@@ -1,0 +1,119 @@
+{% extends 'shopkeeper/base/base.html' %}
+{% load static %}
+
+{% block stylesheet %}
+    <style>
+        .cashImg {
+            width: 60%;
+        }
+
+
+    </style>
+
+{% endblock %}
+{% load static %}
+
+{% block content %}
+
+
+
+
+    <div class="container mt-5">
+        {#        <div class="modal-header">#}
+        {##}
+        {#            <h5 class="modal-title">Create Employee Setup</h5>#}
+        {#        </div>#}
+
+        <div class="row justify-content-center">
+            <h2 class="justify-content-center text-center ">Parent Catgory Setup</h2>
+        </div>
+        {% if messages %}
+            {% for message in messages %}
+                <div {% if message.tags %}class="alert alert-{{ message.tags }}" {% endif %} role="alert">
+                    {{ message }}
+                </div>
+                {#                {% if message.tags == 'error' %}#}
+                {#                      <div class="alert alert-danger" role="alert">#}
+                {#                      {{ message }}#}
+                {#                    </div>#}
+                {#                {% endif %}#}
+
+
+
+            {% endfor %}
+        {% endif %}
+        <div class="row">
+            <form id="employeeForm" method="post" class="" name="employeeForm" enctype="multipart/form-data"
+                  action="{% url 'employee_setup' %}">
+                {% csrf_token %}
+                <div class="form-group row mb-2">
+                    <label for="catgory" class="col-sm-4 col-form-label">Parent Category Name</label>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" id="name" aria-describedby="Pcat" name="name"
+                               placeholder="Parent Category Name">
+                    </div>
+
+                </div>
+
+                <div class="form-group row  mb-2">
+                    <label for="employeeFname" class="col-sm-4 col-form-label">Description </label>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" id="cate" aria-describedby="description"
+                               name="description"
+                               placeholder="description">
+                    </div>
+                </div>
+
+                <div class="form-group row  mb-2">
+                    <label for="meta_keyword" class="col-sm-4 col-form-label">meta_keywords</label>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" id="lname" aria-describedby="meta_keywords"
+                               name="meta_keywords"
+                               placeholder="meta_keywords">
+                    </div>
+                </div>
+
+                <div class="form-group row  mb-2">
+                    <label for="exampleInputmeta_description" class="col-sm-4 col-form-label">meta_description</label>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" id="meta_description"
+                               aria-describedby="meta_description"
+                               placeholder="Enter meta_description" name="meta_description">
+                    </div>
+                </div>
+                <div class="form-group row  mb-2">
+                    <label for="exampleInputmeta_description" class="col-sm-4 col-form-label">Category for </label>
+                    <div class="col-sm-8">
+                        <select class="form-select" aria-label="Default select example">
+                            <option selected>Open this select menu</option>
+                            <option value="BRAND">For Brand</option>
+                            <option value="RETAIL">For Retail</option>
+                            <option value="WSALE">For Whole Sale</option>
+                            <option value="CULTURE">For Culture</option>
+                            <option value="AUTO">For Auto</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row  mb-2">
+                    <label for="exampleInputImge" class="col-sm-4 col-form-label mt-5">Products Image</label>
+                    <div class="col-sm-8">
+                        <input type="file" onchange="preview()">
+                        <img id="frame" src="" width="200px" height="200px"/>
+                    </div>
+                </div>
+                {#            <div class="form-group form-check">#}
+                {#                <input type="checkbox" class="form-check-input" id="exampleCheck1">#}
+                {#                <label class="form-check-label" for="exampleCheck1">Check me out</label>#}
+                {#            </div>#}
+                <button type="submit" class="btn btn-primary" name="employee">Add Employee</button>
+            </form>
+
+        </div>
+    </div>
+    <script>
+        function preview() {
+            frame.src = URL.createObjectURL(event.target.files[0]);
+        }
+
+    </script>
+{% endblock %}

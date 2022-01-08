@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  {% load static %}
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <meta name="keywords" content="">
+  <link rel="shortcut icon" href="{% static 'fimbay/fimbay48x48.png' %}" />
+  <title>Fimbay Admin Portal | Fimbay | Best Online Ecommerce Store | Choose The Best </title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
+  <link href="{% static 'kit/css/app.css' %}" rel="stylesheet">
+
+  <link href="https://cdn.datatables.net/1.11.0/css/jquery.dataTables.min.css" rel="stylesheet">
+  <link href="https://cdn.datatables.net/buttons/2.0.0/css/buttons.dataTables.min.css" rel="stylesheet">
+  <!-- DataTables -->
+  <script src="{% static 'fimbay/js/jquery-3.5.1.js' %}"></script>
+  <script src="{% static 'fimbay/js/jquery.dataTables.min.js' %}"></script>
+  <script src="{% static 'fimbay/js/dataTables.bootstrap5.min.js' %}"></script>
+  <script src="https://cdn.datatables.net/buttons/2.0.0/js/dataTables.buttons.min.js"></script>
+  <script src="https://cdn.datatables.net/buttons/2.0.0/js/buttons.bootstrap5.min.js"></script>
+  <script src="https://cdn.datatables.net/buttons/2.0.0/js/buttons.html5.min.js"></script>
+  <script src="https://cdn.datatables.net/buttons/2.0.0/js/buttons.print.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+  <script src="https://cdn.datatables.net/buttons/2.0.0/js/buttons.colVis.min.js"></script>
+</head>
+<style>
+  * {
+    font-family: Arial, Helvetica, sans-serif;
+  }
+</style>
+
+<body>
+  <div class="wrapper">
+    <nav id="sidebar" class="sidebar">
+      <div class="sidebar-content js-simplebar" style="">
+        <a class="sidebar-brand" href="">
+          <span class="align-middle">Fimbay Admin</span>
+        </a>
+
+        <ul class="sidebar-nav">
+          <li class="sidebar-header">
+            Admin Controls
+          </li>
+
+          <li class="sidebar-item active">
+            <a class="sidebar-link" href="/goprofile/">
+              <i class="align-middle" data-feather="sliders"></i> <span class="align-middle">Dashboard</span>
+            </a>
+          </li>
+
+          <li class="sidebar-item">
+            <a class="sidebar-link" href="/setting/seller/config/">
+              <i class="align-middle" data-feather="settings"></i> <span class="align-middle">Settings</span>
+            </a>
+          </li>
+
+          <li class="sidebar-item">
+            <a class="sidebar-link" href="/payments/admin/dashboard/">
+              <i class="align-middle" data-feather="credit-card"></i> <span class="align-middle">Payments and Recoveries</span>
+            </a>
+          </li>
+          <li class="sidebar-header">
+            Seller's Control
+          </li>
+          <li class="sidebar-item">
+            <a data-target="#ui" data-toggle="collapse" class="sidebar-link collapsed">
+              <i class="align-middle" data-feather="briefcase"></i> <span class="align-middle">Seller's Action</span>
+            </a>
+            <ul id="ui" class="sidebar-dropdown list-unstyled collapse " data-parent="#sidebar">
+              <li class="sidebar-item"><a class="sidebar-link" href="/seller/admin/reporting/">SellersReporting</a></li>
+              <li class="sidebar-item"><a class="sidebar-link" href="/seller/admin/queue/">In-QueueSellers</a></li>
+              <li class="sidebar-item"><a class="sidebar-link" href="/seller/admin/approved/">ApprovedSellers</a></li>
+              <li class="sidebar-item"><a class="sidebar-link" href="/seller/admin/rejected/">RejectedSellers</a></li>
+              <li class="sidebar-item"><a class="sidebar-link" href="/seller/admin/return/">Returned to sellerfor Reviews</a></li>
+              <li class="sidebar-item"><a class="sidebar-link" href="/seller/admin/defaulters/">Defaulters</a></li>
+            </ul>
+          </li>
+          <li class="sidebar-header">
+            Product's Control
+          </li>
+          <li class="sidebar-item">
+            <a data-target="#ui_prd" data-toggle="collapse" class="sidebar-link collapsed">
+              <i class="align-middle" data-feather="briefcase"></i> <span class="align-middle">Product</span>
+            </a>
+            <ul id="ui_prd" class="sidebar-dropdown list-unstyled collapse " data-parent="#sidebar">
+              <li class="sidebar-item"><a class="sidebar-link" href="/product/admin/report/">ProductReporting</a></li>
+              <li class="sidebar-item"><a class="sidebar-link" href="/product/admin/queue/">In-QueueProducts</a></li>
+              <li class="sidebar-item"><a class="sidebar-link" href="/product/admin/approved/">ApprovedProducts</a></li>
+              <li class="sidebar-item"><a class="sidebar-link" href="/product/admin/rejected/">RejectedProducts</a></li>
+              <li class="sidebar-item"><a class="sidebar-link" href="/product/admin/return/">Returned ForSeller Reviews</a></li>
+              <li class="sidebar-item"><a class="sidebar-link" href="/product/admin/bulk/">Bulk Products</a></li>
+            </ul>
+          </li>
+
+          <li class="sidebar-item">
+            <a data-target="#ui_support" data-toggle="collapse" class="sidebar-link collapsed">
+              <i class="align-middle" data-feather="coffee"></i>
+              <span class="align-middle">Support</span>
+            </a>
+            <ul id="ui_support" class="sidebar-dropdown list-unstyled collapse collapse">
+              <li class="sidebar-item"><a class="sidebar-link" href="/support/admin/">Support and Tickets</a></li>
+              <li class="sidebar-item"><a class="sidebar-link" href="/login/support/admin/">Login/Register Support</a></li>
+            </ul>
+          </li>
+
+
+          <li class="sidebar-item">
+            <a class="sidebar-link" href="">
+              <i class="align-middle" data-feather="check-circle"></i> <span class="align-middle">Reviews</span>
+            </a>
+          </li>
+
+          <li class="sidebar-item">
+            <a data-target="#ui_promotion" data-toggle="collapse" class="sidebar-link collapsed">
+              <i class="align-middle" data-feather="list"></i>
+              <span class="align-middle">Promotional Stuff</span>
+            </a>
+            <ul id="ui_promotion" class="sidebar-dropdown list-unstyled collapse collapse">
+              <li class="sidebar-item"><a class="sidebar-link" href="/campaigns-analytics/">Campaigns</a></li>
+              <li class="sidebar-item"><a class="sidebar-link" href="">Bundles</a></li>
+              <li class="sidebar-item"><a class="sidebar-link" href="">Free Shipping</a></li>
+              <li class="sidebar-item"><a class="sidebar-link" href="">Seller Picks</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </nav>
+    <div class="main">
+      <nav class="navbar navbar-expand navbar-light navbar-bg">
+        <a class="sidebar-toggle d-flex">
+          <i class="hamburger align-self-center"></i>
+        </a>
+        <form class="d-none d-sm-inline-block">
+          <div class="input-group input-group-navbar">
+            <input type="text" class="form-control" placeholder="Search…" aria-label="Search">
+            <button class="btn" type="button">
+              <i class="align-middle" data-feather="search"></i>
+            </button>
+          </div>
+        </form>
+
+        <div class="navbar-collapse collapse">
+          <ul class="navbar-nav navbar-align">
+            <li class="nav-item dropdown">
+              <a class="nav-icon dropdown-toggle" href="#" id="alertsDropdown" data-toggle="dropdown">
+                <div class="position-relative">
+                  <i class="align-middle" data-feather="bell"></i>
+                  <span class="indicator"></span>
+                </div>
+              </a>
+              <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right py-0" aria-labelledby="alertsDropdown">
+                <div class="dropdown-menu-header">
+{#                  {{ request.user.notifications.unread.count }} New Notifications#}
+                </div>
+                <div class="list-group">
+
+                  <a href="#" class="list-group-item">
+                    <div class="row g-0 align-items-center">
+                      <div class="col-2">
+                        <i class="text-danger" data-feather="alert-circle"></i>
+                      </div>
+                      <div class="col-10">
+                        <div class="text-dark"></div>
+                        <div class="text-muted small mt-1">{{ notification.description }}</div>
+                        <div class="text-muted small mt-1">{{ notification.timestamp }}</div>
+                      </div>
+                    </div>
+                  </a>
+
+                </div>
+                <div class="dropdown-menu-footer">
+                  <a href="#" class="text-muted">Show all notifications</a>
+                </div>
+              </div>
+            </li>
+            <li class="nav-item dropdown">
+              <!-- <a class="nav-icon dropdown-toggle" href="#" id="messagesDropdown" data-toggle="dropdown">
+                            <div class="position-relative">
+                                <i class="align-middle" data-feather="message-square"></i>
+                            </div>
+                        </a> -->
+              <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right py-0" aria-labelledby="messagesDropdown">
+                <div class="dropdown-menu-header">
+                  <div class="position-relative">
+                    4 New Messages
+                  </div>
+                </div>
+                <div class="list-group">
+                  <a href="#" class="list-group-item">
+                    <div class="row g-0 align-items-center">
+                      <div class="col-2">
+                        <img src="#" class="avatar img-fluid rounded-circle" alt="Vanessa Tucker">
+                      </div>
+                      <div class="col-10 pl-2">
+                        <div class="text-dark">Vanessa Tucker</div>
+                        <div class="text-muted small mt-1">Nam pretium turpis et arcu. Duis arcu
+                          tortor.
+                        </div>
+                        <div class="text-muted small mt-1">15m ago</div>
+                      </div>
+                    </div>
+                  </a>
+                  <a href="#" class="list-group-item">
+                    <div class="row g-0 align-items-center">
+                      <div class="col-2">
+                        <img src="#" class="avatar img-fluid rounded-circle" alt="William Harris">
+                      </div>
+                      <div class="col-10 pl-2">
+                        <div class="text-dark">William Harris</div>
+                        <div class="text-muted small mt-1">Curabitur ligula sapien euismod vitae.
+                        </div>
+                        <div class="text-muted small mt-1">2h ago</div>
+                      </div>
+                    </div>
+                  </a>
+                  <a href="#" class="list-group-item">
+                    <div class="row g-0 align-items-center">
+                      <div class="col-2">
+                        <img src="#" class="avatar img-fluid rounded-circle" alt="Christina Mason">
+                      </div>
+                      <div class="col-10 pl-2">
+                        <div class="text-dark">Christina Mason</div>
+                        <div class="text-muted small mt-1">Pellentesque auctor neque nec urna.</div>
+                        <div class="text-muted small mt-1">4h ago</div>
+                      </div>
+                    </div>
+                  </a>
+                  <a href="#" class="list-group-item">
+                    <div class="row g-0 align-items-center">
+                      <div class="col-2">
+                        <img src="#" class="avatar img-fluid rounded-circle" alt="Sharon Lessman">
+                      </div>
+                      <div class="col-10 pl-2">
+                        <div class="text-dark">Sharon Lessman</div>
+                        <div class="text-muted small mt-1">Aenean tellus metus, bibendum sed,
+                          posuere ac, mattis non.
+                        </div>
+                        <div class="text-muted small mt-1">5h ago</div>
+                      </div>
+                    </div>
+                  </a>
+                </div>
+                <div class="dropdown-menu-footer">
+                  <a href="#" class="text-muted">Show all messages</a>
+                </div>
+              </div>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-icon dropdown-toggle d-inline-block d-sm-none" href="#" data-toggle="dropdown">
+                <i class="align-middle" data-feather="settings"></i>
+              </a>
+
+{#              <a class="nav-link dropdown-toggle d-none d-sm-inline-block" href="#" data-toggle="dropdown">#}
+{#                <img src="{{ request.user.profile_photo.url }}" class="avatar img-fluid rounded mr-1" alt="Image Error" />#}
+{#                <span class="text-dark">{{ request.user.first_name }}</span>#}
+{#              </a>#}
+{#              {% endif %}#}
+{#              {% endif %}#}
+              <div class="dropdown-menu dropdown-menu-right">
+                <a class="dropdown-item" href=""><i class="align-middle mr-1" data-feather="user"></i> Profile</a>
+                <a class="dropdown-item" href="#"><i class="align-middle mr-1" data-feather="pie-chart"></i>
+                  Analytics</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href=""><i class="align-middle mr-1" data-feather="settings"></i> Settings
+                  & Privacy</a>
+                <a class="dropdown-item" href="#"><i class="align-middle mr-1" data-feather="help-circle"></i> Help Center</a>
+                <div class="dropdown-divider"></div>
+{#                <a class="dropdown-item" href="{% url 'logout' %}">Log out</a>#}
+              </div>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+      <main class="content">
+        <div class="container-fluid p-0">
+{#          {% if messages %}#}
+{#          {% for message in messages %}#}
+{#          <div class="alert {{ message.tags }} p-3 alert-dismissible fade show" role="alert">#}
+{#            {{ message }}#}
+{#            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>#}
+{#          </div>#}
+{#          {% endfor %}#}
+{#          {% endif %}#}
+          <div class="row mb-2 mb-xl-3">
+            <div class="col-auto d-none d-sm-block">
+              <h3><strong>Analytics</strong> Dashboard</h3>
+            </div>
+
+            <div class="col-auto ml-auto text-right mt-n1">
+              <nav aria-label="breadcrumb">
+                <ol class="breadcrumb bg-transparent p-0 mt-1 mb-0">
+                  <li class="breadcrumb-item"><a href="/">Fimbay</a></li>
+                  <li class="breadcrumb-item"><a href="/goprofile/">Dashboards</a></li>
+                  <li class="breadcrumb-item" aria-current="page">Analytics</li>
+                </ol>
+              </nav>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-xl-6 col-xxl-6 d-flex">
+              <div class="w-100">
+                <div class="row">
+                  <div class="col-sm-6">
+                    <div class="card">
+                      <div class="card-body">
+                        <h5 class="card-title mb-4">Sellers</h5>
+{#                        <h1 class="mt-1 mb-3">{{ sellers }}</h1>#}
+{#                        <div class="mb-1">#}
+{#                          {% if new_seller_recent_count > 0 %}#}
+{#                              <span class="text-success"> <i#}
+{#                                      class="fas fa-arrow-up">{{ new_seller_recent_count }}</i></span>#}
+{#                              <span class="text-muted">Since last 2Weeks</span>#}
+{#                          {% endif %}#}
+{#                          {% if new_seller_recent_count == 0 %}#}
+{#                              <span class="text-info"> <i#}
+{#                                      class="fas fa-arrow-down">{{ new_seller_recent_count }}</i></span>#}
+{#                              <span class="text-muted">Since last Week</span>#}
+{#                          {% endif %}#}
+                        </div>
+                      </div>
+                    </div>
+                    <div class="card">
+                      <div class="card-body">
+                        <h5 class="card-title mb-4">Customers</h5>
+                        <h1 class="mt-1 mb-3">0</h1>
+                        <div class="mb-1">
+                          <span class="text-success"> <i class="mdi mdi-arrow-bottom-right"></i> 0% </span>
+                          <span class="text-muted">Since last week</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-sm-6">
+                    <div class="card">
+                      <div class="card-body">
+{#                        <h5 class="card-title mb-4">Products</h5>#}
+{#                        <h1 class="mt-1 mb-3">{{ products }}</h1>#}
+{#                        <div class="mb-1">#}
+{#                          {% if new_product_recent_count > 0 %}#}
+{#                              <span class="text-success"> <i#}
+{#                                      class="fas fa-arrow-up">{{ new_product_recent_count }}</i></span>#}
+{#                              <span class="text-muted">Since last 2Weeks</span>#}
+{#                          {% endif %}#}
+{#                          {% if new_product_recent_count == 0 %}#}
+{#                              <span class="text-info"> <i#}
+{#                                      class="fas fa-arrow-down">{{ new_product_recent_count }}</i></span>#}
+{#                              <span class="text-muted">Since last Week</span>#}
+{#                          {% endif %}#}
+{#                        </div>#}
+                      </div>
+                    </div>
+                    <div class="card">
+                      <div class="card-body">
+{#                        <h5 class="card-title mb-4">Orders</h5>#}
+{#                        <h1 class="mt-1 mb-3">{{ orders }}</h1>#}
+{#                        <div class="mb-1">#}
+{#                          {% if new_order_recent_count > 0 %}#}
+{#                              <span class="text-success"> <i#}
+{#                                      class="fas fa-arrow-up">{{ new_order_recent_count }}</i></span>#}
+{#                              <span class="text-muted">Since last 2Weeks</span>#}
+{#                          {% endif %}#}
+{#                          {% if new_order_recent_count == 0 %}#}
+{#                              <span class="text-info"> <i#}
+{#                                      class="fas fa-arrow-down">{{ new_order_recent_count }}</i></span>#}
+{#                              <span class="text-muted">Since last Week</span>#}
+{#                          {% endif %}#}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-xl-6 col-xxl-6">
+              <div class="card flex-fill w-100">
+                <div class="card-header">
+                  <h5 class="card-title mb-0">Product Sales with Months</h5>
+                </div>
+                <div class="card-body py-3">
+                  <div class="chart chart-sm">
+                    <canvas id="chartjs-dashboard-line"></canvas>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-3">
+                <div class="card">
+                  <div class="card-body">
+                    <h5 class="card-title mb-4">Shops</h5>
+                    <h1 class="mt-1 mb-3">0</h1>
+                    <div class="mb-1">
+                      <span class="text-success"> <i class="mdi mdi-arrow-bottom-right"></i> 6.65% </span>
+                      <span class="text-muted">Since last login</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-3">
+                <div class="card">
+                  <div class="card-body">
+                    <h5 class="card-title mb-4">Sales</h5>
+                    <h1 class="mt-1 mb-3">0</h1>
+                    <div class="mb-1">
+                      <span class="text-danger"> <i class="mdi mdi-arrow-bottom-right"></i> -2.25% </span>
+                      <span class="text-muted">Since last week</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-3">
+                <div class="card">
+                  <div class="card-body">
+                    <h5 class="card-title mb-4">Tickets</h5>
+                    <h1 class="mt-1 mb-3">0</h1>
+                    <div class="mb-1">
+                      <span class="text-success"> <i class="mdi mdi-arrow-bottom-right"></i> 6.65% </span>
+                      <span class="text-muted">Since last login</span>
+                    </div>
+                  </div>
+                </div>
+                </div>
+                <div class="col-sm-3">
+                <div class="card">
+                  <div class="card-body">
+                    <h5 class="card-title mb-4">Site Visitors</h5>
+{#                    <h1 class="mt-1 mb-3">{{ visitor.count }}</h1>#}
+                    <div class="mb-1">
+                      <span class="text-success">
+{#                          <i class="fas fa-arrow-up">&nbsp;{{ visitor15 }}</i></span>#}
+                      <span class="text-muted">Since last week</span>
+                    </div>
+                  </div>
+                </div>
+                </div>
+            </div>
+          </div>
+          <div id="all" style="display: block">
+            <div class="row card pt-3">
+              <table class="table table-striped" id="allusers">
+                <thead>
+                  <tr>
+                    <th class="d-none d-xl-table-cell">ID</th>
+                    <th class="d-none d-xl-table-cell">Seller Logo</th>
+                    <th class="d-none d-xl-table-cell">Name</th>
+                    <th class="d-none d-md-table-cell">Email</th>
+                    <th class="d-none d-md-table-cell">Contact</th>
+                    <th class="d-none d-md-table-cell">Seller Title</th>
+                    <th class="d-none d-md-table-cell">Seller Banner</th>
+                    <th>Status</th>
+                    <th class="d-none d-md-table-cell">Account Created On</th>
+                  </tr>
+                </thead>
+                <tbody>
+{#                  {% for slr,slrV in seller_zip %}#}
+{#                  <tr>#}
+{#                    <td class="d-none d-xl-table-cell">{{ slr.id }}</td>#}
+{#                    {% comment %} <td class="d-none d-xl-table-cell"> <img width="100px" class="rounded-circle" src="{{ slr.seller_logo.url }}" alt=""> </td> {% endcomment %}#}
+{#                    <td class="d-none d-xl-table-cell">{{ slr.user.first_name }} {{ slr.user.last_name }}</td>#}
+{#                    <td class="d-none d-xl-table-cell">{{ slr.user.email }}</td>#}
+{#                    <td><span class="d-none d-xl-table-cell">{{ slr.contact }}</span></td>#}
+{#                    <td class="d-none d-md-table-cell">{{ slr.title }}</td>#}
+{#                    <td class="d-none d-md-table-cell">{{ slr.seller_banner }}</td>#}
+{#                    <td>#}
+{#                      {% if slr.user.is_defaulter %}#}
+{#                      <span class="badge bg-danger">Defaulter</span>#}
+{#                      {% endif %}#}
+{#                      {% if slrV.is_verified %}#}
+{#                      <span class="badge bg-secondary">Email Verified</span>#}
+{#                      {% endif %}#}
+{#                      {% if not slrV.is_verified %}#}
+{#                      <span class="badge bg-danger-light">Email Not Verified</span>#}
+{#                      {% endif %}#}
+{#                      {% if slrV.is_profile_complete %}#}
+{#                      <span class="badge bg-success">Profile Completed</span>#}
+{#                      {% endif %}#}
+{#                      {% if not slrV.is_profile_complete %}#}
+{#                      <span class="badge bg-success">Profile Not Complete</span>#}
+{#                      {% endif %}#}
+{#                    </td>#}
+{#                    <td><span class="badge bg-secondary">{{ slr.created_at }}</span></td>#}
+{#                  </tr>#}
+{#                  {% endfor %}#}
+{#                </tbody>#}
+{#              </table>#}
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <footer class="footer">
+        <div class="container-fluid">
+          <div class="row text-muted">
+            <div class="col-6 text-left">
+              <p class="mb-0">
+                <a href="" class="text-muted"><strong>Fimbay </strong></a> &copy;
+              </p>
+            </div>
+            <div class="col-6 text-right">
+              <ul class="list-inline">
+                <li class="list-inline-item">
+                  <a class="text-muted" href="#">Support</a>
+                </li>
+                <li class="list-inline-item">
+                  <a class="text-muted" href="#">Help Center</a>
+                </li>
+                <li class="list-inline-item">
+                  <a class="text-muted" href="#">Privacy</a>
+                </li>
+                <li class="list-inline-item">
+                  <a class="text-muted" href="#">Terms</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </div>
+  </div>
+
+{#  <script src="{% static 'kit/js/app.js' %}"></script>#}
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      var ctx = document.getElementById("chartjs-dashboard-line").getContext("2d");
+      var gradient = ctx.createLinearGradient(0, 0, 0, 225);
+      gradient.addColorStop(0, "rgba(215, 227, 244, 1)");
+      gradient.addColorStop(1, "rgba(215, 227, 244, 0)");
+      // Line chart
+      new Chart(document.getElementById("chartjs-dashboard-line"), {
+        type: "line",
+        data: {
+          labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+          datasets: [{
+            label: "Sales ($)",
+            fill: true,
+            backgroundColor: gradient,
+            borderColor: window.theme.primary,
+            data: [
+              2115,
+              1562,
+              1584,
+              1892,
+              1587,
+              1923,
+              2566,
+              2448,
+              2805,
+              3438,
+              2917,
+              3327
+            ]
+          }]
+        },
+        options: {
+          maintainAspectRatio: false,
+          legend: {
+            display: false
+          },
+          tooltips: {
+            intersect: false
+          },
+          hover: {
+            intersect: true
+          },
+          plugins: {
+            filler: {
+              propagate: false
+            }
+          },
+          scales: {
+            xAxes: [{
+              reverse: true,
+              gridLines: {
+                color: "rgba(0,0,0,0.0)"
+              }
+            }],
+            yAxes: [{
+              ticks: {
+                stepSize: 1000
+              },
+              display: true,
+              borderDash: [3, 3],
+              gridLines: {
+                color: "rgba(0,0,0,0.0)"
+              }
+            }]
+          }
+        }
+      });
+    });
+  </script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      // Pie chart
+      new Chart(document.getElementById("chartjs-dashboard-pie"), {
+        type: "pie",
+        data: {
+          labels: ["Chrome", "Firefox", "IE"],
+          datasets: [{
+            data: [4306, 3801, 1689],
+            backgroundColor: [
+              window.theme.primary,
+              window.theme.warning,
+              window.theme.danger
+            ],
+            borderWidth: 5
+          }]
+        },
+        options: {
+          responsive: !window.MSInputMethodContext,
+          maintainAspectRatio: false,
+          legend: {
+            display: false
+          },
+          cutoutPercentage: 75
+        }
+      });
+    });
+  </script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      // Bar chart
+      new Chart(document.getElementById("chartjs-dashboard-bar"), {
+        type: "bar",
+        data: {
+          labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+          datasets: [{
+            label: "This year",
+            backgroundColor: window.theme.primary,
+            borderColor: window.theme.primary,
+            hoverBackgroundColor: window.theme.primary,
+            hoverBorderColor: window.theme.primary,
+            data: [54, 67, 41, 55, 62, 45, 55, 73, 60, 76, 48, 79],
+            barPercentage: .75,
+            categoryPercentage: .5
+          }]
+        },
+        options: {
+          maintainAspectRatio: false,
+          legend: {
+            display: false
+          },
+          scales: {
+            yAxes: [{
+              gridLines: {
+                display: false
+              },
+              stacked: false,
+              ticks: {
+                stepSize: 20
+              }
+            }],
+            xAxes: [{
+              stacked: false,
+              gridLines: {
+                color: "transparent"
+              }
+            }]
+          }
+        }
+      });
+    });
+  </script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      var markers = [{
+          coords: [31.230391, 121.473701],
+          name: "Shanghai"
+        },
+        {
+          coords: [28.704060, 77.102493],
+          name: "Delhi"
+        },
+        {
+          coords: [6.524379, 3.379206],
+          name: "Lagos"
+        },
+        {
+          coords: [35.689487, 139.691711],
+          name: "Tokyo"
+        },
+        {
+          coords: [23.129110, 113.264381],
+          name: "Guangzhou"
+        },
+        {
+          coords: [40.7127837, -74.0059413],
+          name: "New York"
+        },
+        {
+          coords: [34.052235, -118.243683],
+          name: "Los Angeles"
+        },
+        {
+          coords: [41.878113, -87.629799],
+          name: "Chicago"
+        },
+        {
+          coords: [51.507351, -0.127758],
+          name: "London"
+        },
+        {
+          coords: [40.416775, -3.703790],
+          name: "Madrid "
+        }
+      ];
+      var map = new JsVectorMap({
+        map: "world",
+        selector: "#world_map",
+        zoomButtons: true,
+        markers: markers,
+        markerStyle: {
+          initial: {
+            r: 9,
+            strokeWidth: 7,
+            stokeOpacity: .4,
+            fill: window.theme.primary
+          },
+          hover: {
+            fill: window.theme.primary,
+            stroke: window.theme.primary
+          }
+        }
+      });
+      window.addEventListener("resize", () => {
+        map.updateSize();
+      });
+    });
+  </script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      document.getElementById("datetimepicker-dashboard").flatpickr({
+        inline: true,
+        prevArrow: "<span class=\"fas fa-chevron-left\" title=\"Previous month\"></span>",
+        nextArrow: "<span class=\"fas fa-chevron-right\" title=\"Next month\"></span>",
+      });
+    });
+  </script>
+
+  <script type="text/javascript">
+    $(document).ready(function() {
+      $('#allusers').DataTable({
+        dom: 'Bfrtip',
+        buttons: [{
+            extend: 'copy',
+            text: '<span><i class="fa fa-clipboard" aria-hidden="true"></i> Copy</span></i>',
+            exportOptions: {
+              columns: [0, 2, 3, 4, 5, 6, 7, 8]
+            },
+          },
+          {
+            extend: 'csv',
+            text: '<span><i class="fa fa-file-csv" aria-hidden="true"></i> CSV</span></i>',
+            exportOptions: {
+              columns: [0, 2, 3, 4, 5, 6, 7, 8]
+            },
+          },
+          {
+            extend: 'excel',
+            text: '<span><i class="fa fa-file-excel" aria-hidden="true"></i> Excel</span></i>',
+            exportOptions: {
+              columns: [0, 2, 3, 4, 5, 6, 7, 8]
+            },
+          },
+          {
+            extend: 'pdf',
+            text: '<span><i class="fas fa-file-pdf"></i> PDF</span></i>',
+            exportOptions: {
+              columns: [0, 2, 3, 4, 5, 6, 7, 8]
+            },
+          },
+          {
+            extend: 'print',
+            text: '<span><i class="fa fa-print" aria-hidden="true"></i> Print</span></i>',
+            title: 'Sellers | Fimbay',
+            autoPrint: true,
+            exportOptions: {
+              columns: [0, 2, 3, 4, 5, 6, 7, 8]
+            },
+
+            customize: function(win) {
+              $(win.document.body).prepend('<img src="https://s3.amazonaws.com/unroll-images-production/projects%2F0%2F1625751139192-FIMBAY+LOGO.png" style="position:absolute; padding-left:20px; height:50px; width:100px; top:20px;" />')
+              $(win.document.body).find('th').addClass('display').css('text-align', 'center');
+              $(win.document.body).find('table').addClass('display').css('padding-top', '20px');
+              $(win.document.body).find('table').addClass('display').css('font-size', '12px');
+              $(win.document.body).find('table').addClass('display').css('text-align', 'center');
+              $(win.document.body).find('tr:nth-child(odd) td').each(function(index) {
+                $(this).css('background-color', '#D0D0D0');
+              });
+              $(win.document.body).find('h1').css('text-align', 'center');
+              $(win.document.body).find('h1').css('padding-top', '30px');
+            }
+          },
+        ]
+      });
+    });
+  </script>
+</body>
+
+</html>
