@@ -32,7 +32,7 @@ class User(AbstractUser):
         return self.first_name + ' ' + self.last_name
 
 class Employee(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, null=False)
+    user = models.OneToOneField(User, related_name='user', on_delete=models.CASCADE, null=False)
     target_assign = models.CharField(max_length=10, null=True)
     target_achieved = models.CharField(max_length=10, null=True)
     area_designated = models.CharField(max_length=250, null=True)

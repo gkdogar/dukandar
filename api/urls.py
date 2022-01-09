@@ -10,6 +10,8 @@ from rest_framework_simplejwt.views import (
 )
 
 # router.register('user', views.UserRegister,basename='user')
+router.register('account/registration', views.userRegistration,basename='registration')
+router.register('employee/setup', views.EmployeeViewSet,basename='employee_setup')
 router.register('shopkeeper_setup', views.UserRegister,basename='shopkeeper_setup')
 router.register('shopkeeper_list', views.UserRegister,basename='shopkeeper_list')
 router.register('customer_setup', views.UserRegister,basename='customer_setup')
@@ -22,6 +24,7 @@ app_name = 'api'
 urlpatterns = [
     path('', include(router.urls)),
     # path('api/gettoken/', obtain_auth_token)
+    # path('account/registration/', views.userRegistration,name='registration '),
     path('gettoken/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('refreshtoken/', TokenRefreshView.as_view(), name='token_refresh'),
     path('verifytoken/', TokenVerifyView.as_view(), name='token_verify'),
