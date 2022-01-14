@@ -44,12 +44,14 @@
         {% endif %}
         <div class="row">
             <form id="employeeForm" method="post" class="" name="employeeForm" enctype="multipart/form-data"
-                  action="{% url 'employee_setup' %}">
+                  action="{% url 'parent_category_setup' %}">
                 {% csrf_token %}
                 <div class="form-group row mb-2">
                     <label for="catgory" class="col-sm-4 col-form-label">Parent Category Name</label>
                     <div class="col-sm-8">
+                        <input type="hidden" name="paren_id" value="{{ paren_id }}">
                         <input type="text" class="form-control" id="name" aria-describedby="Pcat" name="name"
+                               value="{{ name }}"
                                placeholder="Parent Category Name">
                     </div>
 
@@ -59,7 +61,7 @@
                     <label for="employeeFname" class="col-sm-4 col-form-label">Description </label>
                     <div class="col-sm-8">
                         <input type="text" class="form-control" id="cate" aria-describedby="description"
-                               name="description"
+                               name="description" value="{{ description }}"
                                placeholder="description">
                     </div>
                 </div>
@@ -68,7 +70,7 @@
                     <label for="meta_keyword" class="col-sm-4 col-form-label">meta_keywords</label>
                     <div class="col-sm-8">
                         <input type="text" class="form-control" id="lname" aria-describedby="meta_keywords"
-                               name="meta_keywords"
+                               name="meta_keywords" value="{{ meta_keywords }}"
                                placeholder="meta_keywords">
                     </div>
                 </div>
@@ -77,35 +79,53 @@
                     <label for="exampleInputmeta_description" class="col-sm-4 col-form-label">meta_description</label>
                     <div class="col-sm-8">
                         <input type="text" class="form-control" id="meta_description"
-                               aria-describedby="meta_description"
+                               aria-describedby="meta_description" value="{{ meta_description }}"
                                placeholder="Enter meta_description" name="meta_description">
                     </div>
                 </div>
                 <div class="form-group row  mb-2">
                     <label for="exampleInputmeta_description" class="col-sm-4 col-form-label">Category for </label>
                     <div class="col-sm-8">
+
                         <select class="form-select" aria-label="Default select example">
-                            <option selected>Open this select menu</option>
-                            <option value="BRAND">For Brand</option>
-                            <option value="RETAIL">For Retail</option>
-                            <option value="WSALE">For Whole Sale</option>
-                            <option value="CULTURE">For Culture</option>
-                            <option value="AUTO">For Auto</option>
+                            {% if category_for %}
+                                <option value="{{ category_for }}">{{ category_for }}</option>
+
+                            {% else %}
+                                <option selected>Open this select menu</option>
+                                <option  value="BRAND">For Brand</option>
+                                <option value="RETAIL">For Retail</option>
+                                <option value="WSALE">For Whole Sale</option>
+                                <option value="CULTURE">For Culture</option>
+                                <option value="AUTO">For Auto</option>
+                            {% endif %}
+
                         </select>
                     </div>
                 </div>
                 <div class="form-group row  mb-2">
                     <label for="exampleInputImge" class="col-sm-4 col-form-label mt-5">Products Image</label>
                     <div class="col-sm-8">
-                        <input type="file" onchange="preview()">
-                        <img id="frame" src="" width="200px" height="200px"/>
+                        <input type="file" onchange="preview()" name="image" value="{{ image }}">
+                       {% if image %}
+                            <img id="frame" src="{{ image.url }}" name="image" width="200px" height="200px"/>
+                        {% else %}
+                            <img id="frame" src="" name="image" width="200px" height="200px"/>
+                        {% endif %}
                     </div>
+                </div>
+                <div class="form-group form-check">
+                     <input type="checkbox" class="form-check-input checkbox" id="is_active"
+                           name="is_active" {% if is_active %} checked
+                           value="True"   {% endif %} value="False">
+
+                    <label class="form-check-label" for="exampleCheck1">Check me out</label>
                 </div>
                 {#            <div class="form-group form-check">#}
                 {#                <input type="checkbox" class="form-check-input" id="exampleCheck1">#}
                 {#                <label class="form-check-label" for="exampleCheck1">Check me out</label>#}
                 {#            </div>#}
-                <button type="submit" class="btn btn-primary" name="employee">Add Employee</button>
+                <button type="submit" class="btn btn-primary float-right">Add Parent Category</button>
             </form>
 
         </div>
@@ -114,6 +134,15 @@
         function preview() {
             frame.src = URL.createObjectURL(event.target.files[0]);
         }
+         $(".checkbox").on('change', function () {
+                if ($(this).is(':checked')) {
+                    $(this).attr('value', 'True');
+
+                } else {
+                    $(this).attr('value', 'False');
+
+                }
+            });
 
     </script>
 {% endblock %}

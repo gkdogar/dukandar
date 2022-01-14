@@ -36,4 +36,11 @@ class ShopkeeperForm(ModelForm):
         model =Shopkeeper
         fields=('emp_id', 'shop_name', 'phone_no','description')
 
+class ParentCategoryForm(ModelForm):
+
+    class Meta:
+        model =ParentCategory
+        fields='__all__'
+
+
 

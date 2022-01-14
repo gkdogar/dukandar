@@ -30,6 +30,9 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
   <script src="https://cdn.datatables.net/buttons/2.0.0/js/buttons.colVis.min.js"></script>
+
+    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css"
+          integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
 </head>
 <style>
   * {
@@ -50,7 +53,7 @@
             Admin Controls
           </li>
 
-          <li class="sidebar-item active">
+          <li class="sidebar-item ">
             <a class="sidebar-link" href="/goprofile/">
               <i class="align-middle" data-feather="sliders"></i> <span class="align-middle">Dashboard</span>
             </a>
@@ -102,12 +105,24 @@
           <li class="sidebar-header">
             Product's Control
           </li>
+                <li class="sidebar-item">
+            <a data-target="#ui_parent" data-toggle="collapse" class="sidebar-link collapsed">
+              <i class="align-middle active" data-feather="briefcase"></i> <span class="align-middle">Parent Categories</span>
+            </a>
+            <ul id="ui_parent" class="sidebar-dropdown list-unstyled collapse " data-parent="#sidebar">
+              <li class="sidebar-item"><a class="sidebar-link" href="{% url 'parent_category_list' %} ">List of Parent Categories</a></li>
+              <li class="sidebar-item"><a class="sidebar-link" href="{% url 'parent_category_setup' %}">Add Parent Category</a></li>
+              <li class="sidebar-item"><a class="sidebar-link" href="/product/admin/approved/">ApprovedProducts</a></li>
+              <li class="sidebar-item"><a class="sidebar-link" href="/product/admin/rejected/">RejectedProducts</a></li>
+
+            </ul>
+          </li>
           <li class="sidebar-item">
             <a data-target="#ui_prd" data-toggle="collapse" class="sidebar-link collapsed">
               <i class="align-middle" data-feather="briefcase"></i> <span class="align-middle">Product</span>
             </a>
             <ul id="ui_prd" class="sidebar-dropdown list-unstyled collapse " data-parent="#sidebar">
-              <li class="sidebar-item"><a class="sidebar-link" href="/product/admin/report/">ProductReporting</a></li>
+              <li class="sidebar-item"><a class="sidebar-link" href="{% url 'google_map_pin' %}">Google map</a></li>
               <li class="sidebar-item"><a class="sidebar-link" href="/product/admin/queue/">In-QueueProducts</a></li>
               <li class="sidebar-item"><a class="sidebar-link" href="/product/admin/approved/">ApprovedProducts</a></li>
               <li class="sidebar-item"><a class="sidebar-link" href="/product/admin/rejected/">RejectedProducts</a></li>
