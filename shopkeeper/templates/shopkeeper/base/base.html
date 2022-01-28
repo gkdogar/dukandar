@@ -150,9 +150,9 @@
       </div>
     </nav>
     <div class="main">
-         {% block content %}
+         {% comment %} {% block content %}
 
-        {% endblock %}
+        {% endblock %} {% endcomment %}
 
     </div>
   </div>
@@ -345,7 +345,7 @@
           name: "Madrid "
         }
       ];
-      var map = new JsVectorMap({
+      {% comment %} var map = new JsVectorMap({
         map: "world",
         selector: "#world_map",
         zoomButtons: true,
@@ -362,7 +362,7 @@
             stroke: window.theme.primary
           }
         }
-      });
+      }); {% endcomment %}
       window.addEventListener("resize", () => {
         map.updateSize();
       });
@@ -370,11 +370,11 @@
   </script>
   <script>
     document.addEventListener("DOMContentLoaded", function() {
-      document.getElementById("datetimepicker-dashboard").flatpickr({
+      {% comment %} document.getElementById("datetimepicker-dashboard").flatpickr({
         inline: true,
         prevArrow: "<span class=\"fas fa-chevron-left\" title=\"Previous month\"></span>",
         nextArrow: "<span class=\"fas fa-chevron-right\" title=\"Next month\"></span>",
-      });
+      }); {% endcomment %}
     });
   </script>
 

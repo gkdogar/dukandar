@@ -23,7 +23,7 @@ class EmployeeListView(ListView):
         #    print('user',user)
         #    object_list= Employee.objects.filter(user=user.id)
         #    print('object_list',object_list)
-        object_list = User.objects.filter(user_type='STAFF')
+        object_list = Employee.objects.all()
 
         return object_list
 

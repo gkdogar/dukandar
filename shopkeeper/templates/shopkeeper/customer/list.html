@@ -37,22 +37,25 @@
                 <th scope="col">Last Name</th>
                 <th scope="col">Email</th>
                 <th scope="col">Daily Task</th>
+                <th scope="col">Achieved Task</th>
                 <th scope="col">Area designated</th>
                 <th scope="col">Shopkeeper</th>
             </tr>
             </thead>
             <tbody>
-            {{ object_list }}
+          
             {% for employee in object_list %}
-                {{ object_list }}
+               
                 <tr>
+                    
                     <th scope="row">{{ forloop.counter }}</th>
-                    <td>{{ employee.first_name }}</td>
-                    <td>{{ employee.last_name }}</td>
-                    <td>{{ employee.email }}</td>
-                    <td>{{ employee.employee.target }}</td>
-                    <td>{{ employee.employee.area_designated }}</td>
-                    <td>{{ employee.employee.shopkeeper.first_name }}</td>
+                    <td>{{ employee.user.first_name }}</td>
+                    <td>{{ employee.user.last_name }}</td>
+                    <td>{{ employee.user.email }}</td>
+                    <td>{{ employee.target_assign }}</td>
+                    <td>{{ employee.target_achieved }}</td>
+                    <td>{{ employee.area_designated }}</td>
+                    <td>{{ employee.shopkeeper.first_name }}</td>
                 </tr>
             {% endfor %}
 
