@@ -1,0 +1,21 @@
+{% extends 'shopkeeper/base/base.html' %}
+{% load static %}
+{% block stylesheet %}
+    <style>
+
+    </style>
+
+{% endblock %}
+
+{% block content %}
+    <h1>Employee List</h1>
+
+
+    <script>
+        $(document).ready(function () {
+            $('ul').find("li#employee_page").addClass("active");
+
+        });
+    </script>
+
+{% endblock %}

@@ -10,7 +10,9 @@ from django.contrib import messages
 import folium
 
 def index(request):
-    return render(request, 'shopkeeper/admin/dashboard.html')
+    return render(request, 'shopkeeper/base/base.html')
+
+
 
 
 class EmployeeListView(ListView):
@@ -27,6 +29,32 @@ class EmployeeListView(ListView):
 
         return object_list
 
+def employeeSetup(request):
+    return render(request, 'shopkeeper/employee/setup.html')
+def employeeList(request):
+    return render(request, 'shopkeeper/employee/list.html')
+def employeeDetail(request):
+    return render(request, 'shopkeeper/employee/setup.html')
+def employeeDelete(request):
+    return render(request, 'shopkeeper/employee/setup.html')
+
+def dukandarSetup(request):
+    return render(request, 'shopkeeper/dukandar/setup.html')
+def dukandarList(request):
+    return render(request, 'shopkeeper/dukandar/list.html')
+def dukandarDetail(request):
+    return render(request, 'shopkeeper/dukandar/setup.html')
+def dukandarDelete(request):
+    return render(request, 'shopkeeper/dukandar/setup.html')
+
+def customerSetup(request):
+    return render(request, 'shopkeeper/customer/setup.html')
+def customerList(request):
+    return render(request, 'shopkeeper/customer/list.html')
+def customerDetail(request):
+    return render(request, 'shopkeeper/customer/setup.html')
+def customerDelete(request):
+    return render(request, 'shopkeeper/customer/setup.html')
 
 # @method_decorator(login_required, name='dispatch')
 class EmployeeSetupView(View):
@@ -94,7 +122,6 @@ def parent_category_delete(request,pk):
 
     return redirect('parent_category_list')
 
-
 class ParentCategorySetupView(View):
 
     def get(self, request, *args, **kwargs):
@@ -128,14 +155,38 @@ class ParentCategorySetupView(View):
                 return redirect('parent_category_setup')
 
 
+def sub_categorySetup(request):
+    return render(request, 'shopkeeper/sub/setup.html')
 
+def sub_categoryList(request):
+    return render(request, 'shopkeeper/sub/list.html')
 
+def sub_categoryDetail(request, pk):
+    return render(request, 'shopkeeper/sub/setup.html')
 
+def sub_categoryDelete(request, pk):
+    return render(request, 'shopkeeper/sub/setup.html')
 
+def productSetup(request):
+    return render(request, 'shopkeeper/product/setup.html')
 
+def productList(request):
+    return render(request, 'shopkeeper/product/list.html')
 
+def productDetail(request):
+    return render(request, 'shopkeeper/product/setup.html')
 
+def productDelete(request):
+    return render(request, 'shopkeeper/product/setup.html')
 
+def ordersList(request):
+    return render(request, 'shopkeeper/order/list.html')
+
+def walletList(request):
+    return render(request, 'shopkeeper/wallet/list.html')
+
+def spinesList(request):
+    return render(request, 'shopkeeper/spins/list.html')
 
 def register(request):
     if request.method == 'POST':
