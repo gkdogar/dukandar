@@ -1,0 +1,178 @@
+<nav id="sidebar" class="sidebar">
+    <div class="sidebar-content js-simplebar" style="">
+        <a class="sidebar-brand" href="">
+            <span class="align-middle">Dukandar Admin</span>
+        </a>
+
+        <ul class="sidebar-nav">
+            <li class="sidebar-header">
+                Admin Controls
+            </li>
+
+            <li class="sidebar-item ">
+                <a class="sidebar-link" href="/">
+                    <i class="align-middle" data-feather="sliders"></i> <span class="align-middle">Dashboard</span>
+                </a>
+            </li>
+
+            <li class="sidebar-item">
+                <a class="sidebar-link" href="{% url 'parent_category_setup' %}">
+                    <i class="align-middle" data-feather="settings"></i> <span class="align-middle">Settings</span>
+                </a>
+            </li>
+
+            <li class="sidebar-item">
+                <a class="sidebar-link" href="/payments/admin/dashboard/">
+                    <i class="align-middle" data-feather="credit-card"></i> <span class="align-middle">Payments and Recoveries</span>
+                </a>
+            </li>
+
+            </li>
+            <li class="sidebar-header">
+
+                Users Control
+            </li>
+            <li class="sidebar-item" id="employee_page">
+                <a data-target="#employee_control" data-toggle="collapse" class="sidebar-link collapsed">
+                    <i class="align-middle" data-feather="users"></i> <span
+                        class="align-middle">Employee Action</span>
+                </a>
+                <ul id="employee_control" class="sidebar-dropdown list-unstyled collapse " data-parent="#sidebar">
+                    <li class="sidebar-item "><a class="sidebar-link" href="{% url 'employee_list' %}">Employee List</a>
+                    </li>
+                    <li class="sidebar-item"><a class="sidebar-link" href="{% url 'employee_setup' %}">Employee
+                        Setup</a></li>
+                    {#              <li class="sidebar-item"><a class="sidebar-link" href="/seller/admin/approved/">ApprovedSellers</a></li>#}
+                    {#              <li class="sidebar-item"><a class="sidebar-link" href="/seller/admin/rejected/">RejectedSellers</a></li>#}
+                    {#              <li class="sidebar-item"><a class="sidebar-link" href="/seller/admin/return/">Returned to sellerfor Reviews</a></li>#}
+                    {#              <li class="sidebar-item"><a class="sidebar-link" href="/seller/admin/defaulters/">Defaulters</a></li>#}
+                </ul>
+            </li>
+
+             <li class="sidebar-item" id="dukandar_page">
+                <a data-target="#dukandar_control" data-toggle="collapse" class="sidebar-link collapsed">
+                    <i class="align-middle" data-feather="users"></i> <span
+                        class="align-middle">Dhukandar Action</span>
+                </a>
+                <ul id="dukandar_control" class="sidebar-dropdown list-unstyled collapse " data-parent="#sidebar">
+                    <li class="sidebar-item"><a class="sidebar-link" href="{% url 'dukandar_list' %}">Dukandar List</a>
+                    </li>
+                    <li class="sidebar-item"><a class="sidebar-link" href="{% url 'dukandar_setup' %}">Dukandar
+                        Setup</a></li>
+                      <li class="sidebar-item"><a class="sidebar-link"  href="{% url 'spines_list' %}">Dukandar Spines</a></li>
+                      <li class="sidebar-item"><a class="sidebar-link"  href="{% url 'wallet_list' %}">Dukandar Wallet</a></li>
+                    {#              <li class="sidebar-item"><a class="sidebar-link" href="/seller/admin/return/">Returned to sellerfor Reviews</a></li>#}
+                    {#              <li class="sidebar-item"><a class="sidebar-link" href="/seller/admin/defaulters/">Defaulters</a></li>#}
+                </ul>
+            </li>
+             <li class="sidebar-item" id="customer_page">
+                <a data-target="#customer_control" data-toggle="collapse" class="sidebar-link collapsed">
+                    <i class="align-middle" data-feather="users"></i> <span
+                        class="align-middle">Customer Action</span>
+                </a>
+                <ul id="customer_control" class="sidebar-dropdown list-unstyled collapse " data-parent="#sidebar">
+                    <li class="sidebar-item"><a class="sidebar-link" href="{% url 'customer_list' %}">Customer List</a>
+                    </li>
+                    <li class="sidebar-item"><a class="sidebar-link" href="{% url 'customer_setup' %}">Customer
+                        Setup</a></li>
+                    {#              <li class="sidebar-item"><a class="sidebar-link" href="/seller/admin/approved/">ApprovedSellers</a></li>#}
+                    {#              <li class="sidebar-item"><a class="sidebar-link" href="/seller/admin/rejected/">RejectedSellers</a></li>#}
+                    {#              <li class="sidebar-item"><a class="sidebar-link" href="/seller/admin/return/">Returned to sellerfor Reviews</a></li>#}
+                    {#              <li class="sidebar-item"><a class="sidebar-link" href="/seller/admin/defaulters/">Defaulters</a></li>#}
+                </ul>
+            </li>
+
+
+            <li class="sidebar-header active" id ="product_tabs">
+                Product's Control
+            </li>
+            <li class="sidebar-item">
+                <a data-target="#ui_parent" data-toggle="collapse" class="sidebar-link collapsed">
+                    <i class="align-middle" data-feather="briefcase"></i> <span class="align-middle">Parent Categories</span>
+                </a>
+                <ul id="ui_parent" class="sidebar-dropdown list-unstyled collapse " data-parent="#sidebar">
+                    <li class="sidebar-item"><a class="sidebar-link" href="{% url 'parent_category_list' %} ">List of
+                        Parent Categories</a></li>
+                    <li class="sidebar-item"><a class="sidebar-link" href="{% url 'parent_category_setup' %}">Add Parent
+                        Category</a></li>
+                    {#              <li class="sidebar-item"><a class="sidebar-link" href="/product/admin/approved/">ApprovedProducts</a></li>#}
+                    {#              <li class="sidebar-item"><a class="sidebar-link" href="/product/admin/rejected/">RejectedProducts</a></li>#}
+
+                </ul>
+            <li class="sidebar-item">
+                <a data-target="#ui_parent_sub" data-toggle="collapse" class="sidebar-link collapsed">
+                    <i class="align-middle active" data-feather="briefcase"></i> <span class="align-middle">Parent Sub Categories</span>
+                </a>
+                <ul id="ui_parent_sub" class="sidebar-dropdown list-unstyled collapse " data-parent="#sidebar">
+                    <li class="sidebar-item"><a class="sidebar-link" href="{% url 'parent_sub_category_list' %} ">List of
+                        Parent Categories</a></li>
+                    <li class="sidebar-item"><a class="sidebar-link" href="{% url 'parent_sub_category_setup' %}">Add Parent
+                        Category</a></li>
+                    {#              <li class="sidebar-item"><a class="sidebar-link" href="/product/admin/approved/">ApprovedProducts</a></li>#}
+                    {#              <li class="sidebar-item"><a class="sidebar-link" href="/product/admin/rejected/">RejectedProducts</a></li>#}
+
+                </ul>
+            </li>
+            <li class="sidebar-item">
+                <a data-target="#ui_prd" data-toggle="collapse" class="sidebar-link collapsed">
+                    <i class="align-middle" data-feather="briefcase"></i> <span class="align-middle">Product</span>
+                </a>
+                <ul id="ui_prd" class="sidebar-dropdown list-unstyled collapse " data-parent="#sidebar">
+                    <li class="sidebar-item"><a class="sidebar-link" href="{% url 'google_map_pin' %}">Google map</a>
+                    </li>
+                    <li class="sidebar-item"><a class="sidebar-link" href="{% url 'product_setup' %}">Add Product</a>
+                    </li>
+                    <li class="sidebar-item"><a class="sidebar-link"
+                                               href="{% url 'product_ist' %}">Product List</a></li>
+
+                </ul>
+            </li>
+
+            <li class="sidebar-item">
+                <a data-target="#ui_support" data-toggle="collapse" class="sidebar-link collapsed">
+                    <i class="align-middle" data-feather="coffee"></i>
+                    <span class="align-middle">Support</span>
+                </a>
+                <ul id="ui_support" class="sidebar-dropdown list-unstyled collapse collapse">
+                    <li class="sidebar-item"><a class="sidebar-link" href="/support/admin/">Support and Tickets</a></li>
+                    <li class="sidebar-item"><a class="sidebar-link" href="/login/support/admin/">Login/Register
+                        Support</a></li>
+                </ul>
+            </li>
+
+
+            <li class="sidebar-item">
+                <a class="sidebar-link" href="">
+                    <i class="align-middle" data-feather="check-circle"></i> <span class="align-middle">Reviews</span>
+                </a>
+            </li>
+
+            <li class="sidebar-item">
+                <a data-target="#ui_promotion" data-toggle="collapse" class="sidebar-link collapsed">
+                    <i class="align-middle" data-feather="list"></i>
+                    <span class="align-middle">Promotional Stuff</span>
+                </a>
+                <ul id="ui_promotion" class="sidebar-dropdown list-unstyled collapse collapse">
+                    <li class="sidebar-item"><a class="sidebar-link" href="/campaigns-analytics/">Campaigns</a></li>
+                    <li class="sidebar-item"><a class="sidebar-link" href="">Bundles</a></li>
+                    <li class="sidebar-item"><a class="sidebar-link" href="">Free Shipping</a></li>
+                    <li class="sidebar-item"><a class="sidebar-link" href="">Seller Picks</a></li>
+                </ul>
+            </li>
+              <li class="sidebar-header">
+               Orders
+            </li>
+            <li class="sidebar-item " id="order_page">
+                <a data-target="#order_list" data-toggle="collapse" class="sidebar-link collapsed">
+                   <span class="iconify" data-icon="fe:list-order"></span> <span
+                        class="align-middle">Orders Detail</span>
+                </a>
+                <ul id="order_list" class="sidebar-dropdown list-unstyled collapse " data-parent="#sidebar">
+                    <li class="sidebar-item"><a class="sidebar-link" href="{% url 'orders_list' %}">Order List</a>
+                    </li>
+
+                </ul>
+            </li>
+        </ul>
+    </div>
+</nav>

@@ -1,24 +1,16 @@
 {% extends 'shopkeeper/base/base.html' %}
 {% load static %}
-
 {% block stylesheet %}
     <style>
-        .cashImg {
-            width: 60%;
-        }
-
 
     </style>
 
 {% endblock %}
-{% load static %}
-
-
 
 {% block content %}
-    <div class="container mt-5">
-        <div class="row justify-content-center">
-            <h2 class="justify-content-center text-center">Employee List</h2>
+<div class="container">
+        <h1 class="text-center mt-5 mb-5 font-weight-bold">Customer's List</h1>
+     
             {% if messages %}
                 {% for message in messages %}
                     <div {% if message.tags %}class="alert alert-{{ message.tags }}" {% endif %} role="alert">
@@ -26,44 +18,63 @@
                     </div>
                 {% endfor %}
             {% endif %}
-        </div>
-        <a type="submit" href="{% url 'employee_setup' %}" class="btn btn-primary text-right" name="employee">Add
-            Employee</a>
-        <table class="table">
-            <thead class="thead-dark">
-            <tr>
-                <th scope="col">#</th>
-                <th scope="col">First Name</th>
-                <th scope="col">Last Name</th>
-                <th scope="col">Email</th>
-                <th scope="col">Daily Task</th>
-                <th scope="col">Achieved Task</th>
-                <th scope="col">Area designated</th>
-                <th scope="col">Shopkeeper</th>
-            </tr>
-            </thead>
-            <tbody>
-          
-            {% for employee in object_list %}
-               
-                <tr>
+      
+     
+        <div class="row">
+            
+          <div class="col-12">
+            <a type="submit" href="{% url 'customer_setup' %}" class="btn btn-primary float-right" name="employee">Add
+             Customer</a>
+            <table class="table">
+                <thead class="thead-dark">
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">UserName</th>
+                    <th scope="col">First Name</th>
+                    <th scope="col">Last Name</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Phone#</th>
+                    <th scope="col">Order's</th>
+                  
                     
-                    <th scope="row">{{ forloop.counter }}</th>
-                    <td>{{ employee.user.first_name }}</td>
-                    <td>{{ employee.user.last_name }}</td>
-                    <td>{{ employee.user.email }}</td>
-                    <td>{{ employee.target_assign }}</td>
-                    <td>{{ employee.target_achieved }}</td>
-                    <td>{{ employee.area_designated }}</td>
-                    <td>{{ employee.shopkeeper.first_name }}</td>
-                </tr>
-            {% endfor %}
+                  </tr>
+                </thead>
+                <tbody>
+                    {% for customer in employee_list%}
+                  <tr>
+                    <th scope="row">{{forloop.counter}}</th>
+                    <td>{{customer.user.username}}</td>
+                    <td>{{customer.user.first_name}}</td>
+                    <td>{{customer.user.last_name}}</td>
+                    <td>{{customer.user.email}}</td>
+                    <td>{{customer.target_assign}}</td>
+                    <td>{{customer.target_achieved}}</td>
+                    <td>{{customer.area_designated}}</td>
+                    <td>
 
+                        <a href="{% url 'customer_update' customer.id %}" class="mr-3" data-toggle="tooltip" title="Hooray!"> <i class="fas fa-trash-alt"  style="color:red;"></i></a>
+                        <a href="{% url 'customer_update'  customer.id %}">  <i class="fas fa-edit" style="color:blue;"></i></a>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                  
+                </tbody>
+              </table>
+              
+        
+          </div>
+      
+        </div>
+       
+      </div>
+    
 
-            </tbody>
-        </table>
-    </div>
+      <script>
+        $(document).ready(function () {
+            $('ul').find("li#customer_page").addClass("active");
 
+        });
+    </script>
 {% endblock %}
 
 

@@ -1,0 +1,112 @@
+{% extends 'shopkeeper/base/base.html' %}
+{% load static %}
+{% block stylesheet %}
+    <style>
+
+    </style>
+
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+  <h1 class="text-center mt-5 mb-5 font-weight-bold">Employee Setup</h1>
+    {% if messages %}
+    {% for message in messages %}
+        <div {% if message.tags %}class="alert alert-{{ message.tags }}" {% endif %} role="alert">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
+
+
+    <div class="row col-2 offset-10">
+        <a type="submit" href="{% url 'employee_list' %}" class="btn btn-primary float-right mb-1" name="employee">Employee Lists</a>
+     
+    </div>
+    <form action="{% if emp_id %}{% url 'employee_update' emp_id %}{% else %}{% url 'employee_setup' %} {% endif %}" method="post">
+    {% csrf_token %}
+    <div class="row">
+    
+      <div class="col-4">
+        <div class="form-group ">
+            <label for="exampleInputusername">Username</label>
+            <input type="text" class="form-control" id="username" name="username", >
+          </div>
+          <div class="form-group mt-1">
+            <label for="exampleInputEmail1">Email address</label>
+            <input type="email" class="form-control" id="exampleInputEmail1" name="email">
+            
+          </div>
+          <div class="form-group mt-1">
+            <label for="exampleInputPassword">Password</label>
+            <input type="password" class="form-control" id="exampleInputPassword1" name="password">
+          </div>
+          <div class="form-group mt-1">
+            <label for="exampleInputPassword1">Re Password</label>
+            <input type="password" class="form-control" id="exampleInputPassword1" name="password1">
+          </div>
+         
+   
+      </div>
+      <div class="col-4">
+      
+        <div class="form-group mt-1">
+            <label for="exampleInputFirst_Name">First Name</label>
+            <input type="text" class="form-control" id="first_name" name="first_name">
+           
+          </div>
+            <div class="form-group mt-1">
+              <label for="exampleInputlast_name">Last Name</label>
+              <input type="text" class="form-control" id="last_name" name="last_name">
+            </div>
+      
+          
+              <div class="form-group mt-1">
+                <label for="exampleInputAddress">Address</label>
+                {% comment %} <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea> {% endcomment %}
+                <input type="text" class="form-control" id="address" name="address">
+              </div>
+              <div class="form-group mt-1">
+                <label for="exampleInputdescription">Description</label>
+                <input type="text" class="form-control" id="description"  name="description" value="">
+              </div>
+           
+              
+
+           
+      </div>
+      <div class="col-4">
+   
+        <div class="form-group mt-1">
+            <label for="exampleInputarea_designated">Area Designate</label>
+            <input type="text" class="form-control" id="area_designated"  name="area_designated" value="">
+          </div>
+          <div class="form-group mt-1">
+            <label for="exampleInputtarget_assign">Target Assign</label>
+            <input type="text" class="form-control" id="target_assign"  name="target_assign" value="">
+          </div>
+          <div class="form-group mt-1">
+            <label for="exampleInputtarget_achieved">Target Achieved</label>
+            <input type="text" class="form-control" id="target_achieved"  name="target_achieved" value="">
+          </div>
+          <div class="form-check mt-1">
+            <input type="checkbox" class="form-check-input" id="exampleCheck1" name="is_active">
+            <label class="form-check-label" for="exampleCheck1" name="is_active">Is Active Employee</label>
+          </div>
+      </div>
+    </div>
+    <button type="submit" class="btn btn-primary float-right mt-1">Submit</button>
+</form>
+  </div>
+
+
+        <script>
+        $(document).ready(function () {
+            $('ul').find("li#employee_page").addClass("active");
+            setTimeout(function() {
+              $('div.alert').fadeOut('slow');
+          }, 5000);
+        });
+    </script>
+{% endblock %}

@@ -1,10 +1,92 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'shopkeeper/base/base.html' %}
+{% load static %}
+{% block stylesheet %}
+    <style>
 
-</body>
-</html>
+    </style>
+
+{% endblock %}
+
+{% block content %}
+<div class="container">
+        <h1 class="text-center mt-5 mb-5 font-weight-bold">Parent Categoies List</h1>
+     
+            {% if messages %}
+                {% for message in messages %}
+                    <div {% if message.tags %}class="alert alert-{{ message.tags }}" {% endif %} role="alert">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+      
+     
+        <div class="row">
+            
+          <div class="col-12">
+            <a type="submit" href="{% url 'parent_category_setup' %}" class="btn btn-primary float-right mb-1" name="employee">Add
+                Parent Category</a>
+              <table class="table" id="table_id">
+                <thead class="thead-dark">
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">description</th>
+                    <th scope="col">Meta_keywords</th>
+                    <th scope="col">Meta_description</th>
+                    <th scope="col">Image</th>
+                     <th scope="col">Category_for</th>
+                     <th scope="col">Status</th>
+                     <th scope="col">Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                {{ object_list }}
+                {% for parent in parent_list %}
+                    {{ object_list }}
+                    <tr>
+                        <th scope="row">{{ forloop.counter }}</th>
+                        <td>{{ parent.name }}</td>
+                        <td>{{ parent.description }}</td>
+                        <td>{{ parent.meta_keywords }}</td>
+                        <td>{{ parent.meta_description }}</td>
+                        <td>{% if parent.image %}
+                            <img src="{{ parent.image.url }}" alt="{{ parent.name }}" width="50">
+                              
+                            {% else %}
+                            {{ parent.image }}
+                            {% endif %}
+    
+                        </td>
+                        <td>{{ parent.category_for }}</td>
+                     <td>{{ parent.is_active }}</td>
+                    <td>
+    
+                        <a href="{% url 'parent_category_update' parent.id %}" class="mr-3" data-toggle="tooltip" title="Hooray!"> <i class="fas fa-trash-alt"  style="color:red;"></i></a>
+                        <a href="{% url 'parent_category_update'  parent.id %}">  <i class="fas fa-edit" style="color:blue;"></i></a>
+                    </td>
+                    </tr>
+                {% endfor %}
+    
+    
+                </tbody>
+            </table>
+              
+        
+          </div>
+      
+        </div>
+       
+      </div>
+    
+    {{context}}
+
+    <script>
+        $(document).ready(function () {
+            $('ul').find("li#product_tabs").addClass("active");
+            $('#table_id').DataTable();
+
+
+        });
+    </script>
+
+{% endblock %}

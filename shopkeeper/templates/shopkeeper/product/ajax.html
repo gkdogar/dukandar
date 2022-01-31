@@ -1,0 +1,66 @@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+
+        $(document).ready(function(){
+           
+            $('select#parent_select').change(function(){
+                alert($(this).val());
+            });
+             // Add to Wish List Button
+             $("div#list_div").each(function(){
+              
+                $(this).find("#wish_ajax_btn").click(function () {
+                    
+                        var THIS =$(this)
+                        var url = $(this).attr('href');
+                        let token = $("input[name=csrfmiddlewaretoken]").val()
+                        mydata={
+                            csrfmiddlewaretoken:token
+                            },
+                        $.ajax({
+                            url: url,
+                            'csrfmiddlewaretoken': '{% csrf_token %}',
+                            methods:'PsOST',
+                            data:mydata,
+                            processData: false,
+                            contentType:false,
+                            success:function (response) {
+                                console.log(response.status)
+                            if(response.status ==1){
+                
+                            THIS.addClass('add_to_wish_btn')
+                            console.log('message',response.message)
+                    
+                            }
+                            if(response.status == -1){
+                                console.log('message',response.message)
+                                THIS.removeClass('add_to_wish_btn')
+                            }
+                            if(response.status ==0){
+                                console.log('message',response.message)
+                                alert(response.message)
+                              
+                            }  
+                            }
+                        });
+    
+                });
+                
+          
+
+            
+               
+                
+            });
+           
+                  
+                    
+               
+
+                
+                
+        });
+       
+
+
+</script>

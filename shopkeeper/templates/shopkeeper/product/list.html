@@ -1,0 +1,94 @@
+{% extends 'shopkeeper/base/base.html' %}
+{% load static %}
+{% block stylesheet %}
+    <style>
+
+    </style>
+
+{% endblock %}
+
+{% block content %}
+<div class="container">
+        <h1 class="text-center mt-5 mb-5 font-weight-bold">Products List</h1>
+     
+            {% if messages %}
+                {% for message in messages %}
+                    <div {% if message.tags %}class="alert alert-{{ message.tags }}" {% endif %} role="alert">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+      
+     
+        <div class="row">
+            
+          <div class="col-12">
+            <a type="submit" href="{% url 'product_setup' %}" class="btn btn-primary float-right mb-1" name="employee">Add
+                Product</a>
+              <table class="table" id="table_id">
+                <thead class="thead-dark">
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Parent Cat</th>
+                    <th scope="col">Parent Sub Cat</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Image</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Quantity</th>
+                    <th scope="col">Price</th>
+                     <th scope="col">Discount</th>
+                     <th scope="col">Status</th>
+                     <th scope="col">Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                {{ object_list }}
+                {% for prod in products_list %}
+                    {{ object_list }}
+                    <tr>
+                        <th scope="row">{{ forloop.counter }}</th>
+                        <td>{{ prod.parent.name }}</td>
+                        <td>{{ prod.sub_cat.name }}</td>
+                        <td>{{ prod.name }}</td>
+                        <td>{% if prod.image %}
+                            <img src="{{ prod.image.url }}" alt="{{ prod.name }}" width="50">
+                              
+                            {% else %}
+                            {{ prod.image }}
+                            {% endif %}
+                        </td>
+                        <td>{{ prod.description }}</td>
+                        <td>{{ prod.quantity }}</td>
+                        <td>{{ prod.price }}</td>
+                        <td>{{ prod.discount }}</td>
+                         <td>{{ prod.is_active }}</td>
+                    <td>
+                        <a href="{% url 'product_delete' prod.id %}" class="mr-3" data-toggle="tooltip" title="Hooray!"> <i class="fas fa-trash-alt"  style="color:red;"></i></a>
+                        <a href="{% url 'product_update'  prod.id %}">  <i class="fas fa-edit" style="color:blue;"></i></a>
+                    </td>
+                    </tr>
+                {% endfor %}
+    
+    
+                </tbody>
+            </table>
+              
+        
+          </div>
+      
+        </div>
+       
+      </div>
+    
+    {{context}}
+
+    <script>
+        $(document).ready(function () {
+            $('ul').find("li#product_tabs").addClass("active");
+            $('#table_id').DataTable();
+
+
+        });
+    </script>
+
+{% endblock %}

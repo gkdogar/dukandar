@@ -116,6 +116,7 @@ class Product(models.Model):
                                 on_delete=models.CASCADE,
                                 null=True)
     name = models.CharField(max_length=255, null=False)
+    image = models.ImageField(upload_to='product/category/sub')
     description = models.TextField()
     # sku = models.CharField(max_length=100, null=False,blank=True)
     quantity = models.IntegerField(default=0)

@@ -25,7 +25,7 @@ class UserAdmin(ImportExportModelAdmin, DjangoUserAdmin):
 admin.site.register(Shopkeeper)
 admin.site.register(Employee)
 admin.site.register(Customer)
-admin.site.register(ParentCategory)
+admin.site.register(ParentCategory,ImportExportModelAdmin)
 admin.site.register(SubCategory)
 admin.site.register(Product)
 admin.site.register(Order)
