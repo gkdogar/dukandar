@@ -10,6 +10,8 @@ from django.contrib import messages
 import folium
 import re
 from django.http import JsonResponse
+import json
+
 
 def index(request):
     return render(request, 'shopkeeper/base/base.html')
@@ -302,7 +304,7 @@ def productSetup(request):
                 messages.success(request, 'Record Created Successfully')
                 return redirect('product_ist')
             else:
-                print('Error', form.errors)
+               
                 messages.error(request, 'Something Went Wrong')
                 return redirect('product_setup')
 
@@ -406,6 +408,17 @@ def google_map(request):
 
     return render(request, 'shopkeeper/admin/google_map.html', context)
 
-def parent_sub_ajax_data(request,pk):
-    print('hello',pk)
-    return JsonResponse({"status": "hello"}, status=400)
+def parent_sub_ajax_data(request):
+    parentID= json.loads(str(request.POST.get('parentID')))
+    parent_sub_list =SubCategory.objects.filter(parent=parentID, is_active=True)
+    sub_list=[]
+    for sub in parent_sub_list:
+        sub_list.append({
+            'id':sub.id,
+            'name':sub.name
+        })
+    context={
+           'parent_sub_list': json.dumps(sub_list)
+    }
+
+    return JsonResponse(context, status=200)

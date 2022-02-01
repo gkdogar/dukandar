@@ -59,6 +59,6 @@ urlpatterns = [
     # wallet+URLS
     path('spines/lists', spinesList, name='spines_list'),
 
-    path('parent/sub/category/ajax/lists/<int:pk>/', parent_sub_ajax_data, name='parent_sub_ajax_data'),
+    path('parent/sub/category/ajax/lists/', parent_sub_ajax_data, name='parent_sub_ajax_data'),
 
 ]

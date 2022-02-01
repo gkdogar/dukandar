@@ -2,65 +2,28 @@
 <script>
 
         $(document).ready(function(){
-           
             $('select#parent_select').change(function(){
-                alert($(this).val());
-            });
-             // Add to Wish List Button
-             $("div#list_div").each(function(){
-              
-                $(this).find("#wish_ajax_btn").click(function () {
-                    
-                        var THIS =$(this)
-                        var url = $(this).attr('href');
-                        let token = $("input[name=csrfmiddlewaretoken]").val()
-                        mydata={
-                            csrfmiddlewaretoken:token
-                            },
-                        $.ajax({
-                            url: url,
-                            'csrfmiddlewaretoken': '{% csrf_token %}',
-                            methods:'PsOST',
-                            data:mydata,
-                            processData: false,
-                            contentType:false,
-                            success:function (response) {
-                                console.log(response.status)
-                            if(response.status ==1){
-                
-                            THIS.addClass('add_to_wish_btn')
-                            console.log('message',response.message)
-                    
-                            }
-                            if(response.status == -1){
-                                console.log('message',response.message)
-                                THIS.removeClass('add_to_wish_btn')
-                            }
-                            if(response.status ==0){
-                                console.log('message',response.message)
-                                alert(response.message)
-                              
-                            }  
-                            }
-                        });
-    
-                });
-                
-          
+               var SubSelect =$('select#sub_category').find('option').remove().end()
+                var parent_id = $(this).val()
+                postData={ parentID:JSON.stringify(parent_id), csrfmiddlewaretoken :"{{csrf_token}}" }
+                  var url = $(this).attr('href');
+                    $.ajax({
+                      method: "POST",
+                      url: "{% url 'parent_sub_ajax_data' %}",
+                      data: postData
+                    })
+                      .done(function( response ) {
+                       sub_list=response.parent_sub_list
+                       sub_list_json = JSON.parse(sub_list); 
+                        SubSelect.append('<option value="None"selected="selected">----</option>').prop('selected', true);
+                        $.each(sub_list_json, function(key, value) {   
+                          SubSelect.append('<option value="'+value.id+'">'+value.name+'</option>').prop('selected', true);
+                                 }); //eachloopend 
+                      });//doneEnd 
 
-            
-               
-                
-            });
-           
-                  
-                    
-               
-
-                
-                
+              });//SelectParentEnd
+   
         });
        
-
 
 </script>
