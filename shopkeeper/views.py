@@ -14,7 +14,20 @@ import json
 
 
 def index(request):
-    return render(request, 'shopkeeper/base/base.html')
+    employees=Employee.objects.all().count()
+    customers=Customer.objects.all().count()
+    dukandars=Shopkeeper.objects.all().count()
+    products=Product.objects.all().count()
+    orders=Order.objects.all().count()
+    context ={
+        'employees':employees,
+        'dukandars':dukandars,
+        'customers':customers,
+        'products':products,
+        'orders':orders
+        
+    }
+    return render(request, 'shopkeeper/dashboard.html',context)
 
 
 
@@ -433,7 +446,7 @@ def google_map(request):
         'map':m
     }
 
-    return render(request, 'shopkeeper/admin/google_map.html', context)
+    return render(request, 'shopkeeper/dukandar/google_map.html', context)
 
 def parent_sub_ajax_data(request):
     parentID= json.loads(str(request.POST.get('parentID')))
