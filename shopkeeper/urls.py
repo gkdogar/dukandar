@@ -52,7 +52,7 @@ urlpatterns = [
 
     # Order+URLS
     path('Order/lists', ordersList, name='orders_list'),
-
+    path('Order/lists/detail/<int:pk>/', ordersDetails, name='order_details'),
     # wallet+URLS
     path('wallet/lists', walletList, name='wallet_list'),
 

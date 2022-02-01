@@ -342,7 +342,34 @@ def productDelete(request):
     return render(request, 'shopkeeper/product/setup.html')
 
 def ordersList(request):
-    return render(request, 'shopkeeper/order/list.html')
+    orders_list =Order.objects.all()
+    context={
+        'orders_list':orders_list
+    }
+    return render(request, 'shopkeeper/order/list.html',context)
+
+def ordersDetails(request, pk):
+    if request.POST:
+        orders_obj =Order.objects.get(id=pk)
+        orders_obj.status=request.POST['status']
+        orders_obj.save()
+        messages.success(request, 'Order Status Successfully')
+        return redirect('orders_list')
+    else:
+        orders_obj =Order.objects.get(id=pk)
+        context={
+            'order_id':orders_obj.id,
+            'product': orders_obj.product,
+            'dukandar':orders_obj.shopkeeper,
+            'customer':orders_obj.customer,
+            'order_date': orders_obj.order_date,
+            'amount':orders_obj.amount,
+            'order_upto':orders_obj.order_upto,
+            'quantity': orders_obj.quantity,
+            'status':orders_obj.status,
+
+        }
+        return render(request, 'shopkeeper/order/detail.html',context)
 
 def walletList(request):
     return render(request, 'shopkeeper/wallet/list.html')

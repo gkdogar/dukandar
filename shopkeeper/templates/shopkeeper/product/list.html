@@ -42,9 +42,9 @@
                 </tr>
                 </thead>
                 <tbody>
-                {{ object_list }}
+                
                 {% for prod in products_list %}
-                    {{ object_list }}
+                  
                     <tr>
                         <th scope="row">{{ forloop.counter }}</th>
                         <td>{{ prod.parent.name }}</td>
@@ -80,7 +80,7 @@
        
       </div>
     
-    {{context}}
+ 
 
     <script>
         $(document).ready(function () {
