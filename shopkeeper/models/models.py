@@ -110,7 +110,7 @@ class SubCategory(models.Model):
 class Product(models.Model):
     # shopkeeper = models.ForeignKey(Shopkeeper, on_delete=models.CASCADE)
     parent = models.ForeignKey(ParentCategory,
-                               on_delete=models.CASCADE,
+                               on_delete=models.CASCADE, related_name='ParentCategory',
                                null=True)
     sub_cat = models.ForeignKey(SubCategory,
                                 on_delete=models.CASCADE,
@@ -143,7 +143,7 @@ class Order(models.Model):
                                on_delete=models.CASCADE,
                                null=True,
                                blank=True)
-    customer = models.ForeignKey(Customer,
+    cutomer = models.ForeignKey(Customer,
                                    on_delete=models.CASCADE,
                                    null=True,blank=True)
     order_date = models.DateTimeField(auto_now=True)
