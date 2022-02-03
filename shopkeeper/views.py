@@ -46,42 +46,6 @@ class EmployeeListView(ListView):
 
         return object_list
 
-def employeeSetup(request):
-    if request.POST:
-        print('user Exist',request.POST)
-        username= request.POST.get('username')
-        password= request.POST.get('password')
-        password1= request.POST.get('password1')
-        check_user = User.objects.filter(username=username)
-        if check_user.count() == 1:
-            messages.error(request, 'UserName Already Existed')
-            return redirect('employee_setup')
-        if password != password1:
-            reg = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!#%*?&]{6,20}$"
-            pat = re.compile(reg)               
-            mat = re.search(pat, password)
-            if mat:
-                print("Password is valid.")
-            else:
-                messages.error(request, 'Password Must contains one Capital and One Speceial Char')
-                return redirect('employee_setup')
-            messages.error(request, 'Password must be matched!')
-            return redirect('employee_setup')
-        user= User.objects.create_user(username=username,password=password)
-        user.first_name=request.POST.get('first_name')
-        user.last_name=request.POST.get('last_name')
-        user.email=request.POST.get('email')
-        user.address=request.POST.get('address')
-        user.user_type='STAFF'
-        user.save()
-        employee=Employee.objects.create(user=user, target_assign=request.POST.get('target_assign'), target_achieved=request.POST.get('target_achieved'), area_designated=request.POST.get('area_designated'), description =request.POST.get('description'),is_active =request.POST.get('is_active'))
-        employee.save()
-        messages.success(request, 'Record Created Successfully')
-        return redirect('employee_list')
-    else:
- 
-        return render(request, 'shopkeeper/employee/setup.html')
-
 def employeeList(request): 
     employee_list =Employee.objects.all()
     context={
@@ -89,10 +53,79 @@ def employeeList(request):
     }
     return render(request, 'shopkeeper/employee/list.html',context)
 
+
+def employeeSetup(request):
+    if request.POST:
+        print('req',request.POST)
+        employee_id = request.POST.get('employee_id') or None
+        if employee_id :
+            employee_obj = Employee.objects.get(id=employee_id)
+            user =User.objects.get(id=employee_obj.user.id)
+            user.username= request.POST.get('username')
+            user.first_name= request.POST.get('first_name')
+            user.last_name= request.POST.get('last_name')
+            user.email= request.POST.get('email')
+            user.address= request.POST.get('address')
+            user.save()
+            employee_obj.user=user
+            employee_obj.phone_no=request.POST.get('phone_no')
+            employee_obj.description=request.POST.get('description')
+            employee_obj.target_assign=request.POST.get('target_assign')
+            employee_obj.target_achieved=request.POST.get('target_achieved')
+            employee_obj.area_designated=request.POST.get('area_designated')
+            employee_obj.is_active=request.POST.get('is_active')or False
+            employee_obj.save()
+            messages.add_message(request, messages.SUCCESS, 'Record Updated Successfully')
+            return redirect('employee_list')
+
+        else:
+            print('user Exist',request.POST)
+            username= request.POST.get('username')
+            password= request.POST.get('password')
+            password1= request.POST.get('password1')
+            check_user = User.objects.filter(username=username)
+            if check_user.count() == 1:
+                messages.error(request, 'UserName Already Existed')
+                return redirect('employee_setup')
+            if password != password1:
+                reg = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!#%*?&]{6,20}$"
+                pat = re.compile(reg)               
+                mat = re.search(pat, password)
+                if mat:
+                    print("Password is valid.")
+                else:
+                    messages.error(request, 'Password Must contains one Capital and One Speceial Char')
+                    return redirect('employee_setup')
+                messages.error(request, 'Password must be matched!')
+                return redirect('employee_setup')
+            user= User.objects.create_user(username=username,password=password)
+            user.first_name=request.POST.get('first_name')
+            user.last_name=request.POST.get('last_name')
+            user.email=request.POST.get('email')
+            user.address=request.POST.get('address')
+            user.user_type='STAFF'
+            employee=Employee.objects.create(user=user, phone_no =request.POST.get('phone_no'), target_assign=request.POST.get('target_assign'), target_achieved=request.POST.get('target_achieved'), area_designated=request.POST.get('area_designated'), description =request.POST.get('description'),is_active =request.POST.get('is_active') or False)
+            employee.save()
+            user.save()
+            messages.success(request, 'Record Created Successfully')
+            return redirect('employee_list')
+    else:
+ 
+        return render(request, 'shopkeeper/employee/setup.html')
+
+
 def employeeUpdate(request,pk):
-    context={
-        'emp_id':1
+    employee_obj = Employee.objects.get(id=pk)
+    context = {
+        'employee_id': employee_obj.id,
+        'user': employee_obj.user,
+        'target_assign': employee_obj.target_assign,
+        'target_achieved': employee_obj.target_achieved,
+        'description': employee_obj.description,
+        'area_designated': employee_obj.area_designated,
+        'is_active': employee_obj.is_active,
     }
+
     return render(request, 'shopkeeper/employee/setup.html',context)
 
 def employeeDelete(request):
@@ -107,10 +140,43 @@ def dukandarList(request):
 
 
 def dukandarSetup(request):
-    return render(request, 'shopkeeper/dukandar/setup.html')
+    
+    if request.POST:
+        dukandar_id = request.POST.get('dukandar_id') or None
+        dukandar_obj = Shopkeeper.objects.get(id=dukandar_id)
+        print('dukandar_obj',dukandar_obj)
+        user =User.objects.get(id=dukandar_obj.user.id)
+        user.username= request.POST.get('username')
+        user.first_name= request.POST.get('first_name')
+        user.last_name= request.POST.get('last_name')
+        user.email= request.POST.get('email')
+        user.address= request.POST.get('address')
+        user.email= request.POST.get('email')
+        user.save()
+        dukandar_obj.user=user
+        dukandar_obj.shop_name=request.POST.get('shop_name')
+        dukandar_obj.phone_no=request.POST.get('phone_no')
+        dukandar_obj.description=request.POST.get('description')
+        # dukandar_obj.latitude=request.POST.get('first_name')
+        # dukandar_obj.longitude=request.POST.get('first_name')
+        dukandar_obj.is_active=request.POST.get('is_active')or False
+        dukandar_obj.save()
+        messages.add_message(request, messages.SUCCESS, 'Record Updated Successfully')
+        return redirect('dukandar_list')
+    else:
+      return render(request, 'shopkeeper/dukandar/setup.html')
 def dukandarUpdate(request, pk):
-
-    return render(request, 'shopkeeper/dukandar/setup.html')
+    dukandar_obj = Shopkeeper.objects.get(id=pk)
+    context = {
+        'dukandar_id':dukandar_obj.id,
+        'emp_id': dukandar_obj.emp_id,
+         'user': dukandar_obj.user,
+        'shop_name': dukandar_obj.shop_name,
+        'phone_no': dukandar_obj.phone_no,
+        'description': dukandar_obj.description,
+        'is_active': dukandar_obj.is_active,
+    }
+    return render(request, 'shopkeeper/dukandar/setup.html', context)
 def dukandarDelete(request):
     return render(request, 'shopkeeper/dukandar/setup.html')
 
@@ -374,7 +440,7 @@ def ordersDetails(request, pk):
             'order_id':orders_obj.id,
             'product': orders_obj.product,
             'dukandar':orders_obj.shopkeeper,
-            'customer':orders_obj.customer,
+            # 'customer':orders_obj.customer,
             'order_date': orders_obj.order_date,
             'amount':orders_obj.amount,
             'order_upto':orders_obj.order_upto,
@@ -433,6 +499,7 @@ def google_map(request):
     locationlist=[]
     # for point in range(0, len(locationlist)):
     #     folium.Marker(locationlist[point], popup=df_counters['Name'][point]).add_to(map)
+    
     m=folium.Map(location=[31.5204, 74.3587], zoom_start=12)
     folium.Marker(location=[31.5047, 74.3315], popup='Default popup Marker1',
                   tooltip='Click here to see Popup').add_to(m)

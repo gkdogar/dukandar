@@ -10,8 +10,8 @@ urlpatterns = [
     path('customer/List', EmployeeListView.as_view(), name='employee_List'),
     path('google/map/pins/', google_map, name='google_map_pin'),
     path('customer/setup', EmployeeSetupView.as_view(), name='employee_setup'),
-    path('dukandar/list', EmployeeSetupView.as_view(), name='dukandar_list'),
-    path('dukandar/setup', EmployeeSetupView.as_view(), name='dukandar_setup'),
+    # path('dukandar/list', EmployeeSetupView.as_view(), name='dukandar_list'),
+    # path('dukandar/setup', EmployeeSetupView.as_view(), name='dukandar_setup'),
 
     # Employee+URLS
     path('employee/lists', employeeList, name='employee_list'),
@@ -20,7 +20,7 @@ urlpatterns = [
     path('employee/delete/<int:pk>/', employeeDelete, name='employee_delete'),
 
     #Dukandar+URLS
-    path('dukandar/setup',dukandarSetup, name='dukandar_setup'),
+    path('dukandar/setups',dukandarSetup, name='dukandar_setup'),
     path('dukandar/lists', dukandarList, name='dukandar_list'),
     path('dukandar/setup/<int:pk>/', dukandarUpdate, name='dukandar_update'),
     path('dukandar/delete/<int:pk>/', dukandarDelete, name='dukandar_delete'),

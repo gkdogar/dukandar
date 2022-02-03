@@ -23,9 +23,9 @@
         <div class="row">
             
           <div class="col-12">
-            <a type="submit" href="{% url 'dukandar_setup' %}" class="btn btn-primary float-right" name="employee">Add
+            <a type="submit" href="{% url 'dukandar_setup' %}" class="btn btn-primary float-right mb-1" name="employee">Add
              ShopKeeper</a>
-            <table class="table">
+            <table class="table" id="dukandarTable">
                 <thead class="thead-dark">
                   <tr>
                     <th scope="col">#</th>
@@ -38,6 +38,7 @@
                     <th scope="col">Location</th>
                     <th scope="col">Added by Employee</th>
                     <th scope="col">Order's</th>
+                    <th scope="col">Spines</th>
                     <th scope="col">Actions</th>
                     
                   </tr>
@@ -53,7 +54,9 @@
                     <td>{{dukandar.phone_no}}</td>
                     <td>{{dukandar.shop_name}}</td>
                     <td></td>
+                    
                     <td>{{dukandar.emp_id.user.first_name}} {{dukandar.emp_id.user.last_name}}</td>
+                    <td></td>
                     <td></td>
                     <td>
 
@@ -76,7 +79,7 @@
       <script>
         $(document).ready(function () {
             $('ul').find("li#dukandar_page").addClass("active");
-
+            $('#dukandarTable').DataTable();
         });
     </script>
 {% endblock %}

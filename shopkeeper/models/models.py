@@ -36,6 +36,7 @@ class Employee(models.Model):
     target_assign = models.CharField(max_length=10, null=True)
     target_achieved = models.CharField(max_length=10, null=True)
     area_designated = models.CharField(max_length=250, null=True)
+    phone_no = models.CharField(max_length=20)
     description = models.TextField(null=True)
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)

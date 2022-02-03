@@ -36,6 +36,7 @@
                     <th scope="col">Target Assign</th>
                     <th scope="col">Target Achieved</th>
                     <th scope="col">Area Designated</th>
+                    <th scope="col">Status</th>
                     <th scope="col">Actions</th>
                   </tr>
                 </thead>
@@ -50,6 +51,7 @@
                     <td>{{employee.target_assign}}</td>
                     <td>{{employee.target_achieved}}</td>
                     <td>{{employee.area_designated}}</td>
+                    <td>{{employee.is_active}}</td>
                     <td>
 
                         <a href="{% url 'employee_update' employee.id %}" class="mr-3" data-toggle="tooltip" title="Hooray!"> <i class="fas fa-trash-alt"  style="color:red;"></i></a>
