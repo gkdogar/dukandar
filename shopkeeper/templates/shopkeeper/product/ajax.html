@@ -1,0 +1,29 @@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+
+        $(document).ready(function(){
+            $('select#parent_select').change(function(){
+               var SubSelect =$('select#sub_category').find('option').remove().end()
+                var parent_id = $(this).val()
+                postData={ parentID:JSON.stringify(parent_id), csrfmiddlewaretoken :"{{csrf_token}}" }
+                  var url = $(this).attr('href');
+                    $.ajax({
+                      method: "POST",
+                      url: "{% url 'parent_sub_ajax_data' %}",
+                      data: postData
+                    })
+                      .done(function( response ) {
+                       sub_list=response.parent_sub_list
+                       sub_list_json = JSON.parse(sub_list); 
+                        SubSelect.append('<option value="None"selected="selected">----</option>').prop('selected', true);
+                        $.each(sub_list_json, function(key, value) {   
+                          SubSelect.append('<option value="'+value.id+'">'+value.name+'</option>').prop('selected', true);
+                                 }); //eachloopend 
+                      });//doneEnd 
+
+              });//SelectParentEnd
+   
+        });
+       
+
+</script>

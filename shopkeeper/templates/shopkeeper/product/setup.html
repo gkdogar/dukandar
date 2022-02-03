@@ -8,14 +8,132 @@
 {% endblock %}
 
 {% block content %}
-<h1>Product Setup</h1>
+
+<div class="container">
+  <h1 class="text-center mt-3 mb-5 font-weight-bold">
+    Product Setup</h1>
+    {% if messages %}
+    {% for message in messages %}
+        <div {% if message.tags %}class="alert alert-{{ message.tags }}" {% endif %} role="alert">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
 
 
+    <div class="row col-2 offset-10">
+        <a type="submit" href="{% url 'product_ist' %}" class="btn btn-primary float-right mb-1" name="product_list">Product Lists</a>
+     
+    </div>
+    <form id="subCateForm" method="post" class="" name="subCateForm" enctype="multipart/form-data"
+                  action="{% url 'product_setup' %}">
+    {% csrf_token %}
+    <div class="row">
+    
+      <div class="col-6">
+        <input type="hidden" name="product_id" value="{{ product_id }}">
+        <div class="form-group ">
+            <label for="exampleInputParent">Parent Category</label>
+            <select class="form-select" aria-label="Default select example" name="parent" id="parent_select">
+                {% if not parent_id %}
+                <option value="None">------</option>
+                {% endif %}
+                {% for parent in parent_cat_list %}
+                <option value="{{parent.id}}"{% if parent.id == parent_id %} selected="selected"{% endif %}>{{parent.name}}</option>
+                {% endfor %}
+            </select>
+          </div>
+          <div class="form-group ">
+            <label for="exampleInputParent">Parent Sub Category</label>
+          
+            <select class="form-select" aria-label="Default select example" name="sub_cat" id="sub_category">
+                {% if not sub_cat_id %}
+                <option value="None">------</option>
+                {% endif %}
+                {% for sub in parent_sub_list %}
+                <option value="{{sub.id}}"{% if sub.id == sub_cat_id %} selected="selected"{% endif %}>{{sub.name}}</option>
+                {% endfor %}
+            </select>
+          </div>
+          <div class="form-group mt-1">
+            <label for="exampleInputName">Name</label>
+            <input type="text" class="form-control" name="name" value="{{ name }}"
+                               >
+          </div>
+          <div class="form-group mt-1">
+            <label for="exampleInputDescription">Description</label>
+            <input type="text" class="form-control" id="cate" aria-describedby="description"
+                               name="description" value="{{ description }}"
+                               >
+          </div>
+          <div class="form-group mt-1">
+            <label for="exampleInputquantity">Quantity</label>
+            <input type="number" class="form-control" id="quantity" aria-describedby="quantity"
+            name="quantity" value="{{ quantity }}"
+           >
+          </div>
+          <div class="form-group mt-1">
+            <label for="exampleInputPrice">Price</label>
+            <input type="text" class="form-control" id="price"
+            aria-describedby="price" value="{{ price }}"
+            name="price">
+          </div>
+          <div class="form-group mt-1">
+            <label for="exampleInputdiscount">discount</label>
+            <input type="text" class="form-control" id="discount"
+            aria-describedby="discount" value="{{ discount }}"
+            name="discount">
+          </div>
+         
+        
+      </div>
+      <div class="col-6">
+      
+            <div class="form-group mt-1">
+              <label for="exampleInputlast_name">Products Image</label>
+                  <input type="file" onchange="preview()" name="image" value="{{ image }}">
+                       {% if image %}
+                            <img id="frame" src="{{ image.url }}" name="image" width="200px" height="200px"/>
+                        {% else %}
+                            <img id="frame" src="" name="image" width="200px" height="200px"/>
+                        {% endif %}
+            </div>
+            <div class="form-check mt-5">
+                <input type="checkbox" class="form-check-input checkbox" id="is_active"
+                name="is_active" {% if is_active %} checked
+                value="True"   {% endif %} value="False">
+                <label class="form-check-label" for="exampleCheck1" name="is_active">Is Active Product</label>
+              </div>
 
-      <script>
+           
+      </div>
+
+    </div>
+    <button type="submit" class="btn btn-primary float-right mt-1">Submit</button>
+</form>
+  </div>
+
+
+        <script>
         $(document).ready(function () {
             $('ul').find("li#product_tabs").addClass("active");
-
+            setTimeout(function() {
+              $('div.alert').fadeOut('slow');
+          }, 5000);
+          
         });
+        function preview() {
+            frame.src = URL.createObjectURL(event.target.files[0]);
+        }
+         $(".checkbox").on('change', function () {
+                if ($(this).is(':checked')) {
+                    $(this).attr('value', 'True');
+
+                } else {
+                    $(this).attr('value', 'False');
+
+                }
+            });
     </script>
+    {% include 'shopkeeper/product/ajax.html' %}
 {% endblock %}

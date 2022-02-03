@@ -8,5 +8,114 @@
 {% endblock %}
 
 {% block content %}
-<h1>Sub Category Setup</h1>
+
+<div class="container">
+  <h1 class="text-center mt-5 mb-5 font-weight-bold">
+    Parent Sub Catgory Setup</h1>
+    {% if messages %}
+    {% for message in messages %}
+        <div {% if message.tags %}class="alert alert-{{ message.tags }}" {% endif %} role="alert">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
+
+
+    <div class="row col-2 offset-10">
+        <a type="submit" href="{% url 'parent_sub_category_list' %}" class="btn btn-primary float-right mb-1" name="employee">Sub Category Lists</a>
+     
+    </div>
+    <form id="subCateForm" method="post" class="" name="subCateForm" enctype="multipart/form-data"
+                  action="{% url 'parent_sub_category_setup' %}">
+    {% csrf_token %}
+    <div class="row">
+    
+      <div class="col-6">
+        <input type="hidden" name="sub_id" value="{{ sub_id }}">
+        <div class="form-group ">
+            <label for="exampleInputParent">Parent Category</label>
+          
+            <select class="form-select" aria-label="Default select example" name="parent">
+                {% if not parent_id %}
+                <option value="None">------</option>
+                {% endif %}
+                {% for parent in parent_cat_list %}
+                <option value="{{parent.id}}"{% if parent.id == parent_id %} selected="selected"{% endif %}>{{parent.name}}</option>
+                {% endfor %}
+            </select>
+          </div>
+          <div class="form-group mt-1">
+            <label for="exampleInputName">Name</label>
+            <input type="text" class="form-control" id="name" aria-describedby="name"
+                               name="name" value="{{ name }}"
+                               >
+          </div>
+          <div class="form-group mt-1">
+            <label for="exampleInputDescription">Description</label>
+            <input type="text" class="form-control" 
+                               name="description" value="{{ description }}"
+                               >
+          </div>
+          <div class="form-group mt-1">
+            <label for="exampleInputmeta_keywords">meta_keywords</label>
+            <input type="text" class="form-control" id="lname" aria-describedby="meta_keywords"
+            name="meta_keywords" value="{{ meta_keywords }}"
+           >
+          </div>
+          <div class="form-group mt-1">
+            <label for="exampleInputPassword1">meta_description</label>
+            <input type="text" class="form-control" id="meta_description"
+            aria-describedby="meta_description" value="{{ meta_description }}"
+            name="meta_description">
+          </div>
+         
+   
+      </div>
+      <div class="col-6">
+            <div class="form-group mt-1">
+              <label for="exampleInputlast_name">Products Image</label>
+                  <input type="file" onchange="preview()" name="image" value="{{ image }}">
+                       {% if image %}
+                            <img id="frame" src="{{ image.url }}" name="image" width="200px" height="200px"/>
+                        {% else %}
+                            <img id="frame" src="" name="image" width="200px" height="200px"/>
+                        {% endif %}
+            </div>
+            <div class="form-check mt-5">
+                <input type="checkbox" class="form-check-input checkbox" id="is_active"
+                name="is_active" {% if is_active %} checked
+                value="True"   {% endif %} value="False">
+                <label class="form-check-label" for="exampleCheck1" name="is_active">Is Active Sub Category</label>
+              </div>
+
+           
+      </div>
+
+    </div>
+    <button type="submit" class="btn btn-primary float-right mt-1">Submit</button>
+</form>
+  </div>
+
+
+        <script>
+        $(document).ready(function () {
+            $('ul').find("li#employee_page").addClass("active");
+            setTimeout(function() {
+              $('div.alert').fadeOut('slow');
+          }, 5000);
+          
+        });
+        function preview() {
+            frame.src = URL.createObjectURL(event.target.files[0]);
+        }
+         $(".checkbox").on('change', function () {
+                if ($(this).is(':checked')) {
+                    $(this).attr('value', 'True');
+
+                } else {
+                    $(this).attr('value', 'False');
+
+                }
+            });
+    </script>
 {% endblock %}

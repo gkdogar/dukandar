@@ -8,9 +8,71 @@
 {% endblock %}
 
 {% block content %}
-<h1>Dukandar List</h1>
+<div class="container">
+        <h1 class="text-center mt-5 mb-5 font-weight-bold">Dukandar's List</h1>
+     
+            {% if messages %}
+                {% for message in messages %}
+                    <div {% if message.tags %}class="alert alert-{{ message.tags }}" {% endif %} role="alert">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+      
+     
+        <div class="row">
+            
+          <div class="col-12">
+            <a type="submit" href="{% url 'dukandar_setup' %}" class="btn btn-primary float-right" name="employee">Add
+             ShopKeeper</a>
+            <table class="table">
+                <thead class="thead-dark">
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">UserName</th>
+                    <th scope="col">First Name</th>
+                    <th scope="col">Last Name</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Phone#</th>
+                    <th scope="col">Shop Name</th>
+                    <th scope="col">Location</th>
+                    <th scope="col">Added by Employee</th>
+                    <th scope="col">Order's</th>
+                    <th scope="col">Actions</th>
+                    
+                  </tr>
+                </thead>
+                <tbody>
+                    {% for dukandar in dukandars_list%}
+                  <tr>
+                    <th scope="row">{{forloop.counter}}</th>
+                    <td>{{dukandar.user.username}}</td>
+                    <td>{{dukandar.user.first_name}}</td>
+                    <td>{{dukandar.user.last_name}}</td>
+                    <td>{{dukandar.user.email}}</td>
+                    <td>{{dukandar.phone_no}}</td>
+                    <td>{{dukandar.shop_name}}</td>
+                    <td></td>
+                    <td>{{dukandar.emp_id.user.first_name}} {{dukandar.emp_id.user.last_name}}</td>
+                    <td></td>
+                    <td>
 
-
+                        <a href="{% url 'dukandar_update' dukandar.id %}" class="mr-3" data-toggle="tooltip" title="Hooray!"> <i class="fas fa-trash-alt"  style="color:red;"></i></a>
+                        <a href="{% url 'dukandar_update'  dukandar.id %}">  <i class="fas fa-edit" style="color:blue;"></i></a>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                  
+                </tbody>
+              </table>
+              
+        
+          </div>
+      
+        </div>
+       
+      </div>
+    
       <script>
         $(document).ready(function () {
             $('ul').find("li#dukandar_page").addClass("active");

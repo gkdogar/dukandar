@@ -8,9 +8,26 @@ from django.views import View
 from django.views.generic import ListView
 from django.contrib import messages
 import folium
+import re
+from django.http import JsonResponse
+import json
+
 
 def index(request):
-    return render(request, 'shopkeeper/base/base.html')
+    employees=Employee.objects.all().count()
+    customers=Customer.objects.all().count()
+    dukandars=Shopkeeper.objects.all().count()
+    products=Product.objects.all().count()
+    orders=Order.objects.all().count()
+    context ={
+        'employees':employees,
+        'dukandars':dukandars,
+        'customers':customers,
+        'products':products,
+        'orders':orders
+        
+    }
+    return render(request, 'shopkeeper/dashboard.html',context)
 
 
 
@@ -25,24 +42,74 @@ class EmployeeListView(ListView):
         #    print('user',user)
         #    object_list= Employee.objects.filter(user=user.id)
         #    print('object_list',object_list)
-        object_list = User.objects.filter(user_type='STAFF')
+        object_list = Employee.objects.all()
 
         return object_list
 
 def employeeSetup(request):
-    return render(request, 'shopkeeper/employee/setup.html')
-def employeeList(request):
-    return render(request, 'shopkeeper/employee/list.html')
-def employeeDetail(request):
-    return render(request, 'shopkeeper/employee/setup.html')
+    if request.POST:
+        print('user Exist',request.POST)
+        username= request.POST.get('username')
+        password= request.POST.get('password')
+        password1= request.POST.get('password1')
+        check_user = User.objects.filter(username=username)
+        if check_user.count() == 1:
+            messages.error(request, 'UserName Already Existed')
+            return redirect('employee_setup')
+        if password != password1:
+            reg = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!#%*?&]{6,20}$"
+            pat = re.compile(reg)               
+            mat = re.search(pat, password)
+            if mat:
+                print("Password is valid.")
+            else:
+                messages.error(request, 'Password Must contains one Capital and One Speceial Char')
+                return redirect('employee_setup')
+            messages.error(request, 'Password must be matched!')
+            return redirect('employee_setup')
+        user= User.objects.create_user(username=username,password=password)
+        user.first_name=request.POST.get('first_name')
+        user.last_name=request.POST.get('last_name')
+        user.email=request.POST.get('email')
+        user.address=request.POST.get('address')
+        user.user_type='STAFF'
+        user.save()
+        employee=Employee.objects.create(user=user, target_assign=request.POST.get('target_assign'), target_achieved=request.POST.get('target_achieved'), area_designated=request.POST.get('area_designated'), description =request.POST.get('description'),is_active =request.POST.get('is_active'))
+        employee.save()
+        messages.success(request, 'Record Created Successfully')
+        return redirect('employee_list')
+    else:
+ 
+        return render(request, 'shopkeeper/employee/setup.html')
+
+def employeeList(request): 
+    employee_list =Employee.objects.all()
+    context={
+        'employee_list':employee_list
+    }
+    return render(request, 'shopkeeper/employee/list.html',context)
+
+def employeeUpdate(request,pk):
+    context={
+        'emp_id':1
+    }
+    return render(request, 'shopkeeper/employee/setup.html',context)
+
 def employeeDelete(request):
     return render(request, 'shopkeeper/employee/setup.html')
 
+def dukandarList(request):
+    dukandars_list=Shopkeeper.objects.all()
+    context ={
+        'dukandars_list':dukandars_list
+    }
+    return render(request, 'shopkeeper/dukandar/list.html',context)
+
+
 def dukandarSetup(request):
     return render(request, 'shopkeeper/dukandar/setup.html')
-def dukandarList(request):
-    return render(request, 'shopkeeper/dukandar/list.html')
-def dukandarDetail(request):
+def dukandarUpdate(request, pk):
+
     return render(request, 'shopkeeper/dukandar/setup.html')
 def dukandarDelete(request):
     return render(request, 'shopkeeper/dukandar/setup.html')
@@ -132,7 +199,6 @@ class ParentCategorySetupView(View):
 
         paren_id =request.POST.get('paren_id') or None
         if paren_id:
-            print('req', request.FILES)
             parent_obj = ParentCategory.objects.get(id=paren_id)
             img =parent_obj.image
             parent_obj.name=request.POST.get('name')
@@ -155,32 +221,168 @@ class ParentCategorySetupView(View):
                 return redirect('parent_category_setup')
 
 
-def sub_categorySetup(request):
-    return render(request, 'shopkeeper/sub/setup.html')
-
 def sub_categoryList(request):
-    return render(request, 'shopkeeper/sub/list.html')
+    sub_category_list=SubCategory.objects.all()
+    context={
+        'sub_category_list':sub_category_list
+    }
+    return render(request, 'shopkeeper/sub/list.html', context)
 
-def sub_categoryDetail(request, pk):
-    return render(request, 'shopkeeper/sub/setup.html')
+def sub_categorySetup(request):
+    if request.POST:
+        sub_id =request.POST.get('sub_id') or None
+        if sub_id:
+            sub_obj = SubCategory.objects.get(id=sub_id)
+            img =sub_obj.image
+            sub_obj.parent = ParentCategory.objects.get(id=request.POST.get('parent'))
+            sub_obj.name=request.POST.get('name')
+            sub_obj.description = request.POST.get('description')
+            sub_obj.meta_keywords = request.POST.get('meta_keywords')
+            sub_obj.meta_description = request.POST.get('meta_description')
+            sub_obj.image=request.FILES.get('image') or img
+            sub_obj.is_active=request.POST.get('is_active')or False
+            sub_obj.save()
+            messages.add_message(request, messages.SUCCESS, 'Record Updated Successfully')
+            return redirect('parent_sub_category_list')
+
+        else:
+            form = SubCategoryForm(request.POST or None, request.FILES or None)
+            if form.is_valid():
+                form.save()
+                messages.success(request, 'Record Created Successfully')
+                return redirect('parent_sub_category_list')
+            else:
+                messages.error(request, 'Something Went Wrong')
+                return redirect('parent_sub_category_setup')
+    else:
+        parent_cat_list =ParentCategory.objects.filter(is_active=True)
+        context ={
+            'parent_cat_list':parent_cat_list
+        }
+        return render(request, 'shopkeeper/sub/setup.html',context)
+
+def sub_categoryUpdate(request, pk):
+    sub_obj = SubCategory.objects.get(id=pk)
+    parent_cat_list =ParentCategory.objects.all()
+    context = {
+        'parent_cat_list':parent_cat_list,
+        'sub_id':sub_obj.id,
+        'parent_id':sub_obj.parent.id,
+        'name': sub_obj.name,
+        'description': sub_obj.description,
+        'meta_keywords': sub_obj.meta_keywords,
+        'meta_description': sub_obj.meta_description,
+        'image': sub_obj.image,
+        'is_active': sub_obj.is_active,
+    }
+    return render(request, 'shopkeeper/sub/setup.html', context)
 
 def sub_categoryDelete(request, pk):
-    return render(request, 'shopkeeper/sub/setup.html')
-
-def productSetup(request):
-    return render(request, 'shopkeeper/product/setup.html')
+     sub_obj = SubCategory.objects.get(id=pk)
+     sub_obj.delete()
+     messages.success(request, 'Record Deleted Successfully')
+     return redirect('parent_sub_category_list')
 
 def productList(request):
-    return render(request, 'shopkeeper/product/list.html')
+    products_list =Product.objects.all()
+    context={
+        'products_list':products_list
+    }
+    return render(request, 'shopkeeper/product/list.html', context)
 
-def productDetail(request):
-    return render(request, 'shopkeeper/product/setup.html')
+
+def productSetup(request):
+
+    if request.POST:
+        product_id =request.POST.get('product_id') or None
+        if product_id:
+            prod_obj = Product.objects.get(id=product_id)
+            img =prod_obj.image
+            prod_obj.parent = ParentCategory.objects.get(id=request.POST.get('parent'))
+            prod_obj.sub_cat = SubCategory.objects.get(id=request.POST.get('sub_cat'))
+            prod_obj.name=request.POST.get('name')
+            prod_obj.description = request.POST.get('description')
+            prod_obj.price = request.POST.get('price')
+            prod_obj.quantity = request.POST.get('quantity')
+            prod_obj.discount = request.POST.get('discount')
+            prod_obj.image=request.FILES.get('image') or img
+            prod_obj.is_active=request.POST.get('is_active')or False
+            prod_obj.save()
+            messages.add_message(request, messages.SUCCESS, 'Record Updated Successfully')
+            return redirect('product_ist')
+        else:
+            form = ProductForm(request.POST or None, request.FILES or None)
+            if form.is_valid():
+                form.save()
+                messages.success(request, 'Record Created Successfully')
+                return redirect('product_ist')
+            else:
+               
+                messages.error(request, 'Something Went Wrong')
+                return redirect('product_setup')
+
+    else:
+        parent_cat_list =ParentCategory.objects.filter(is_active=True)
+        parent_sub_list=SubCategory.objects.filter(is_active=True)
+        context={
+            'parent_cat_list':parent_cat_list,
+            'parent_sub_list':parent_sub_list
+        }
+        return render(request, 'shopkeeper/product/setup.html',context)
+
+
+def productUpdate(request, pk):
+    prod_obj = Product.objects.get(id=pk)
+    parent_cat_list =ParentCategory.objects.filter(is_active=True)
+    parent_sub_list=SubCategory.objects.filter(is_active=True)
+    context = {
+        'parent_cat_list':parent_cat_list,
+        'parent_sub_list':parent_sub_list,
+        'product_id':prod_obj.id,
+        'parent_id':prod_obj.parent.id,
+        'sub_cat_id':prod_obj.sub_cat.id,
+        'name': prod_obj.name,
+        'image': prod_obj.image,
+        'description': prod_obj.description,
+        'quantity': prod_obj.quantity,
+        'price': prod_obj.price,
+        'discount': prod_obj.discount,
+        'is_active': prod_obj.is_active,
+    }
+    return render(request, 'shopkeeper/product/setup.html', context)
 
 def productDelete(request):
     return render(request, 'shopkeeper/product/setup.html')
 
 def ordersList(request):
-    return render(request, 'shopkeeper/order/list.html')
+    orders_list =Order.objects.all()
+    context={
+        'orders_list':orders_list
+    }
+    return render(request, 'shopkeeper/order/list.html',context)
+
+def ordersDetails(request, pk):
+    if request.POST:
+        orders_obj =Order.objects.get(id=pk)
+        orders_obj.status=request.POST['status']
+        orders_obj.save()
+        messages.success(request, 'Order Status Successfully')
+        return redirect('orders_list')
+    else:
+        orders_obj =Order.objects.get(id=pk)
+        context={
+            'order_id':orders_obj.id,
+            'product': orders_obj.product,
+            'dukandar':orders_obj.shopkeeper,
+            'customer':orders_obj.customer,
+            'order_date': orders_obj.order_date,
+            'amount':orders_obj.amount,
+            'order_upto':orders_obj.order_upto,
+            'quantity': orders_obj.quantity,
+            'status':orders_obj.status,
+
+        }
+        return render(request, 'shopkeeper/order/detail.html',context)
 
 def walletList(request):
     return render(request, 'shopkeeper/wallet/list.html')
@@ -244,4 +446,19 @@ def google_map(request):
         'map':m
     }
 
-    return render(request, 'shopkeeper/admin/google_map.html', context)
+    return render(request, 'shopkeeper/dukandar/google_map.html', context)
+
+def parent_sub_ajax_data(request):
+    parentID= json.loads(str(request.POST.get('parentID')))
+    parent_sub_list =SubCategory.objects.filter(parent=parentID, is_active=True)
+    sub_list=[]
+    for sub in parent_sub_list:
+        sub_list.append({
+            'id':sub.id,
+            'name':sub.name
+        })
+    context={
+           'parent_sub_list': json.dumps(sub_list)
+    }
+
+    return JsonResponse(context, status=200)

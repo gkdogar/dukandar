@@ -8,12 +8,73 @@
 {% endblock %}
 
 {% block content %}
-    <h1> Orders List</h1>
+<div class="container">
+        <h1 class="text-center mt-5 mb-5 font-weight-bold">Order's List</h1>
+     
+            {% if messages %}
+                {% for message in messages %}
+                    <div {% if message.tags %}class="alert alert-{{ message.tags }}" {% endif %} role="alert">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+      
+     
+        <div class="row">
+            
+          <div class="col-12">
+            {% comment %} <a type="submit" href="{% url 'product_setup' %}" class="btn btn-primary float-right mb-1" name="employee">Add
+                Product</a> {% endcomment %}
+              <table class="table" id="table_id">
+                <thead class="thead-dark">
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Product Name</th>
+                    <th scope="col">Dukandar Name</th>
+                    <th scope="col">Customer Name</th>
+                    <th scope="col">Order Date</th>
+                    <th scope="col">Amount</th>
+                    <th scope="col">Quantity</th>
+                     <th scope="col">Status</th>
+                     <th scope="col">Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+              
+                {% for order in orders_list %}
+                  
+                    <tr>
+                        <th scope="row">{{ forloop.counter }}</th>
+                        <td>{{ order.product.name }}</td>
+                        <td>{{ order.shopkeeper.user.first_name }} {{ order.shopkeeper.user.last_name }}</td>
+                        <td>{{ order.cutomer.user.first_name }}{{ order.cutomer.user.first_name }}</td>
+                       
+                        <td>{{ order.order_date }}</td>
+                        <td>{{ order.amount }}</td>
+                        <td>{{ order.quantity }}</td>
+                       
+                        <td>{{ order.status }}</td>
+                        
+                     <td>
+                        <a href="{% url 'order_details'  order.id %}" class="mr-3" data-toggle="tooltip" title="Hooray!"> <i class="fas fa-trash-alt"  style="color:red;"></i></a>
+                        <a href="{% url 'order_details'  order.id %}">  <i class="fas fa-edit" style="color:blue;"></i></a>
+                    </td> 
+                    </tr>
+                {% endfor %}
+    
+    
+                </tbody>
+            </table>
+              
+        
+          </div>
+      
+        </div>
+       
+      </div>
+    
 
-
-
-
-
+  
 
 
     <script>

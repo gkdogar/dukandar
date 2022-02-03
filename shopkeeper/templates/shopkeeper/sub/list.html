@@ -8,5 +8,86 @@
 {% endblock %}
 
 {% block content %}
-<h1>Sub Category List</h1>
+<div class="container">
+        <h1 class="text-center mt-5 mb-5 font-weight-bold">Sub Category List</h1>
+     
+            {% if messages %}
+                {% for message in messages %}
+                    <div {% if message.tags %}class="alert alert-{{ message.tags }}" {% endif %} role="alert">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+      
+     
+        <div class="row">
+            
+          <div class="col-12">
+            <a type="submit" href="{% url 'parent_sub_category_setup' %}" class="btn btn-primary float-right mb-1" name="employee">Add
+                Parent Category</a>
+              <table class="table" id="table_id">
+                <thead class="thead-dark">
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Parent Category</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">description</th>
+                    <th scope="col">Meta_keywords</th>
+                    <th scope="col">Meta_description</th>
+                    <th scope="col">Image</th>
+                     <th scope="col">Status</th>
+                     <th scope="col">Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                {{ object_list }}
+                {% for sub in sub_category_list %}
+                    {{ object_list }}
+                    <tr>
+                        <th scope="row">{{ forloop.counter }}</th>
+                        <td>{{ sub.parent.name }}</td>
+                        <td>{{ sub.name }}</td>
+                        <td>{{ sub.description }}</td>
+                        <td>{{ sub.meta_keywords }}</td>
+                        <td>{{ sub.meta_description }}</td>
+                        <td>{% if sub.image %}
+                            <img src="{{ sub.image.url }}" alt="{{ sub.name }}" width="50">
+                              
+                            {% else %}
+                            {{ sub.image }}
+                            {% endif %}
+    
+                        </td>
+                       
+                     <td>{{ sub.is_active }}</td>
+                    <td>
+    
+                        <a href="{% url 'parent_sub_category_delete' sub.id %}" class="mr-3" data-toggle="tooltip" title="Hooray!"> <i class="fas fa-trash-alt"  style="color:red;"></i></a>
+                        <a href="{% url 'parent_sub_category_update'  sub.id %}">  <i class="fas fa-edit" style="color:blue;"></i></a>
+                    </td>
+                    </tr>
+                {% endfor %}
+    
+    
+                </tbody>
+            </table>
+              
+        
+          </div>
+      
+        </div>
+       
+      </div>
+    
+    {{context}}
+
+    <script>
+        $(document).ready(function () {
+            $('ul').find("li#product_tabs").addClass("active");
+            $('#table_id').DataTable();
+
+
+        });
+    </script>
+
 {% endblock %}

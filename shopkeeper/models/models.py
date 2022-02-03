@@ -116,6 +116,7 @@ class Product(models.Model):
                                 on_delete=models.CASCADE,
                                 null=True)
     name = models.CharField(max_length=255, null=False)
+    image = models.ImageField(upload_to='product/category/sub')
     description = models.TextField()
     # sku = models.CharField(max_length=100, null=False,blank=True)
     quantity = models.IntegerField(default=0)
@@ -140,10 +141,11 @@ class Order(models.Model):
                                null=True)
     shopkeeper = models.ForeignKey(Shopkeeper,
                                on_delete=models.CASCADE,
-                               null=True)
-    cutomer = models.ForeignKey(Customer,
+                               null=True,
+                               blank=True)
+    customer = models.ForeignKey(Customer,
                                    on_delete=models.CASCADE,
-                                   null=True)
+                                   null=True,blank=True)
     order_date = models.DateTimeField(auto_now=True)
     amount = models.IntegerField(default=0)
     order_upto =  models.IntegerField(default=0)
@@ -153,7 +155,7 @@ class Order(models.Model):
                                     default='PROCESSING')
 
     def __str__(self):
-        return self.order_date
+        return str(self.order_date)
 
 class OrderHistory(models.Model):
 

@@ -42,5 +42,15 @@ class ParentCategoryForm(ModelForm):
         model =ParentCategory
         fields='__all__'
 
+class SubCategoryForm(ModelForm):
 
+    class Meta:
+        model =SubCategory
+        fields='__all__'
+
+class ProductForm(ModelForm):
+
+    class Meta:
+        model =Product
+        fields='__all__'
 

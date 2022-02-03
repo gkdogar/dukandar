@@ -9,24 +9,72 @@
 
 {% block content %}
 
-    <div class="container mt-5">
-       <h1>Employee List</h1>
+<div class="container">
+        <h1 class="text-center mt-5 mb-5 font-weight-bold">Employee List</h1>
+     
+            {% if messages %}
+                {% for message in messages %}
+                    <div {% if message.tags %}class="alert alert-{{ message.tags }}" {% endif %} role="alert">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+      
+     
         <div class="row">
-            <div class="col-sm">
-                One of three columns
-            </div>
-            <div class="col-sm">
-                One of three columns
-            </div>
-            <div class="col-sm">
-                One of three columns
-            </div>
+            
+          <div class="col-12">
+            <a type="submit" href="{% url 'employee_setup' %}" class="btn btn-primary float-right mb-1" name="employee">Add
+              Employee</a>
+            <table class="table" id="employeeTable">
+                <thead class="thead-dark">
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">UserName</th>
+                    <th scope="col">First Name</th>
+                    <th scope="col">Last Name</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Target Assign</th>
+                    <th scope="col">Target Achieved</th>
+                    <th scope="col">Area Designated</th>
+                    <th scope="col">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                    {% for employee in employee_list%}
+                  <tr>
+                    <th scope="row">{{forloop.counter}}</th>
+                    <td>{{employee.user.username}}</td>
+                    <td>{{employee.user.first_name}}</td>
+                    <td>{{employee.user.last_name}}</td>
+                    <td>{{employee.user.email}}</td>
+                    <td>{{employee.target_assign}}</td>
+                    <td>{{employee.target_achieved}}</td>
+                    <td>{{employee.area_designated}}</td>
+                    <td>
+
+                        <a href="{% url 'employee_update' employee.id %}" class="mr-3" data-toggle="tooltip" title="Hooray!"> <i class="fas fa-trash-alt"  style="color:red;"></i></a>
+                        <a href="{% url 'employee_update'  employee.id %}">  <i class="fas fa-edit" style="color:blue;"></i></a>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                  
+                </tbody>
+              </table>
+              
+        
+          </div>
+      
         </div>
-    </div>
+       
+      </div>
+    
+
 
     <script>
         $(document).ready(function () {
             $('ul').find("li#employee_page").addClass("active");
+            $('#employeeTable').DataTable();
 
         });
     </script>
