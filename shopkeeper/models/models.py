@@ -35,7 +35,8 @@ class Employee(models.Model):
     user = models.OneToOneField(User, related_name='user', on_delete=models.CASCADE, null=False)
     target_assign = models.CharField(max_length=10, null=True)
     target_achieved = models.CharField(max_length=10, null=True)
-    area_designated = models.CharField(max_length=250, null=True)
+    area_designated = models.CharField(max_length=250, null=True, blank=True)
+    phone_no = models.CharField(max_length=20, null=True)
     description = models.TextField(null=True)
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -49,7 +50,7 @@ class Employee(models.Model):
 
 class Customer(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=False)
-    phone_no = models.CharField(max_length=20)
+    phone_no = models.CharField(max_length=20, null=True)
     is_active = models.BooleanField(default=True)
 
     def __str__(self):
@@ -110,7 +111,7 @@ class SubCategory(models.Model):
 class Product(models.Model):
     # shopkeeper = models.ForeignKey(Shopkeeper, on_delete=models.CASCADE)
     parent = models.ForeignKey(ParentCategory,
-                               on_delete=models.CASCADE,
+                               on_delete=models.CASCADE, related_name='ParentCategory',
                                null=True)
     sub_cat = models.ForeignKey(SubCategory,
                                 on_delete=models.CASCADE,
@@ -143,7 +144,7 @@ class Order(models.Model):
                                on_delete=models.CASCADE,
                                null=True,
                                blank=True)
-    customer = models.ForeignKey(Customer,
+    cutomer = models.ForeignKey(Customer,
                                    on_delete=models.CASCADE,
                                    null=True,blank=True)
     order_date = models.DateTimeField(auto_now=True)

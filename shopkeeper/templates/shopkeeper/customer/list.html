@@ -25,7 +25,7 @@
           <div class="col-12">
             <a type="submit" href="{% url 'customer_setup' %}" class="btn btn-primary float-right" name="employee">Add
              Customer</a>
-            <table class="table">
+            <table class="table" id="customerTable">
                 <thead class="thead-dark">
                   <tr>
                     <th scope="col">#</th>
@@ -72,7 +72,7 @@
       <script>
         $(document).ready(function () {
             $('ul').find("li#customer_page").addClass("active");
-
+            $('#customerTable').DataTable();
         });
     </script>
 {% endblock %}

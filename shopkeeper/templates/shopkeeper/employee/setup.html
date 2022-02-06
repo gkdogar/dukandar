@@ -30,12 +30,13 @@
     
       <div class="col-4">
         <div class="form-group ">
+          <input type="hidden" name="employee_id" value="{{ employee_id }}">
             <label for="exampleInputusername">Username</label>
-            <input type="text" class="form-control" id="username" name="username", >
+            <input type="text" class="form-control" id="username" name="username", value="{{user.username}}" >
           </div>
           <div class="form-group mt-1">
             <label for="exampleInputEmail1">Email address</label>
-            <input type="email" class="form-control" id="exampleInputEmail1" name="email">
+            <input type="email" class="form-control" id="exampleInputEmail1" name="email" value="{{user.email}}">
             
           </div>
           <div class="form-group mt-1">
@@ -53,23 +54,23 @@
       
         <div class="form-group mt-1">
             <label for="exampleInputFirst_Name">First Name</label>
-            <input type="text" class="form-control" id="first_name" name="first_name">
+            <input type="text" class="form-control" id="first_name" name="first_name" value="{{user.first_name}}">
            
           </div>
             <div class="form-group mt-1">
               <label for="exampleInputlast_name">Last Name</label>
-              <input type="text" class="form-control" id="last_name" name="last_name">
+              <input type="text" class="form-control" id="last_name" name="last_name" value="{{user.last_name}}">
             </div>
       
           
               <div class="form-group mt-1">
                 <label for="exampleInputAddress">Address</label>
                 {% comment %} <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea> {% endcomment %}
-                <input type="text" class="form-control" id="address" name="address">
+                <input type="text" class="form-control" id="address" name="address" value="{{user.address}}">
               </div>
               <div class="form-group mt-1">
-                <label for="exampleInputdescription">Description</label>
-                <input type="text" class="form-control" id="description"  name="description" value="">
+                <label for="exampleInputphone_no">Phone#</label>
+                <input type="text" class="form-control" id="phone_no"  name="phone_no"  value="{{phone_no}}">
               </div>
            
               
@@ -77,23 +78,30 @@
            
       </div>
       <div class="col-4">
+        <div class="form-group mt-1">
+          <label for="exampleInputdescription">Description</label>
+          <input type="text" class="form-control" id="description"  name="description"  value="{{description}}">
+        </div>
    
         <div class="form-group mt-1">
             <label for="exampleInputarea_designated">Area Designate</label>
-            <input type="text" class="form-control" id="area_designated"  name="area_designated" value="">
+            <input type="text" class="form-control" id="area_designated"  name="area_designated" value="{{area_designated}}">
           </div>
           <div class="form-group mt-1">
             <label for="exampleInputtarget_assign">Target Assign</label>
-            <input type="text" class="form-control" id="target_assign"  name="target_assign" value="">
+            <input type="text" class="form-control" id="target_assign"  name="target_assign" value="{{target_assign}}">
           </div>
           <div class="form-group mt-1">
             <label for="exampleInputtarget_achieved">Target Achieved</label>
-            <input type="text" class="form-control" id="target_achieved"  name="target_achieved" value="">
+            <input type="text" class="form-control" id="target_achieved"  name="target_achieved" value="{{target_achieved}}">
           </div>
-          <div class="form-check mt-1">
-            <input type="checkbox" class="form-check-input" id="exampleCheck1" name="is_active">
+          <div class="form-check mt-5">
+            <input type="checkbox" class="form-check-input checkbox" id="is_active"
+            name="is_active" {% if is_active %} checked
+            value="True"   {% endif %} value="False">
             <label class="form-check-label" for="exampleCheck1" name="is_active">Is Active Employee</label>
           </div>
+          
       </div>
     </div>
     <button type="submit" class="btn btn-primary float-right mt-1">Submit</button>
@@ -107,6 +115,15 @@
             setTimeout(function() {
               $('div.alert').fadeOut('slow');
           }, 5000);
+          $(".checkbox").on('change', function () {
+            if ($(this).is(':checked')) {
+                $(this).attr('value', 'True');
+
+            } else {
+                $(this).attr('value', 'False');
+
+            }
+        });
         });
     </script>
 {% endblock %}
