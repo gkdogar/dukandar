@@ -47,11 +47,20 @@ class CustomerSerializer(serializers.ModelSerializer):
 
 
 class ShopkeeperSerializer(serializers.ModelSerializer):
+    user = UserRegistrationSerializer(many=False, read_only=True)
     class Meta:
         model = Shopkeeper
-        # fields = ['user', 'shop_name','phone_no','description','latitude','longitude']
-        fields = '__all__'
+        fields = ['user','emp_id', 'shop_name','phone_no','description','latitude','longitude']
+        # fields = '__all__'
         depth = 1
+
+    extra_kwargs = {
+        'shop_name': {'required': True},
+        'phone_no': {'required': True},
+        'description': {'required': True},
+        'latitude': {'required': True},
+        'longitude': {'required': True},
+    }
 
 
 class ParentCategorySerializer(serializers.ModelSerializer):

@@ -58,12 +58,12 @@ class Customer(models.Model):
 
 class Shopkeeper(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=False)
-    emp_id = models.ForeignKey(Employee, on_delete=models.CASCADE, null=False)
-    shop_name = models.CharField(max_length=255)
-    phone_no = models.CharField(max_length=20)
+    emp_id = models.ForeignKey(Employee, on_delete=models.CASCADE, null=True )
+    shop_name = models.CharField(max_length=255, null=False)
+    phone_no = models.CharField(max_length=20, null=False)
     description = models.TextField(null=True)
-    latitude = models.CharField(max_length=50)
-    longitude = models.CharField(max_length=50)
+    latitude = models.CharField(max_length=50, null=False)
+    longitude = models.CharField(max_length=50, null=False)
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
