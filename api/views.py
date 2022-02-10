@@ -90,6 +90,8 @@ class ShopkeeperViewSetApi(viewsets.ViewSet):
             return Response(serializer.data, status=status.HTTP_200_OK)
 
     def create(self, request):
+        print('POST Request API', request.POST)
+        print('POST Request Data', request.data)
         serializer = ShopkeeperSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -97,6 +99,9 @@ class ShopkeeperViewSetApi(viewsets.ViewSet):
                 'message': 'Record Created Successfully !'
             }
             return Response(response, status=status.HTTP_201_CREATED)
+        else:
+            e
+            print('Invalid Serializer')
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def update(self, request, pk):
