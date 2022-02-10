@@ -221,7 +221,7 @@ class ShopkeeperViewSetApi(viewsets.ViewSet):
 
     def create(self, request):
         try:
-            print(request.data)
+
             post_data = request.data
             username = post_data['username']
             email = post_data['email']
@@ -283,96 +283,20 @@ class ShopkeeperViewSetApi(viewsets.ViewSet):
 
             return Response(response, status=status.HTTP_400_BAD_REQUEST)
 
-    # def create(self, request):
-    #
-    #
-    #
-    #     post_data = request.data
-    #     print('user data', post_data)
-    #     username = post_data['username']
-    #     email = post_data['email']
-    #     user_exist = User.objects.filter(username=username)
-    #     if user_exist:
-    #         response = {
-    #             'Error': 'Same User Name is already Existed ' + username
-    #         }
-    #         return Response(response, status=status.HTTP_400_BAD_REQUEST)
-    #     validate_email = check(email)
-    #     if not validate_email:
-    #         response = {
-    #             'Error': 'Email is not in Proper Format ' + email
-    #         }
-    #         return Response(response, status=status.HTTP_400_BAD_REQUEST)
-    #     password = request.POST.get('password')
-    #     password2 = request.POST.get('password2')
-    #     if password != password2:
-    #         response = {
-    #             'Error': 'Password Must be Same !'
-    #         }
-    #         return Response(response, status=status.HTTP_400_BAD_REQUEST)
-    #
-        # employ_id = post_data.get('emp_id', None)
-        # copyied_dict = post_data.copy()
-        # print('emp_exitsss')
-        # emp_exit= User.objects.get(email=employ_id)
-        # print('emp_exit',emp_exit)
-        # if emp_exit:
-        #     employee_obj = Employee.objects.get(user=emp_exit.id)
-        #     copyied_dict['emp_id'] = str(employee_obj.id)
-        #     print('employee', employee_obj)
-        # response = {
-        #     'message': 'Employee Does Not Exist'
-        # }
-        # return Response(response, status=status.HTTP_400_BAD_REQUEST)
-    #
-    #     if post_data['shop_name'] & post_data['phone_no'] & post_data['latitude'] & post_data['longitude'] & post_data[
-    #         'emp_id']:
-    #         user = User.objects.create(username=post_data['username'], password=post_data['password'],
-    #                                    email=post_data['email'], first_name=post_data['first_name'], last_name='last_name',
-    #                                    address=post_data['address'])
-    #         user.user_type = 'SHOPKEEPER'
-    #         user.save()
-    #         employee = Employee.objects.get(id=post_data['employee_id'])
-    #         dukandar = Shopkeeper.objects.create(user=user, shop_name=post_data['shop_name'],
-    #                                              phone_no=post_data['phone_no'], latitude=post_data['latitude'],
-    #                                              longitude=post_data['longitude'], emp_id=employee_obj)
-    #         dukandar.save()
-        # print('Post Requets', request.POST)
-        # print('Data ', request.data)
 
-        # user_serilizer = UserRegistrationSerializer(data=request.data)
-        #
-        # print('user_serilizer', user_serilizer)
-        # if user_serilizer.is_valid():
-        #     user_serilizer.save()
-        #     response = {
-        #         'message': 'Record Created Successfully !'
-        #     }
-        #     return Response(response, status=status.HTTP_201_CREATED)
-        # print('copyied_dict >>', copyied_dict)
-        # serializer = ShopkeeperSerializer(data=copyied_dict)
-        # print('serializer', serializer)
-        # if serializer.is_valid():
-        #     serializer.save()
-        #     response = {
-        #         'message': 'Record Created Successfully !'
-        #     }
-        #     return Response(response, status=status.HTTP_201_CREATED)
-        # else:
-        #
-        #     print('Invalid Serializer')
-        # return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def update(self, request, pk):
-        print("********List*******")
-        print("BaseName:>>", self.basename)
-        print("action:>>", self.action)
-        print("detail:>>", self.detail)
-        print("suffix:>>", self.suffix)
-        print("description:>>", self.description)
-        print("description:>>", self.description)
-        id = pk
-        dukandar = Shopkeeper.objects.get(id=id)
+        post_data = request.data
+        dukandar = Shopkeeper.objects.get(id=pk)
+        user = User.objects.get(id=dukandar.user.id)
+        user.username = post_data['user']['username']
+        user.first_name = post_data['user']['first_name']
+        user.last_name = post_data['user']['last_name']
+        user.email = post_data['user']['email']
+        user.address = post_data['user']['address']
+        user.user_type = 'SHOPKEEPER'
+        user.save()
+
         serializer = ShopkeeperSerializer(dukandar, data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -383,8 +307,20 @@ class ShopkeeperViewSetApi(viewsets.ViewSet):
         return Response(serializer.data, status=status.HTTP_400_BAD_REQUEST)
 
     def partial_update(self, request, pk):
-        id = pk
-        dukandar = Shopkeeper.objects.get(id=id)
+        post_data = request.data
+        dukandar = Shopkeeper.objects.get(id=pk)
+
+        user_data = post_data.get('user',None)
+        if user_data:
+            dukandar = Shopkeeper.objects.get(id=pk)
+            user = User.objects.get(id=dukandar.user.id)
+            user.username = user_data.get('username', user.username)
+            user.first_name = user_data.get('first_name', user.first_name)
+            user.last_name = user_data.get('last_name', user.last_name)
+            user.email = user_data.get('email', user.email)
+            user.address = user_data.get('address', user.address)
+            user.user_type = 'SHOPKEEPER'
+            user.save()
         serializer = ShopkeeperSerializer(dukandar, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()

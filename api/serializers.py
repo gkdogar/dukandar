@@ -59,7 +59,7 @@ class ShopkeeperSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Shopkeeper
-        fields = ['user', 'emp_id', 'shop_name', 'phone_no', 'description', 'latitude', 'longitude',
+        fields = ['id','user', 'emp_id', 'shop_name', 'phone_no', 'description', 'latitude', 'longitude',
                   'last_name', 'password', 'password2','address', 'first_name']
         # fields = '__all__'
         # depth = 1
