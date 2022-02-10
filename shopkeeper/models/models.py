@@ -35,8 +35,8 @@ class Employee(models.Model):
     user = models.OneToOneField(User, related_name='user', on_delete=models.CASCADE, null=False)
     target_assign = models.CharField(max_length=10, null=True)
     target_achieved = models.CharField(max_length=10, null=True)
-    area_designated = models.CharField(max_length=250, null=True)
-    phone_no = models.CharField(max_length=20)
+    area_designated = models.CharField(max_length=250, null=True, blank=True)
+    phone_no = models.CharField(max_length=20, null=True)
     description = models.TextField(null=True)
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -50,7 +50,7 @@ class Employee(models.Model):
 
 class Customer(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=False)
-    phone_no = models.CharField(max_length=20)
+    phone_no = models.CharField(max_length=20, null=True)
     is_active = models.BooleanField(default=True)
 
     def __str__(self):
@@ -58,12 +58,12 @@ class Customer(models.Model):
 
 class Shopkeeper(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=False)
-    emp_id = models.ForeignKey(Employee, on_delete=models.CASCADE, null=False)
-    shop_name = models.CharField(max_length=255)
-    phone_no = models.CharField(max_length=20)
+    emp_id = models.ForeignKey(Employee, on_delete=models.CASCADE, null=True )
+    shop_name = models.CharField(max_length=255, null=False)
+    phone_no = models.CharField(max_length=20, null=False)
     description = models.TextField(null=True)
-    latitude = models.CharField(max_length=50)
-    longitude = models.CharField(max_length=50)
+    latitude = models.CharField(max_length=50, null=False)
+    longitude = models.CharField(max_length=50, null=False)
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -143,13 +143,13 @@ class Order(models.Model):
     shopkeeper = models.ForeignKey(Shopkeeper,
                                on_delete=models.CASCADE,
                                null=True,
-                               blank=True)
-    cutomer = models.ForeignKey(Customer,
+                               )
+    customer = models.ForeignKey(Customer,
                                    on_delete=models.CASCADE,
-                                   null=True,blank=True)
+                                   null=True)
     order_date = models.DateTimeField(auto_now=True)
-    amount = models.IntegerField(default=0)
-    order_upto =  models.IntegerField(default=0)
+    amount = models.DecimalField(default=0, max_digits=6, decimal_places=2)
+    order_upto = models.DecimalField(default=0, max_digits=6, decimal_places=2)
     quantity = models.IntegerField(default=0)
     status=models.CharField(choices=ORDER_CHOICES,
                                     max_length=12,
