@@ -605,8 +605,10 @@ class userRegistration(viewsets.ViewSet):
 
 
 class OrderViewSetApi(viewsets.ViewSet):
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
+    def list(self, request):
+        orders = Order.objects.all()
+        serializer = OrderSerializer(orders, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def retrieve(self, request, pk=None):
         id = pk
@@ -616,7 +618,9 @@ class OrderViewSetApi(viewsets.ViewSet):
             return Response(serializer.data, status=status.HTTP_200_OK)
 
     def create(self, request):
+
         post_data=request.data
+        
         customer_id =post_data.get('customer', None)
         shopkeeper_id =post_data.get('shopkeeper', None)
 
@@ -625,12 +629,11 @@ class OrderViewSetApi(viewsets.ViewSet):
                 customer_obj=Customer.objects.get(id=customer_id)
                 if customer_obj:
                     serializer = OrderSerializer(data=post_data)
-                    serializer.cutomer=customer_id
-                 
+                    
                     if serializer.is_valid():
 
                         serializer.save()
-                       
+                        print('serializer',serializer)
                         response = {
                         'message': 'Order Created Successfully'
                             }
@@ -642,28 +645,95 @@ class OrderViewSetApi(viewsets.ViewSet):
                 return Response(response,status=status.HTTP_400_BAD_REQUEST)
         
         else:
+            
             try:
-                shopkeeper_ibj=Shopkeeper.objects.get(id=shopkeeper_id)
-                if shopkeeper_ibj:
+                shopkeeper_obj=Shopkeeper.objects.get(id=shopkeeper_id)
+                if shopkeeper_obj:
                     serializer = OrderSerializer(data=post_data)
                     
                     if serializer.is_valid():
                         order =serializer.save()
-                       
-                      
-
+                        amount=float(post_data['amount'])
+                        if amount > float(100000) and amount < float(250000):
+                            wallet =Wallet.objects.create(shopkeeper=shopkeeper_obj,order=order,amount=1000)
+                            wallet.save()
+                          
+                        if amount > float(250000) and amount < float(500000):
+                            wallet =Wallet.objects.create(shopkeeper=shopkeeper_obj,order=order,amount=2500)
+                            wallet.save()
+                        if amount > float(500000):
+                            wallet =Wallet.objects.create(shopkeeper=shopkeeper_obj,order=order,amount=7500)
+                            wallet.save()
+                        if amount > float(250000) and amount < float(500000):
+                            spine =Spines.objects.create(shopkeeper=shopkeeper_obj,order=order,amount=1)
+                            spine.save()        
+                        if amount > float(500000) and amount < float(1000000):
+                            spine =Spines.objects.create(shopkeeper=shopkeeper_obj,order=order,amount=2)
+                            spine.save()
                         response = {
                         'message': 'Order Created Successfully',
                         'order_id':order.id
 
                             }
                         return Response(response, status=status.HTTP_201_CREATED)  
+                    
             except  Customer.DoesNotExist:
                 response = {
                     'message': 'Shopkeeper with Id Does Not Exist For this Order'
                         }
                 return Response(response,status=status.HTTP_400_BAD_REQUEST)
+        response = {
+                    'message': 'Bad Request'
+                        }
+        return Response(response, status=status.HTTP_400_BAD_REQUEST)
 
-  
+    def update(self, request, pk):
+        print("********List*******")
+        print("BaseName:>>", self.basename)
+        print("action:>>", self.action)
+        print("detail:>>", self.detail)
+        print("suffix:>>", self.suffix)
+        print("description:>>", self.description)
+        print("description:>>", self.description)
+        id = pk
+        order = Order.objects.get(id=id)
+        serializer = OrderSerializer(order, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            response = {
+                'message': 'Complete Record Update Successfully'
+            }
+            return Response(response, status=status.HTTP_200_OK)
+        return Response(serializer.data, status=status.HTTP_400_BAD_REQUEST)
 
-    
+    def partial_update(self, request, pk):
+        id = pk
+        order = Order.objects.get(id=id)
+        serializer = OrderSerializer(order, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            response = {
+                'message': 'Partial Record Update Successfully'
+            }
+            return Response(response, status=status.HTTP_200_OK)
+        return Response(serializer.data, status=status.HTTP_400_BAD_REQUEST)
+
+    # def destroy(self, request, pk):
+    #     order = Order.objects.get(id=pk)
+    #     order.delete()
+    #     response = {
+    #         'message': 'Record Deleted Successfully'
+    #     }
+    #     return Response(response, status=status.HTTP_200_OK)
+
+class SpinesViewSetApi(viewsets.ViewSet):
+        def list(self, request):
+            spines = Spines.objects.all()
+            serializer = OrderSerializer(spines, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+class WalletViewSetApi(viewsets.ViewSet):
+        def list(self, request):
+            wallet = Wallet.objects.all()
+            serializer = OrderSerializer(wallet, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)

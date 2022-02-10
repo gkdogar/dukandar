@@ -143,13 +143,15 @@ class Order(models.Model):
     shopkeeper = models.ForeignKey(Shopkeeper,
                                on_delete=models.CASCADE,
                                null=True,
+                               blank=True
                                )
     customer = models.ForeignKey(Customer,
                                    on_delete=models.CASCADE,
+                                    blank=True,
                                    null=True)
     order_date = models.DateTimeField(auto_now=True)
-    amount = models.DecimalField(default=0, max_digits=6, decimal_places=2)
-    order_upto = models.DecimalField(default=0, max_digits=6, decimal_places=2)
+    amount = models.BigIntegerField()
+    order_upto = models.DecimalField(default=0, max_digits=7, decimal_places=2)
     quantity = models.IntegerField(default=0)
     status=models.CharField(choices=ORDER_CHOICES,
                                     max_length=12,
@@ -206,8 +208,7 @@ class Wallet(models.Model):
     amount = models.IntegerField(default=0)
 
     def __str__(self):
-        return self.amount
-
+        return str(self.amount)
 class Complaint(models.Model):
     shopkeeper = models.ForeignKey(Shopkeeper,
                                 on_delete=models.CASCADE,
@@ -232,8 +233,7 @@ class Spines(models.Model):
                                 null=True)
     amount = models.IntegerField(default=0)
 
-    spine_no = models.IntegerField(default=0)
+    spine_no = models.CharField(max_length=20, null=True)
 
     def __str__(self):
-        return self.spine_no
-
+        return str(self.amount)
