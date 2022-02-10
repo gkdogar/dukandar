@@ -18,6 +18,15 @@ from rest_framework.response import Response
 
 from rest_framework import status
 
+def check(email):
+    regex = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'  # to validate emails only
+    if (re.fullmatch(regex, email)):
+
+        return True
+    else:
+
+        return False
+
 
 class ProductViewSetApi(viewsets.ViewSet):
     def list(self, request):
@@ -211,57 +220,123 @@ class ShopkeeperViewSetApi(viewsets.ViewSet):
             return Response(serializer.data, status=status.HTTP_200_OK)
 
     def create(self, request):
+        try:
+            print(request.data)
+            post_data = request.data
+            username = post_data['username']
+            email = post_data['email']
+            user_exist = User.objects.filter(username=username)
+            if user_exist:
+                response = {
+                    'Error': 'Same User Name is already Existed ' + username
+                }
+                return Response(response, status=status.HTTP_400_BAD_REQUEST)
+            validate_email = check(email)
+            if not validate_email:
+                response = {
+                    'Error': 'Email is not in Proper Format ' + email
+                }
+                return Response(response, status=status.HTTP_400_BAD_REQUEST)
+            password = request.POST.get('password')
+            password2 = request.POST.get('password2')
+            if password != password2:
+                response = {
+                    'Error': 'Password Must be Same !'
+                }
+                return Response(response, status=status.HTTP_400_BAD_REQUEST)
+            try:
+                employ_id = post_data.get('emp_id', None)
+                copyied_dict = post_data.copy()
+                print('emp_exitsss')
+                employee_obj= Employee.objects.get(id=employ_id)
+                print('emp_exit',employee_obj)
+                if employee_obj:
+                    user = User.objects.create(username=post_data['username'], password=post_data['password'],
+                                               email=post_data['email'], first_name=post_data['first_name'],
+                                               last_name='last_name',
+                                               address=post_data['address'])
+                    user.user_type = 'SHOPKEEPER'
+                    user.save()
+                    employee = Employee.objects.get(id=post_data['emp_id'])
+                    dukandar = Shopkeeper.objects.create(user=user, shop_name=post_data['shop_name'],
+                                                         phone_no=post_data['phone_no'], latitude=post_data['latitude'],
+                                                         longitude=post_data['longitude'], emp_id=employee_obj)
+                    dukandar.save()
+            except Employee.DoesNotExist:
+                response = {
+                    'message': 'Employee Does Not Exist'
+                }
+                return Response(response, status=status.HTTP_400_BAD_REQUEST)
 
-        employee_obj=None
-        post_data = request.data
-        username = post_data['username']
-        email = post_data['email']
-        user_exist = User.objects.filter(username=username)
-        if user_exist:
+            serializer = ShopkeeperSerializer(data=post_data)
+            print(serializer)
+
             response = {
-                'Error': 'Same User Name is already Existed ' + username
+                'message': 'Record Created Successfully !'
             }
-            return Response(response, status=status.HTTP_400_BAD_REQUEST)
-        validate_email = check(email)
-        if not validate_email:
+            return Response(response, status=status.HTTP_201_CREATED)
+
+        except User.DoesNotExist:
             response = {
-                'Error': 'Email is not in Proper Format ' + email
-            }
-            return Response(response, status=status.HTTP_400_BAD_REQUEST)
-        password = request.POST.get('password')
-        password2 = request.POST.get('password2')
-        if password != password2:
-            response = {
-                'Error': 'Password Must be Same !'
-            }
+                'message': 'User Already Exist'
+             }
+
             return Response(response, status=status.HTTP_400_BAD_REQUEST)
 
-        employ_id = post_data.get('emp_id', None)
-        copyied_dict = post_data.copy()
-        print('emp_exitsss')
-        emp_exit= User.objects.get(email=employ_id)
-        print('emp_exit',emp_exit)
-        if emp_exit:
-            employee_obj = Employee.objects.get(user=emp_exit.id)
-            copyied_dict['emp_id'] = str(employee_obj.id)
-            print('employee', employee_obj)
-        response = {
-            'message': 'Employee Does Not Exist'
-        }
-        return Response(response, status=status.HTTP_400_BAD_REQUEST)
-
-        if post_data['shop_name'] & post_data['phone_no'] & post_data['latitude'] & post_data['longitude'] & post_data[
-            'emp_id']:
-            user = User.objects.create(username=post_data['username'], password=post_data['password'],
-                                       email=post_data['email'], first_name=post_data['first_name'], last_name='last_name',
-                                       address=post_data['address'])
-            user.user_type = 'SHOPKEEPER'
-            user.save()
-            employee = Employee.objects.get(id=post_data['employee_id'])
-            dukandar = Shopkeeper.objects.create(user=user, shop_name=post_data['shop_name'],
-                                                 phone_no=post_data['phone_no'], latitude=post_data['latitude'],
-                                                 longitude=post_data['longitude'], emp_id=employee_obj)
-            dukandar.save()
+    # def create(self, request):
+    #
+    #
+    #
+    #     post_data = request.data
+    #     print('user data', post_data)
+    #     username = post_data['username']
+    #     email = post_data['email']
+    #     user_exist = User.objects.filter(username=username)
+    #     if user_exist:
+    #         response = {
+    #             'Error': 'Same User Name is already Existed ' + username
+    #         }
+    #         return Response(response, status=status.HTTP_400_BAD_REQUEST)
+    #     validate_email = check(email)
+    #     if not validate_email:
+    #         response = {
+    #             'Error': 'Email is not in Proper Format ' + email
+    #         }
+    #         return Response(response, status=status.HTTP_400_BAD_REQUEST)
+    #     password = request.POST.get('password')
+    #     password2 = request.POST.get('password2')
+    #     if password != password2:
+    #         response = {
+    #             'Error': 'Password Must be Same !'
+    #         }
+    #         return Response(response, status=status.HTTP_400_BAD_REQUEST)
+    #
+        # employ_id = post_data.get('emp_id', None)
+        # copyied_dict = post_data.copy()
+        # print('emp_exitsss')
+        # emp_exit= User.objects.get(email=employ_id)
+        # print('emp_exit',emp_exit)
+        # if emp_exit:
+        #     employee_obj = Employee.objects.get(user=emp_exit.id)
+        #     copyied_dict['emp_id'] = str(employee_obj.id)
+        #     print('employee', employee_obj)
+        # response = {
+        #     'message': 'Employee Does Not Exist'
+        # }
+        # return Response(response, status=status.HTTP_400_BAD_REQUEST)
+    #
+    #     if post_data['shop_name'] & post_data['phone_no'] & post_data['latitude'] & post_data['longitude'] & post_data[
+    #         'emp_id']:
+    #         user = User.objects.create(username=post_data['username'], password=post_data['password'],
+    #                                    email=post_data['email'], first_name=post_data['first_name'], last_name='last_name',
+    #                                    address=post_data['address'])
+    #         user.user_type = 'SHOPKEEPER'
+    #         user.save()
+    #         employee = Employee.objects.get(id=post_data['employee_id'])
+    #         dukandar = Shopkeeper.objects.create(user=user, shop_name=post_data['shop_name'],
+    #                                              phone_no=post_data['phone_no'], latitude=post_data['latitude'],
+    #                                              longitude=post_data['longitude'], emp_id=employee_obj)
+    #         dukandar.save()
         # print('Post Requets', request.POST)
         # print('Data ', request.data)
 
@@ -274,19 +349,19 @@ class ShopkeeperViewSetApi(viewsets.ViewSet):
         #         'message': 'Record Created Successfully !'
         #     }
         #     return Response(response, status=status.HTTP_201_CREATED)
-        print('copyied_dict >>', copyied_dict)
-        serializer = ShopkeeperSerializer(data=copyied_dict)
-        print('serializer', serializer)
-        if serializer.is_valid():
-            serializer.save()
-            response = {
-                'message': 'Record Created Successfully !'
-            }
-            return Response(response, status=status.HTTP_201_CREATED)
-        else:
-            e
-            print('Invalid Serializer')
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        # print('copyied_dict >>', copyied_dict)
+        # serializer = ShopkeeperSerializer(data=copyied_dict)
+        # print('serializer', serializer)
+        # if serializer.is_valid():
+        #     serializer.save()
+        #     response = {
+        #         'message': 'Record Created Successfully !'
+        #     }
+        #     return Response(response, status=status.HTTP_201_CREATED)
+        # else:
+        #
+        #     print('Invalid Serializer')
+        # return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def update(self, request, pk):
         print("********List*******")
@@ -328,14 +403,6 @@ class ShopkeeperViewSetApi(viewsets.ViewSet):
         return Response(response, status=status.HTTP_200_OK)
 
 
-def check(email):
-    regex = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'  # to validate emails only
-    if (re.fullmatch(regex, email)):
-
-        return True
-    else:
-
-        return False
 
 
 class CustomerViewSetApi(viewsets.ViewSet):
