@@ -17,7 +17,6 @@ router.register('customer', views.CustomerViewSetApi,basename='customers')
 router.register('products', views.ProductViewSetApi,basename='products')
 router.register('orders', views.OrderViewSetApi,basename='orders')
 router.register('wallet', views.WalletViewSetApi,basename='wallet')
-
 router.register('spines', views.SpinesViewSetApi,basename='spines')
 
 app_name = 'api'
