@@ -23,7 +23,7 @@
         <div class="row">
             
           <div class="col-12">
-            <a type="submit" href="{% url 'customer_setup' %}" class="btn btn-primary float-right" name="employee">Add
+            <a type="submit" href="{% url 'shopkeeper:customer_setup' %}" class="btn btn-primary float-right" name="employee">Add
              Customer</a>
             <table class="table" id="customerTable">
                 <thead class="thead-dark">
@@ -52,8 +52,8 @@
                     <td>{{customer.area_designated}}</td>
                     <td>
 
-                        <a href="{% url 'customer_update' customer.id %}" class="mr-3" data-toggle="tooltip" title="Hooray!"> <i class="fas fa-trash-alt"  style="color:red;"></i></a>
-                        <a href="{% url 'customer_update'  customer.id %}">  <i class="fas fa-edit" style="color:blue;"></i></a>
+                        <a href="{% url 'shopkeeper:customer_update' customer.id %}" class="mr-3" data-toggle="tooltip" title="Hooray!"> <i class="fas fa-trash-alt"  style="color:red;"></i></a>
+                        <a href="{% url 'shopkeeper:customer_update'  customer.id %}">  <i class="fas fa-edit" style="color:blue;"></i></a>
                     </td>
                   </tr>
                   {% endfor %}

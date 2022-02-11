@@ -23,7 +23,7 @@
         <div class="row">
             
           <div class="col-12">
-            <a type="submit" href="{% url 'product_setup' %}" class="btn btn-primary float-right mb-1" name="employee">Add
+            <a type="submit" href="{% url 'shopkeeper:product_setup' %}" class="btn btn-primary float-right mb-1" name="employee">Add
                 Product</a>
               <table class="table" id="table_id">
                 <thead class="thead-dark">
@@ -63,8 +63,8 @@
                         <td>{{ prod.discount }}</td>
                          <td>{{ prod.is_active }}</td>
                     <td>
-                        <a href="{% url 'product_delete' prod.id %}" class="mr-3" data-toggle="tooltip" title="Hooray!"> <i class="fas fa-trash-alt"  style="color:red;"></i></a>
-                        <a href="{% url 'product_update'  prod.id %}">  <i class="fas fa-edit" style="color:blue;"></i></a>
+                        <a href="{% url 'shopkeeper:product_delete' prod.id %}" class="mr-3" data-toggle="tooltip" title="Hooray!"> <i class="fas fa-trash-alt"  style="color:red;"></i></a>
+                        <a href="{% url 'shopkeeper:product_update'  prod.id %}">  <i class="fas fa-edit" style="color:blue;"></i></a>
                     </td>
                     </tr>
                 {% endfor %}

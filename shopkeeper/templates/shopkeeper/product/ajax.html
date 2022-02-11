@@ -9,7 +9,7 @@
                   var url = $(this).attr('href');
                     $.ajax({
                       method: "POST",
-                      url: "{% url 'parent_sub_ajax_data' %}",
+                      url: "{% url 'shopkeeper:parent_sub_ajax_data' %}",
                       data: postData
                     })
                       .done(function( response ) {

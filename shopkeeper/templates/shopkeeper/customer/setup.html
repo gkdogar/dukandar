@@ -43,7 +43,7 @@
             {% endfor %}
         {% endif %}
         <form id="employeeForm" method="post" class="" name="employeeForm" enctype="multipart/form-data"
-              action="{% url 'employee_setup' %}">
+              action="{% url 'shopkeeper:employee_setup' %}">
             {% csrf_token %}
             <div class="form-group">
                 <label for="employeeFname">User Name</label>

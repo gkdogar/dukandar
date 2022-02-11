@@ -56,8 +56,8 @@
                         <td>{{ order.status }}</td>
                         
                      <td>
-                        <a href="{% url 'order_details'  order.id %}" class="mr-3" data-toggle="tooltip" title="Hooray!"> <i class="fas fa-trash-alt"  style="color:red;"></i></a>
-                        <a href="{% url 'order_details'  order.id %}">  <i class="fas fa-edit" style="color:blue;"></i></a>
+                        <a href="{% url 'shopkeeper:order_details'  order.id %}" class="mr-3" data-toggle="tooltip" title="Hooray!"> <i class="fas fa-trash-alt"  style="color:red;"></i></a>
+                        <a href="{% url 'shopkeeper:order_details'  order.id %}">  <i class="fas fa-edit" style="color:blue;"></i></a>
                     </td> 
                     </tr>
                 {% endfor %}

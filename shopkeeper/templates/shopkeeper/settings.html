@@ -1,0 +1,117 @@
+{% extends 'shopkeeper/base/base.html' %}
+{% load static %}
+{% block stylesheet %}
+    <style>
+
+    </style>
+
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+  <h1 class="text-center mt-5 mb-5 font-weight-bold"> Admin Settings</h1>
+    {% if messages %}
+    {% for message in messages %}
+        <div {% if message.tags %}class="alert alert-{{ message.tags }}" {% endif %} role="alert">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
+
+
+    <div class="row col-2 offset-10">
+     
+    </div>
+    <form action="{% url 'shopkeeper:admin_setting' %}" method="post">
+    {% csrf_token %}
+    <div class="row justify-content-center">
+    
+      {% comment %} <div class="col-4">
+        <div class="form-group ">
+          <input type="hidden" name="employee_id" value="{{ employee_id }}">
+            <label for="exampleInputusername">Username</label>
+            <input type="text" class="form-control" id="username" name="username", value="{{user.username}}" >
+          </div>
+          <div class="form-group mt-1">
+            <label for="exampleInputEmail1">Email address</label>
+            <input type="email" class="form-control" id="exampleInputEmail1" name="email" value="{{user.email}}">
+            
+          </div>
+        </div> {% endcomment %}
+          {% comment %} <div class="form-group mt-1">
+            <label for="exampleInputPassword">Password</label>
+            <input type="password" class="form-control" id="exampleInputPassword1" name="password">
+          </div>
+          <div class="form-group mt-1">
+            <label for="exampleInputPassword1">Re Password</label>
+            <input type="password" class="form-control" id="exampleInputPassword1" name="password1">
+          </div> {% endcomment %}
+
+      <div class="col-4" >
+   
+        <div class="form-group ">
+          <input type="hidden" name="employee_id" value="{{ employee_id }}">
+            <label for="exampleInputusername">Username</label>
+            <input type="text" class="form-control" id="username" name="username", value="{{user.username}}" >
+          </div>
+          <div class="form-group mt-1">
+            <label for="exampleInputEmail1">Email address</label>
+            <input type="email" class="form-control" id="exampleInputEmail1" name="email" value="{{user.email}}">
+            
+          </div>
+      
+        <div class="form-group mt-1">
+            <label for="exampleInputFirst_Name">First Name</label>
+            <input type="text" class="form-control" id="first_name" name="first_name" value="{{user.first_name}}">
+           
+          </div>
+            <div class="form-group mt-1">
+              <label for="exampleInputlast_name">Last Name</label>
+              <input type="text" class="form-control" id="last_name" name="last_name" value="{{user.last_name}}">
+            </div>
+      
+          
+              <div class="form-group mt-1">
+                <label for="exampleInputAddress">Address</label>
+                {% comment %} <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea> {% endcomment %}
+                <input type="text" class="form-control" id="address" name="address" value="{{user.address}}">
+              </div>
+              <div class="form-group mt-1">
+                <label for="exampleInputphone_no">Phone#</label>
+                <input type="text" class="form-control" id="phone_no"  name="phone_no"  value="{{phone_no}}">
+              </div>
+           
+              
+
+      <button type="submit" class="btn btn-primary float-right mt-1">Submit</button>
+           
+      </div>
+      {% comment %} <div class="col-4">
+      
+      
+      </div> {% endcomment %}
+    </div>
+    
+</form>
+  </div>
+
+
+        <script>
+        $(document).ready(function () {
+            $('ul').find("li#employee_page").addClass("active");
+            setTimeout(function() {
+              $('div.alert').fadeOut('slow');
+          }, 5000);
+          $(".checkbox").on('change', function () {
+            if ($(this).is(':checked')) {
+                $(this).attr('value', 'True');
+
+            } else {
+                $(this).attr('value', 'False');
+
+            }
+        });
+        });
+    </script>
+{% endblock %}

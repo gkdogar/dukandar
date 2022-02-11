@@ -61,7 +61,7 @@ class Shopkeeper(models.Model):
     emp_id = models.ForeignKey(Employee, on_delete=models.CASCADE, null=True )
     shop_name = models.CharField(max_length=255, null=False)
     phone_no = models.CharField(max_length=20, null=False)
-    description = models.TextField(null=True)
+    description = models.TextField(null=False)
     latitude = models.CharField(max_length=50, null=False)
     longitude = models.CharField(max_length=50, null=False)
     is_active = models.BooleanField(default=True)

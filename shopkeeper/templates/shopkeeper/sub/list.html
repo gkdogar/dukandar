@@ -23,7 +23,7 @@
         <div class="row">
             
           <div class="col-12">
-            <a type="submit" href="{% url 'parent_sub_category_setup' %}" class="btn btn-primary float-right mb-1" name="employee">Add
+            <a type="submit" href="{% url 'shopkeeper:parent_sub_category_setup' %}" class="btn btn-primary float-right mb-1" name="employee">Add
                 Parent Category</a>
               <table class="table" id="table_id">
                 <thead class="thead-dark">
@@ -62,8 +62,8 @@
                      <td>{{ sub.is_active }}</td>
                     <td>
     
-                        <a href="{% url 'parent_sub_category_delete' sub.id %}" class="mr-3" data-toggle="tooltip" title="Hooray!"> <i class="fas fa-trash-alt"  style="color:red;"></i></a>
-                        <a href="{% url 'parent_sub_category_update'  sub.id %}">  <i class="fas fa-edit" style="color:blue;"></i></a>
+                        <a href="{% url 'shopkeeper:parent_sub_category_delete' sub.id %}" class="mr-3" data-toggle="tooltip" title="Hooray!"> <i class="fas fa-trash-alt"  style="color:red;"></i></a>
+                        <a href="{% url 'shopkeeper:parent_sub_category_update'  sub.id %}">  <i class="fas fa-edit" style="color:blue;"></i></a>
                     </td>
                     </tr>
                 {% endfor %}

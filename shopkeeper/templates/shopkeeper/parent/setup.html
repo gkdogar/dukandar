@@ -44,7 +44,7 @@
         {% endif %}
         <div class="row">
             <form id="employeeForm" method="post" class="" name="employeeForm" enctype="multipart/form-data"
-                  action="{% url 'parent_category_setup' %}">
+                  action="{% url 'shopkeeper:parent_category_setup' %}">
                 {% csrf_token %}
                 <div class="form-group row mb-2">
                     <label for="catgory" class="col-sm-4 col-form-label">Parent Category Name</label>

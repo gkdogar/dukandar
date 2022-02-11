@@ -23,7 +23,7 @@
         <div class="row">
             
           <div class="col-12">
-            <a type="submit" href="{% url 'dukandar_setup' %}" class="btn btn-primary float-right mb-1" name="employee">Add
+            <a type="submit" href="{% url 'shopkeeper:dukandar_setup' %}" class="btn btn-primary float-right mb-1" name="employee">Add
              ShopKeeper</a>
             <table class="table" id="dukandarTable">
                 <thead class="thead-dark">
@@ -60,8 +60,8 @@
                     <td></td>
                     <td>
 
-                        <a href="{% url 'dukandar_update' dukandar.id %}" class="mr-3" data-toggle="tooltip" title="Hooray!"> <i class="fas fa-trash-alt"  style="color:red;"></i></a>
-                        <a href="{% url 'dukandar_update'  dukandar.id %}">  <i class="fas fa-edit" style="color:blue;"></i></a>
+                        <a href="{% url 'shopkeeper:dukandar_update' dukandar.id %}" class="mr-3" data-toggle="tooltip" title="Hooray!"> <i class="fas fa-trash-alt"  style="color:red;"></i></a>
+                        <a href="{% url 'shopkeeper:dukandar_update'  dukandar.id %}">  <i class="fas fa-edit" style="color:blue;"></i></a>
                     </td>
                   </tr>
                   {% endfor %}

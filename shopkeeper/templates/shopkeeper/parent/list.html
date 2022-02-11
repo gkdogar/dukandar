@@ -31,7 +31,7 @@
                 {% endfor %}
             {% endif %}
         </div>
-        <a type="submit" href="{% url 'parent_category_setup' %}" class="btn btn-primary float-right" name="employee">Add
+        <a type="submit" href="{% url 'shopkeeper:parent_category_setup' %}" class="btn btn-primary float-right" name="employee">Add
             Parent Category</a>
         <table class="table" id="table_id">
             <thead class="thead-dark">
@@ -68,8 +68,8 @@
                  <td>{{ parent.is_active }}</td>
                 <td>
 
-                    <a href="{% url 'parent_category_update' parent.id %}" class="mr-3" data-toggle="tooltip" title="Hooray!"> <i class="fas fa-trash-alt"  style="color:red;"></i></a>
-                    <a href="{% url 'parent_category_update'  parent.id %}">  <i class="fas fa-edit" style="color:blue;"></i></a>
+                    <a href="{% url 'shopkeeper:parent_category_update' parent.id %}" class="mr-3" data-toggle="tooltip" title="Hooray!"> <i class="fas fa-trash-alt"  style="color:red;"></i></a>
+                    <a href="{% url 'shopkeeper:parent_category_update'  parent.id %}">  <i class="fas fa-edit" style="color:blue;"></i></a>
                 </td>
                 </tr>
             {% endfor %}

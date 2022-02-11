@@ -22,11 +22,11 @@
 
 
     <div class="row col-2 offset-10">
-        <a type="submit" href="{% url 'product_ist' %}" class="btn btn-primary float-right mb-1" name="product_list">Product Lists</a>
+        <a type="submit" href="{% url 'shopkeeper:product_ist' %}" class="btn btn-primary float-right mb-1" name="product_list">Product Lists</a>
      
     </div>
     <form id="subCateForm" method="post" class="" name="subCateForm" enctype="multipart/form-data"
-                  action="{% url 'product_setup' %}">
+                  action="{% url 'shopkeeper:product_setup' %}">
     {% csrf_token %}
     <div class="row">
     

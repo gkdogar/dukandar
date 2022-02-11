@@ -10,7 +10,10 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         model = User
         fields = ['id', 'username', 'email', 'password', 'password2', 'first_name', 'last_name', 'user_type', 'address']
         extra_kwargs = {
-            'password': {'write_only': True}
+            'password': {'write_only': True},
+            'first_name': {'required': True},
+            'last_name': {'required': True},
+            'address': {'required': True},
         }
 
     def save(self, **kwargs):
@@ -41,25 +44,37 @@ class CustomerSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Customer
-        fields = ['id','user', 'phone_no']
+        fields = ['id', 'user', 'phone_no']
         # fields = '__all__'
         depth = 1
 
 
 class ShopkeeperSerializer(serializers.ModelSerializer):
     user = UserRegistrationSerializer(many=False, read_only=True)
+    first_name = serializers.CharField(style={'input_type': 'text'}, write_only=True)
+    last_name = serializers.CharField(style={'input_type': 'text'}, write_only=True)
+    address = serializers.CharField(style={'input_type': 'text'}, write_only=True)
+    password = serializers.CharField(style={'input_type': 'password'}, write_only=True)
+    password2 = serializers.CharField(style={'input_type': 'password'}, write_only=True)
+    
+
     class Meta:
         model = Shopkeeper
-        fields = ['user','emp_id', 'shop_name','phone_no','description','latitude','longitude']
+        fields = ['id','user', 'emp_id', 'shop_name', 'phone_no', 'description', 'latitude', 'longitude',
+                  'last_name', 'password', 'password2','address', 'first_name']
         # fields = '__all__'
-        depth = 1
+        # depth = 1
 
     extra_kwargs = {
+        'first_name': {'required': True},
+        'password': {'write_only': True},
+        'address': {'write_only': True},
         'shop_name': {'required': True},
         'phone_no': {'required': True},
         'description': {'required': True},
         'latitude': {'required': True},
         'longitude': {'required': True},
+        'emp_id':{"required":True}
     }
 
 
@@ -85,19 +100,18 @@ class ProductSerializer(serializers.ModelSerializer):
 
 
 class OrderSerializer(serializers.ModelSerializer):
-    
     class Meta:
         model = Order
-        fields = ['id','product', 'shopkeeper','customer' ,'amount','quantity']
+        fields = ['id', 'product', 'shopkeeper', 'customer', 'amount', 'quantity']
         extra_kwargs = {
-        'product': {'required': True},
-       
-        # 'cutomer': {'cutomer': True},
-        # 'shopkeeper':{'required': True},
-        'amount': {'required': True},
-        'quantity': {'required': True},
-       
-         }
+            'product': {'required': True},
+
+            # 'cutomer': {'cutomer': True},
+            # 'shopkeeper':{'required': True},
+            'amount': {'required': True},
+            'quantity': {'required': True},
+
+        }
 
 
 class DiscountSerializer(serializers.ModelSerializer):
