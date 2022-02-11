@@ -56,7 +56,6 @@ class ShopkeeperSerializer(serializers.ModelSerializer):
     address = serializers.CharField(style={'input_type': 'text'}, write_only=True)
     password = serializers.CharField(style={'input_type': 'password'}, write_only=True)
     password2 = serializers.CharField(style={'input_type': 'password'}, write_only=True)
-    
 
     class Meta:
         model = Shopkeeper
