@@ -153,4 +153,4 @@ CORS_ORIGIN_WHITELIST = [
     'http://localhost:8080',
 
 ]
-
+LOGOUT_REDIRECT_URL = '/'

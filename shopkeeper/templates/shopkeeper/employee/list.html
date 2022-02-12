@@ -24,7 +24,7 @@
         <div class="row">
             
           <div class="col-12">
-            <a type="submit" href="{% url 'employee_setup' %}" class="btn btn-primary float-right mb-1" name="employee">Add
+            <a type="submit" href="{% url 'shopkeeper:employee_setup' %}" class="btn btn-primary float-right mb-1" name="employee">Add
               Employee</a>
             <table class="table" id="employeeTable">
                 <thead class="thead-dark">
@@ -55,8 +55,8 @@
                     <td>{{employee.is_active}}</td>
                     <td>
 
-                        <a href="{% url 'employee_update' employee.id %}" class="mr-3" data-toggle="tooltip" title="Hooray!"> <i class="fas fa-trash-alt"  style="color:red;"></i></a>
-                        <a href="{% url 'employee_update'  employee.id %}">  <i class="fas fa-edit" style="color:blue;"></i></a>
+                        <a href="{% url 'shopkeeper:employee_update' employee.id %}" class="mr-3" data-toggle="tooltip" title="Hooray!"> <i class="fas fa-trash-alt"  style="color:red;"></i></a>
+                        <a href="{% url 'shopkeeper:employee_update'  employee.id %}">  <i class="fas fa-edit" style="color:blue;"></i></a>
                     </td>
                   </tr>
                   {% endfor %}

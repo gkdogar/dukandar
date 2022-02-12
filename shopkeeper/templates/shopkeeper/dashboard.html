@@ -2,22 +2,23 @@
 {% load static %}
 {% block stylesheet %}
 <link href="{% static 'css/main.css' %}" rel="stylesheet">
-    <style>
-       
-    </style>
+
 
 {% endblock %}
 
+
+
 {% block content %}
 
-<div class="container mt-5">
-    
+
+    <div class="container">
+        <h2 class="text-center mt-4 mb-4">Dukandar Dashboard</h2>
         <div class="row">
             <a href="{% url 'shopkeeper:employee_list' %}" class="col-sm div_box employee_div d-flex justify-content-center mr-3" id="a_tag">
           <div >
             <h3>
                 Emnployee
-            </h3> 
+            </h3>
             <h2 class="ml-5">{{employees}}</h2>
           </div>
         </a>
@@ -38,12 +39,11 @@
           </div>
         </a>
         </div>
-        
-        <div class="row mt-5 ">
+         <div class="row mt-5 ">
           <a href="{% url 'shopkeeper:product_ist' %}" class="col-sm div_box product_div d-flex justify-content-center mr-3" id="a_tag">
             <div>
                 <h3>
-                    Products 
+                    Products
                 </h3>
                 <h2 class="ml-5">{{products}}</h2>
               </div>
@@ -65,14 +65,11 @@
             </div>
         </a>
           </div>
-         
-          <div>
-            <h3>Google Map</h3>
-            {{map | safe}}
-          </div>
-          
-        
+        <div class="row" width="400px; border">
+            {{ map | safe }}
+        </div>
 
-</div>
+
+    </div>
 
 {% endblock %}

@@ -21,10 +21,10 @@
 
 
     <div class="row col-2 offset-10">
-        <a type="submit" href="{% url 'employee_list' %}" class="btn btn-primary float-right mb-1" name="employee">Employee Lists</a>
+        <a type="submit" href="{% url 'shopkeeper:employee_list' %}" class="btn btn-primary float-right mb-1" name="employee">Employee Lists</a>
      
     </div>
-    <form action="{% if emp_id %}{% url 'employee_update' emp_id %}{% else %}{% url 'employee_setup' %} {% endif %}" method="post">
+    <form action="{% if emp_id %}{% url 'shopkeeper:employee_update' emp_id %}{% else %}{% url 'shopkeeper:employee_setup' %} {% endif %}" method="post">
     {% csrf_token %}
     <div class="row">
     

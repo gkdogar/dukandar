@@ -40,16 +40,16 @@
                   </tr>
                 </thead>
                 <tbody>
-                    {% for customer in employee_list%}
+                    {% for customer in customer_list%}
                   <tr>
                     <th scope="row">{{forloop.counter}}</th>
                     <td>{{customer.user.username}}</td>
                     <td>{{customer.user.first_name}}</td>
                     <td>{{customer.user.last_name}}</td>
                     <td>{{customer.user.email}}</td>
-                    <td>{{customer.target_assign}}</td>
-                    <td>{{customer.target_achieved}}</td>
-                    <td>{{customer.area_designated}}</td>
+                    <td>{{customer.phone_no}}</td>
+                  <td>{{ customer.order.id }}</td>
+
                     <td>
 
                         <a href="{% url 'shopkeeper:customer_update' customer.id %}" class="mr-3" data-toggle="tooltip" title="Hooray!"> <i class="fas fa-trash-alt"  style="color:red;"></i></a>
