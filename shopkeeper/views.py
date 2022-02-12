@@ -1,4 +1,4 @@
-from django.contrib.auth import authenticate, login
+
 from django.shortcuts import render, redirect
 from bootstrap_modal_forms.generic import BSModalCreateView
 # Create your views here.
@@ -10,39 +10,35 @@ from django.views import View
 from django.views.generic import ListView
 from django.contrib import messages
 import folium
+import pandas as pd
 import re
 from django.http import JsonResponse
 import json
 
 
 def admin_login(request):
-     if request.method == 'POST':
-        print(' request.POST >> ', request.POST)
+    if request.method == 'POST':
+        print('request.POST',request.POST)
         username = request.POST['username']
         password = request.POST['password']
-    
-        user = authenticate(username=username, password=password)
-        if user:
-            check_user = User.objects.filter(username=user)
+        email_user = authenticate(username=username, password=password)
+        print('email_user', email_user)
+        if email_user:
+            check_user = User.objects.filter(username=email_user)
             if (username is None) or (password is None):
                 messages.error(request, "Email or Password not given")
-                return redirect('login')
+                return redirect('shopkeeper:admin_login')
             elif (password is None) and (username is None):
                 messages.error(request, "Credentials can't be empty")
                 return redirect('shopkeeper:admin_login')
             else:
-                if user.user_type == 'SUPER_ADMIN':
-                    login(request, user)
+                if email_user.user_type == 'SUPER_ADMIN':
+                    login(request, email_user)
                     return redirect('shopkeeper:dashboard')
-            
-            messages.error(request, "You are not allowed to Login")
-            return render(request, 'shopkeeper/registration/login.html')
         else:
-            messages.error(request, "Email or Password not given")
+            messages.add_message(request, messages.ERROR, 'UserName or Password Not Given')
             return redirect('shopkeeper:admin_login')
-           
-     else:
-        
+    else:
         return render(request, 'shopkeeper/registration/login.html')
 
 @login_required(login_url='shopkeeper:admin_login')
@@ -70,25 +66,35 @@ def admin_settings(request):
 def dashboard(request):
     employees=Employee.objects.all().count()
     customers=Customer.objects.all().count()
-    dukandars=Shopkeeper.objects.all().count()
+    dukandars_list=Shopkeeper.objects.all()
+    dukandars = dukandars_list.count()
     products=Product.objects.all().count()
     orders=Order.objects.all().count()
+    locationlist =[]
+    map = folium.Map(location=[31.5204, 74.3587], zoom_start=12)
+    df_counters = pd.DataFrame(list(Shopkeeper.objects.all().values('latitude', 'longitude', 'shop_name')))
 
-    m = folium.Map(location=[31.5204, 74.3587], zoom_start=12)
-    folium.Marker(location=[31.5047, 74.3315], popup='Default popup Marker1',
-                  tooltip='Click here to see Popup').add_to(m)
-    folium.Marker(location=[31.511996, 74.343018], popup='Default popup Marker1',
-                  tooltip='Click here to see Popup').add_to(m)
 
-    print('mmm', m)
-    m = m._repr_html_()
+    locations = df_counters[['latitude', 'longitude']]
+    locationlist = locations.values.tolist()
+    for point in range(0, len(locationlist)):
+        folium.Marker(locationlist[point], popup=df_counters['shop_name'][point], tooltip=df_counters['shop_name'][point]).add_to(map)
+
+
+    # folium.Marker(location=[31.5047, 74.3315], popup='Default popup Marker1',
+    #               tooltip='Click here to see Popup').add_to(map)
+    # folium.Marker(location=[31.511996, 74.343018], popup='Default popup Marker1',
+    #               tooltip='Click here to see Popup').add_to(map)
+
+    print('mmm', map)
+    map = map._repr_html_()
     context ={
         'employees':employees,
         'dukandars':dukandars,
         'customers':customers,
         'products':products,
         'orders':orders,
-        'map':m
+        'map':map
         
     }
     return render(request, 'shopkeeper/dashboard.html',context)
@@ -221,6 +227,7 @@ def dukandarSetup(request):
         return redirect('shopkeeper:dukandar_list')
     else:
       return render(request, 'shopkeeper/dukandar/setup.html')
+
 @login_required(login_url='shopkeeper:admin_login')
 def dukandarUpdate(request, pk):
     dukandar_obj = Shopkeeper.objects.get(id=pk)
@@ -234,6 +241,7 @@ def dukandarUpdate(request, pk):
         'is_active': dukandar_obj.is_active,
     }
     return render(request, 'shopkeeper/dukandar/setup.html', context)
+
 @login_required(login_url='shopkeeper:admin_login')
 def dukandarDelete(request,pk):
     dukandar_obj = Shopkeeper.objects.get(id=pk)
@@ -244,8 +252,58 @@ def dukandarDelete(request,pk):
 
 @login_required(login_url='shopkeeper:admin_login')
 def customerSetup(request):
+    if request.POST:
+        customer_id = request.POST.get('id') or None
+        if customer_id:
+            customer_obj = Customer.objects.get(id=customer_id)
+            user = User.objects.get(id=customer_obj.user.id)
+            user.username = request.POST.get('username')
+            user.first_name = request.POST.get('first_name')
+            user.last_name = request.POST.get('last_name')
+            user.email = request.POST.get('email')
+            user.address = request.POST.get('address')
+            user.save()
+            customer_obj.user = user
+            customer_obj.phone_no = request.POST.get('phone_no')
+            customer_obj.is_active = request.POST.get('is_active') or False
+            customer_obj.save()
+            messages.add_message(request, messages.SUCCESS, 'Record Updated Successfully')
+            return redirect('shopkeeper:employee_list')
 
-    return render(request, 'shopkeeper/customer/setup.html')
+        else:
+
+            username = request.POST.get('username')
+            password = request.POST.get('password')
+            password1 = request.POST.get('password1')
+            check_user = User.objects.filter(username=username)
+            if check_user.count() == 1:
+                messages.error(request, 'UserName Already Existed')
+                return redirect('shopkeeper:customer_setup')
+            if password != password1:
+                reg = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!#%*?&]{6,20}$"
+                pat = re.compile(reg)
+                mat = re.search(pat, password)
+                if mat:
+                    print("Password is valid.")
+                else:
+                    messages.error(request, 'Password Must contains one Capital and One Speceial Char')
+                    return redirect('shopkeeper:employee_setup')
+                messages.error(request, 'Password must be matched!')
+                return redirect('shopkeeper:customer_setup')
+            user = User.objects.create_user(username=username, password=password)
+            user.first_name = request.POST.get('first_name')
+            user.last_name = request.POST.get('last_name')
+            user.email = request.POST.get('email')
+            user.address = request.POST.get('address')
+            user.user_type = 'CUSTOMER'
+            customer = Customer.objects.create(user=user, phone_no=request.POST.get('phone_no'),
+                                               is_active=request.POST.get('is_active') or False)
+            customer.save()
+            user.save()
+            messages.success(request, 'Record Created Successfully')
+            return redirect('shopkeeper:customer_list')
+    else:
+         return render(request, 'shopkeeper/customer/setup.html')
 
 @login_required(login_url='shopkeeper:admin_login')
 def customerList(request):
@@ -512,7 +570,7 @@ def walletList(request):
 def spinesList(request):
     return render(request, 'shopkeeper/spins/list.html')
 
-
+@login_required(login_url='shopkeeper:admin_login')
 def register(request):
     if request.method == 'POST':
         print('request post', request.POST)
@@ -553,11 +611,13 @@ def register(request):
 
 @login_required(login_url='shopkeeper:admin_login')
 def google_map(request):
+
     locationlist=[]
     # for point in range(0, len(locationlist)):
     #     folium.Marker(locationlist[point], popup=df_counters['Name'][point]).add_to(map)
     
     m=folium.Map(location=[31.5204, 74.3587], zoom_start=12)
+
     folium.Marker(location=[31.5047, 74.3315], popup='Default popup Marker1',
                   tooltip='Click here to see Popup').add_to(m)
     folium.Marker(location=[31.511996, 74.343018], popup='Default popup Marker1',
@@ -571,7 +631,7 @@ def google_map(request):
     }
 
     return render(request, 'shopkeeper/dukandar/google_map.html', context)
-
+@login_required(login_url='shopkeeper:admin_login')
 def parent_sub_ajax_data(request):
     parentID= json.loads(str(request.POST.get('parentID')))
     parent_sub_list =SubCategory.objects.filter(parent=parentID, is_active=True)
@@ -586,7 +646,7 @@ def parent_sub_ajax_data(request):
     }
 
     return JsonResponse(context, status=200)
-
+@login_required(login_url='shopkeeper:admin_login')
 def admin_logout(request):
     logout(request)
     return redirect('shopkeeper:admin_login')
