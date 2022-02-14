@@ -80,6 +80,10 @@
     <script>
         $(document).ready(function () {
             $('ul').find("li#order_page").addClass("active");
+            $('ul').find("li#order_page").find("a").addClass("collapsed");
+            $('ul').find("li#order_page").find("a").attr("aria-expanded", "true");
+            $('ul#order_list').addClass('show')
+            $('#order_view').addClass('active')
             $('#order_table').DataTable();
         });
     </script>

@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-
+from shopkeeper.models.customManager import *
+from django.utils.translation import gettext_lazy as _
 USER_CHOICES = (
 
     ('SUPER_ADMIN', 'Super Admin'),
@@ -26,6 +27,10 @@ class User(AbstractUser):
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    objects = UserManager()
+
+
 
     def __str__(self):
         return self.first_name + ' ' + self.last_name

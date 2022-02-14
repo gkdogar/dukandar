@@ -44,7 +44,7 @@ urlpatterns = [
     path('parent/sub/category/delete/<int:pk>/', sub_categoryDelete, name='parent_sub_category_delete'),
 
     # Product+URLS
-    path('product/lists', productList, name='product_ist'),
+    path('product/lists', productList, name='product_list'),
     path('product/setup', productSetup, name='product_setup'),
     path('product/setup/<int:pk>/', productUpdate, name='product_update'),
     path('product/delete/<int:pk>/', productDelete, name='product_delete'),

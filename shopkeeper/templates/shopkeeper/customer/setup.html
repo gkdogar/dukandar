@@ -83,9 +83,16 @@
 
 
 
-      <script>
+    <script>
         $(document).ready(function () {
+
             $('ul').find("li#customer_page").addClass("active");
+            $('ul').find("li#customer_page").addClass("active");
+            $('ul').find("li#customer_page").addClass("active");
+            $('ul').find("li#customer_page").find("a").addClass("collapsed");
+            $('ul').find("li#customer_page").find("a").attr("aria-expanded", "true");
+            $('ul#customer_control').addClass('show')
+            $('#cust_setup').addClass('active')
 
         });
     </script>

@@ -22,7 +22,7 @@
 
 
     <div class="row col-2 offset-10">
-        <a type="submit" href="{% url 'shopkeeper:product_ist' %}" class="btn btn-primary float-right mb-1" name="product_list">Product Lists</a>
+        <a type="submit" href="{% url 'shopkeeper:product_list' %}" class="btn btn-primary float-right mb-1" name="product_list">Product Lists</a>
      
     </div>
     <form id="subCateForm" method="post" class="" name="subCateForm" enctype="multipart/form-data"
@@ -116,7 +116,11 @@
 
         <script>
         $(document).ready(function () {
-            $('ul').find("li#product_tabs").addClass("active");
+            $('ul').find("li#product_cat").addClass("active");
+            $('ul').find("li#product_cat").find("a").addClass("collapsed");
+            $('ul').find("li#product_cat").find("a").attr("aria-expanded","true");
+            $('ul#ui_prd').addClass('show')
+            $('#product_setup').addClass('active')
             setTimeout(function() {
               $('div.alert').fadeOut('slow');
           }, 5000);

@@ -99,7 +99,12 @@
 
         <script>
         $(document).ready(function () {
-            $('ul').find("li#employee_page").addClass("active");
+
+              $('ul').find("li#parent_sub_cat").addClass("active");
+            $('ul').find("li#parent_sub_cat").find("a").addClass("collapsed");
+            $('ul').find("li#parent_sub_cat").find("a").attr("aria-expanded", "true");
+            $('ul#ui_parent_sub').addClass('show')
+            $('#sub_setup').addClass('active')
             setTimeout(function() {
               $('div.alert').fadeOut('slow');
           }, 5000);

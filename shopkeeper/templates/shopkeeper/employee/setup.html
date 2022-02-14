@@ -112,6 +112,10 @@
         <script>
         $(document).ready(function () {
             $('ul').find("li#employee_page").addClass("active");
+            $('ul').find("li#employee_page").find("a").addClass("collapsed");
+            $('ul').find("li#employee_page").find("a").attr("aria-expanded","true");
+            $('ul#employee_control').addClass('show')
+            $('#emp_setup').addClass('active')
             setTimeout(function() {
               $('div.alert').fadeOut('slow');
           }, 5000);

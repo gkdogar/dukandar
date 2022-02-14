@@ -1,0 +1,54 @@
+/* .employee{
+    display: grid;
+    grid-gap: 15px;
+    grid-template-columns: repeat(auto-fit, 200px);
+} */
+
+
+.div_box {
+  width: 100%;
+  height: 50%;
+  font-size: 60px;
+  padding: 20px 30px;
+  box-sizing: border-box;
+  
+}
+.employee_div {
+        color: #004a67;
+  background: #09b0d4;
+    }
+.dukandar_div {
+    color: #fff;
+    background: #f35e7b;
+    }
+
+
+.product_div {
+color: #94132f;
+background: #f05c7e;
+}
+.customer_div {
+color: #06512a;
+background: #249557;
+}
+.Budget {
+color: #044352;
+background: #2a9cb6;
+}
+.orders {
+    color: #06512a;
+    background: #249557;
+    }
+
+    
+#a_tag:link { text-decoration: none; }
+
+#a_tag:visited { text-decoration: none; }
+
+#a_tag:hover { 
+    text-decoration: none;
+    box-shadow: 3px 5px 3px 5px #888888;
+ }
+
+
+#a_tag:active { text-decoration: none; }

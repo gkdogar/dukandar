@@ -32,7 +32,7 @@ def admin_login(request):
                 messages.error(request, "Credentials can't be empty")
                 return redirect('shopkeeper:admin_login')
             else:
-                if email_user.user_type == 'SUPER_ADMIN':
+                if email_user.is_superuser == 'True':
                     print('asaa')
                     login(request, email_user)
                     print('hello')
@@ -175,6 +175,7 @@ def employeeUpdate(request,pk):
     context = {
         'employee_id': employee_obj.id,
         'user': employee_obj.user,
+        'phone_no': employee_obj.phone_no,
         'target_assign': employee_obj.target_assign,
         'target_achieved': employee_obj.target_achieved,
         'description': employee_obj.description,
@@ -337,7 +338,7 @@ def parent_category_list(request):
     context={
         'parent_list':parent_list
     }
-    return render(request, 'shopkeeper/product/parent_category_list.html', context)
+    return render(request, 'shopkeeper/parent/list.html', context)
 
 @login_required(login_url='shopkeeper:admin_login')
 def parent_category_detail(request, pk):
@@ -366,7 +367,7 @@ class ParentCategorySetupView(View):
 
     def get(self, request, *args, **kwargs):
 
-        return render(request, 'shopkeeper/product/parent_category_setup.html')
+        return render(request, 'shopkeeper/parent/setup.html')
 
     def post(self, request, *args, **kwargs):
 
