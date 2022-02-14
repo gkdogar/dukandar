@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 
 USER_CHOICES = (
+
     ('SUPER_ADMIN', 'Super Admin'),
     ('STAFF', 'Staff'),
     ('SHOPKEEPER', 'Shopkeeper'),
@@ -14,8 +15,6 @@ ORDER_CHOICES = (('CANCELLED', 'cancelled'), ('DELIVERED', 'delivered '),
 CATEGORY_FOR_CHOICES = (('BRAND', 'For Brand'), ('RETAIL', 'For Retail'),
                         ('WSALE', 'For Whole Sale'),
                         ('CULTURE', 'For Culture'), ('AUTO', 'For Auto'))
-
-
 
 class User(AbstractUser):
     address = models.CharField(max_length=250, null=True)
@@ -209,6 +208,7 @@ class Wallet(models.Model):
 
     def __str__(self):
         return str(self.amount)
+
 class Complaint(models.Model):
     shopkeeper = models.ForeignKey(Shopkeeper,
                                 on_delete=models.CASCADE,

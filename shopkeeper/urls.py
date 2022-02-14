@@ -9,11 +9,8 @@ urlpatterns = [
     path('login', admin_login, name='admin_login'),
     path('settings', admin_settings, name='admin_setting'),
     path('register', register, name='register'),
-    path('customer/List', EmployeeListView.as_view(), name='employee_List'),
     path('google/map/pins/', google_map, name='google_map_pin'),
-    path('customer/setup', EmployeeSetupView.as_view(), name='employee_setup'),
-    # path('dukandar/list', EmployeeSetupView.as_view(), name='dukandar_list'),
-    # path('dukandar/setup', EmployeeSetupView.as_view(), name='dukandar_setup'),
+
 
     # Employee+URLS
     path('employee/lists', employeeList, name='employee_list'),
@@ -62,5 +59,6 @@ urlpatterns = [
     path('spines/lists', spinesList, name='spines_list'),
 
     path('parent/sub/category/ajax/lists/', parent_sub_ajax_data, name='parent_sub_ajax_data'),
+    path('logout', admin_logout, name='admin_logout'),
 
 ]

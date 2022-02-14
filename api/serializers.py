@@ -32,11 +32,11 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 
 
 class EmployeeSerializer(serializers.ModelSerializer):
-    user = UserRegistrationSerializer(many=True, read_only=True)
+    user = UserRegistrationSerializer(many=False, read_only=True)
 
     class Meta:
         model = Employee
-        fields = '__all__'
+        fields = ['user','target_assign','target_achieved','area_designated','phone_no','description']
 
 
 class CustomerSerializer(serializers.ModelSerializer):

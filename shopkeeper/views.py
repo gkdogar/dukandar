@@ -17,7 +17,7 @@ import json
 
 def admin_login(request):
      if request.method == 'POST':
-        print(' request.POST >> ', request.POST)
+        
         username = request.POST['username']
         password = request.POST['password']
     
@@ -26,10 +26,10 @@ def admin_login(request):
             check_user = User.objects.filter(username=user)
             if (username is None) or (password is None):
                 messages.error(request, "Email or Password not given")
-                return redirect('login')
+                return redirect('shopkeeper:admin_login')
             elif (password is None) and (username is None):
                 messages.error(request, "Credentials can't be empty")
-                return redirect('admin_login')
+                return redirect('shopkeeper:admin_login')
             else:
                 if user.user_type == 'SUPER_ADMIN':
                     login(request, user)
@@ -39,7 +39,7 @@ def admin_login(request):
             return render(request, 'shopkeeper/registration/login.html')
         else:
             messages.error(request, "Email or Password not given")
-            return redirect('admin_login')
+            return redirect('shopkeeper:admin_login')
            
      else:
         
@@ -66,8 +66,6 @@ def admin_settings(request):
             return render(request, 'shopkeeper/settings.html',context)    
 
 
-
-
 @login_required(login_url='shopkeeper:admin_login')
 def dashboard(request):
     employees=Employee.objects.all().count()
@@ -75,14 +73,15 @@ def dashboard(request):
     dukandars=Shopkeeper.objects.all().count()
     products=Product.objects.all().count()
     orders=Order.objects.all().count()
-      
-    m=folium.Map(location=[31.5204, 74.3587], zoom_start=12)
+
+    m = folium.Map(location=[31.5204, 74.3587], zoom_start=12)
     folium.Marker(location=[31.5047, 74.3315], popup='Default popup Marker1',
                   tooltip='Click here to see Popup').add_to(m)
     folium.Marker(location=[31.511996, 74.343018], popup='Default popup Marker1',
                   tooltip='Click here to see Popup').add_to(m)
 
-
+    print('mmm', m)
+    m = m._repr_html_()
     context ={
         'employees':employees,
         'dukandars':dukandars,
@@ -94,20 +93,6 @@ def dashboard(request):
     }
     return render(request, 'shopkeeper/dashboard.html',context)
 
-class EmployeeListView(ListView):
-    paginate_by = 100
-    template_name = 'shopkeeper/customer/list.html'
-
-    def get_queryset(self):
-        # user_obj=User.objects.filter(is_staff=True )
-        # for user in user_obj:
-        #    print('user',user)
-        #    object_list= Employee.objects.filter(user=user.id)
-        #    print('object_list',object_list)
-        object_list = Employee.objects.all()
-
-        return object_list
-
 @login_required(login_url='shopkeeper:admin_login')
 def employeeList(request): 
     employee_list =Employee.objects.all()
@@ -115,6 +100,7 @@ def employeeList(request):
         'employee_list':employee_list
     }
     return render(request, 'shopkeeper/employee/list.html',context)
+
 
 @login_required(login_url='shopkeeper:admin_login')
 def employeeSetup(request):
@@ -139,7 +125,7 @@ def employeeSetup(request):
             employee_obj.is_active=request.POST.get('is_active')or False
             employee_obj.save()
             messages.add_message(request, messages.SUCCESS, 'Record Updated Successfully')
-            return redirect('employee_list')
+            return redirect('shopkeeper:employee_list')
 
         else:
             print('user Exist',request.POST)
@@ -149,7 +135,7 @@ def employeeSetup(request):
             check_user = User.objects.filter(username=username)
             if check_user.count() == 1:
                 messages.error(request, 'UserName Already Existed')
-                return redirect('employee_setup')
+                return redirect('shopkeeper:employee_setup')
             if password != password1:
                 reg = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!#%*?&]{6,20}$"
                 pat = re.compile(reg)               
@@ -158,9 +144,9 @@ def employeeSetup(request):
                     print("Password is valid.")
                 else:
                     messages.error(request, 'Password Must contains one Capital and One Speceial Char')
-                    return redirect('employee_setup')
+                    return redirect('shopkeeper:employee_setup')
                 messages.error(request, 'Password must be matched!')
-                return redirect('employee_setup')
+                return redirect('shopkeeper:employee_setup')
             user= User.objects.create_user(username=username,password=password)
             user.first_name=request.POST.get('first_name')
             user.last_name=request.POST.get('last_name')
@@ -171,10 +157,11 @@ def employeeSetup(request):
             employee.save()
             user.save()
             messages.success(request, 'Record Created Successfully')
-            return redirect('employee_list')
+            return redirect('shopkeeper:employee_list')
     else:
  
         return render(request, 'shopkeeper/employee/setup.html')
+
 
 @login_required(login_url='shopkeeper:admin_login')
 def employeeUpdate(request,pk):
@@ -182,6 +169,7 @@ def employeeUpdate(request,pk):
     context = {
         'employee_id': employee_obj.id,
         'user': employee_obj.user,
+        'phone_no': employee_obj.phone_no,
         'target_assign': employee_obj.target_assign,
         'target_achieved': employee_obj.target_achieved,
         'description': employee_obj.description,
@@ -196,7 +184,7 @@ def employeeDelete(request,pk):
     employee_obj = Employee.objects.get(id=pk)
     employee_obj.delete()
     messages.add_message(request, messages.SUCCESS, 'Record Deleted Successfully')
-    return redirect('employee_list')
+    return redirect('shopkeeper:employee_list')
 
  
 @login_required(login_url='shopkeeper:admin_login')
@@ -231,7 +219,7 @@ def dukandarSetup(request):
         dukandar_obj.is_active=request.POST.get('is_active')or False
         dukandar_obj.save()
         messages.add_message(request, messages.SUCCESS, 'Record Updated Successfully')
-        return redirect('dukandar_list')
+        return redirect('shopkeeper:dukandar_list')
     else:
       return render(request, 'shopkeeper/dukandar/setup.html')
 @login_required(login_url='shopkeeper:admin_login')
@@ -252,16 +240,21 @@ def dukandarDelete(request,pk):
     dukandar_obj = Shopkeeper.objects.get(id=pk)
     dukandar_obj.delete()
     messages.add_message(request, messages.SUCCESS, 'Record Deleted Successfully')
-    return redirect('dukandar_list')
+    return redirect('shopkeeper:dukandar_list')
 
 
 @login_required(login_url='shopkeeper:admin_login')
 def customerSetup(request):
+
     return render(request, 'shopkeeper/customer/setup.html')
 
 @login_required(login_url='shopkeeper:admin_login')
 def customerList(request):
-    return render(request, 'shopkeeper/customer/list.html')
+    customer_list = Customer.objects.all()
+    context = {
+        'customer_list': customer_list
+    }
+    return render(request, 'shopkeeper/customer/list.html',context)
 
 @login_required(login_url='shopkeeper:admin_login')
 def customerDetail(request):
@@ -272,40 +265,8 @@ def customerDelete(request,pk):
     customer_obj = Customer.objects.get(id=pk)
     customer_obj.delete()
     messages.add_message(request, messages.SUCCESS, 'Record Deleted Successfully')
-    return redirect('employee_list')
+    return redirect('shopkeeper:customer_list')
     return render(request, 'shopkeeper/customer/setup.html')
-
-# @method_decorator(login_required, name='dispatch')
-class EmployeeSetupView(View):
-    def get(self, request, *args, **kwargs):
-        return render(request, 'shopkeeper/customer/setup.html')
-
-    def post(self, request, *args, **kwargs):
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        fname = request.POST.get('fname')
-        lname = request.POST.get('lname')
-        email = request.POST.get('email')
-
-        check_user = User.objects.filter(username=username)
-        if check_user:
-            # messages.error(request, 'Employee Already Existed')
-            messages.add_message(request, messages.ERROR, 'Employee already existed')
-            return render(request, 'shopkeeper/customer/setup.html')
-
-        else:
-            user = User.objects.create_user(username, password)
-            user.first_name = fname
-            user.last_name = lname
-            user.email = email
-            user.is_staff = True
-            user.user_type = 'STAFF'
-            user.save()
-            employee = Employee.objects.create(user=user)
-            employee.save()
-
-        messages.success(request, 'Employee Record Created Successfully ')
-        return redirect('employee_List')
 
 
 # class CustomerSetupView(BSModalCreateView):
@@ -342,7 +303,7 @@ def parent_category_delete(request,pk):
     parent_delete = ParentCategory.objects.get(id=pk)
     parent_delete.delete()
 
-    return redirect('parent_category_list')
+    return redirect('shopkeeper:parent_category_list')
 
 class ParentCategorySetupView(View):
 
@@ -364,16 +325,16 @@ class ParentCategorySetupView(View):
             parent_obj.is_active=request.POST.get('is_active')or False
             parent_obj.save()
             messages.add_message(request, messages.SUCCESS, 'Record Updated Successfully')
-            return redirect('parent_category_list')
+            return redirect('shopkeeper:parent_category_list')
         else:
             form = ParentCategoryForm(request.POST or None, request.FILES or None)
             if form.is_valid():
                 form.save()
                 messages.success(request, 'Record Created Successfully')
-                return redirect('parent_category_list')
+                return redirect('shopkeeper:parent_category_list')
             else:
                 messages.error(request, 'Something Went Wrong')
-                return redirect('parent_category_setup')
+                return redirect('shopkeeper:parent_category_setup')
 
 @login_required(login_url='shopkeeper:admin_login')
 def sub_categoryList(request):
@@ -398,17 +359,17 @@ def sub_categorySetup(request):
             sub_obj.is_active=request.POST.get('is_active')or False
             sub_obj.save()
             messages.add_message(request, messages.SUCCESS, 'Record Updated Successfully')
-            return redirect('parent_sub_category_list')
+            return redirect('shopkeeper:parent_sub_category_list')
 
         else:
             form = SubCategoryForm(request.POST or None, request.FILES or None)
             if form.is_valid():
                 form.save()
                 messages.success(request, 'Record Created Successfully')
-                return redirect('parent_sub_category_list')
+                return redirect('shopkeeper:parent_sub_category_list')
             else:
                 messages.error(request, 'Something Went Wrong')
-                return redirect('parent_sub_category_setup')
+                return redirect('shopkeeper:parent_sub_category_setup')
     else:
         parent_cat_list =ParentCategory.objects.filter(is_active=True)
         context ={
@@ -438,7 +399,7 @@ def sub_categoryDelete(request, pk):
      sub_obj = SubCategory.objects.get(id=pk)
      sub_obj.delete()
      messages.success(request, 'Record Deleted Successfully')
-     return redirect('parent_sub_category_list')
+     return redirect('shopkeeper:parent_sub_category_list')
 
 @login_required(login_url='shopkeeper:admin_login')
 def productList(request):
@@ -467,17 +428,17 @@ def productSetup(request):
             prod_obj.is_active=request.POST.get('is_active')or False
             prod_obj.save()
             messages.add_message(request, messages.SUCCESS, 'Record Updated Successfully')
-            return redirect('product_ist')
+            return redirect('shopkeeper:product_ist')
         else:
             form = ProductForm(request.POST or None, request.FILES or None)
             if form.is_valid():
                 form.save()
                 messages.success(request, 'Record Created Successfully')
-                return redirect('product_ist')
+                return redirect('shopkeeper:product_ist')
             else:
                
                 messages.error(request, 'Something Went Wrong')
-                return redirect('product_setup')
+                return redirect('shopkeeper:product_setup')
 
     else:
         parent_cat_list =ParentCategory.objects.filter(is_active=True)
@@ -528,7 +489,7 @@ def ordersDetails(request, pk):
         orders_obj.status=request.POST['status']
         orders_obj.save()
         messages.success(request, 'Order Status Successfully')
-        return redirect('orders_list')
+        return redirect('shopkeeper:orders_list')
     else:
         orders_obj =Order.objects.get(id=pk)
         context={
@@ -573,7 +534,7 @@ def register(request):
             login(request, user)
 
             messages.add_message(request, messages.SUCCESS, 'Record Update Successfuly')
-            return redirect('index')
+            return redirect('shopkeeper:index')
         else:
             print('Form Error')
             print(form.errors)
@@ -626,3 +587,7 @@ def parent_sub_ajax_data(request):
     }
 
     return JsonResponse(context, status=200)
+
+def admin_logout(request):
+    logout(request)
+    return redirect('shopkeeper:admin_login')

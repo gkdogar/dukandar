@@ -28,120 +28,10 @@ def check(email):
         return False
 
 
-class ProductViewSetApi(viewsets.ViewSet):
-    def list(self, request):
-        product = Product.objects.all()
-        serializer = ProductSerializer(product, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-    def retrieve(self, request, pk=None):
-
-        id = pk
-        if id is not None:
-            product = Product.objects.get(id=id)
-            serializer = ProductSerializer(product)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-
-    def create(self, request):
-        serializer = ProductSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            response = {
-                'message': 'Record Created Successfully !'
-            }
-            return Response(response, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    def update(self, request, pk):
-        id = pk
-        product = Product.objects.get(id=id)
-        serializer = ProductSerializer(product, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            response = {
-                'message': 'Complete Record Update Successfully'
-            }
-            return Response(response, status=status.HTTP_200_OK)
-        return Response(serializer.data, status=status.HTTP_400_BAD_REQUEST)
-
-    def partial_update(self, request, pk):
-        id = pk
-        product = Product.objects.get(id=id)
-        serializer = ProductSerializer(product, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            response = {
-                'message': 'Partial Record Update Successfully'
-            }
-            return Response(response, status=status.HTTP_200_OK)
-        return Response(serializer.data, status=status.HTTP_400_BAD_REQUEST)
-
-    def destroy(self, request, pk):
-        product = Product.objects.get(id=pk)
-        product.delete()
-        response = {
-            'message': 'Record Deleted Successfully'
-        }
-        return Response(response, status=status.HTTP_200_OK)
-
-
-class ProductAPIVIEW(APIView):
-    def get(self, request, pk=None, format=None):
-        id = pk
-        if id is not None:
-            product = Product.objects.get(id=id)
-            serializer = ProductSerializer(product)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        product = Product.objects.all()
-        serializer = ProductSerializer(product, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-    def post(self, request, format=None):
-        serializer = ProductSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            response = {
-                'message': 'Record Created Successfully !'
-            }
-            return Response(response, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    def put(self, request, pk=None, format=None):
-        id = pk
-        product = Product.objects.get(id=id)
-        serializer = ProductSerializer(product, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            response = {
-                'message': 'Record Update Successfully'
-            }
-            return Response(response, status=status.HTTP_200_OK)
-        return Response(serializer.data, status=status.HTTP_400_BAD_REQUEST)
-
-    def patch(self, request, pk=None, format=None):
-        id = pk
-        product = Product.objects.get(id=id)
-        serializer = ProductSerializer(product, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            response = {
-                'message': 'Record Update Successfully'
-            }
-            return Response(response, status=status.HTTP_200_OK)
-        return Response(serializer.data, status=status.HTTP_400_BAD_REQUEST)
-
-    def delete(self, request, pk=None, format=None):
-        product = Product.objects.get(id=pk)
-        product.delete()
-        response = {
-            'message': 'Record Deleted Successfully'
-        }
-        return Response(response, status=status.HTTP_200_OK)
-
 
 class EmployeeViewSetApi(viewsets.ViewSet):
-    # authentication_classes = [JWTAuthentication]
-    # permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
     # def list(self, request):
     #     print('list Employee')
     #     employees = Employee.objects.all()
@@ -149,33 +39,38 @@ class EmployeeViewSetApi(viewsets.ViewSet):
     #     return Response(serializer.data, status=status.HTTP_200_OK)
 
     def retrieve(self, request, pk=None):
-        id = pk
-        if id is not None:
-            employee = Employee.objects.get(id=id)
-            serializer = EmployeeSerializer(employee)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-
-    def create(self, request):
-        print('create Employee', request.POST)
-        serializer = EmployeeSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
+        try:
+                employee = Employee.objects.get(id=pk)
+                serializer = EmployeeSerializer(employee)
+                return Response(serializer.data, status=status.HTTP_200_OK)
+        except Employee.DoesNotExist:
             response = {
-                'message': 'Record Created Successfully !'
+                'message': 'Record Not Found'
             }
-            return Response(response, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(response, status=status.HTTP_200_OK)
+
+    # def create(self, request):
+    #     print('create Employee', request.POST)
+    #     serializer = EmployeeSerializer(data=request.data)
+    #     if serializer.is_valid():
+    #         serializer.save()
+    #         response = {
+    #             'message': 'Record Created Successfully !'
+    #         }
+    #         return Response(response, status=status.HTTP_201_CREATED)
+    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def update(self, request, pk):
-        print("********List*******")
-        print("BaseName:>>", self.basename)
-        print("action:>>", self.action)
-        print("detail:>>", self.detail)
-        print("suffix:>>", self.suffix)
-        print("description:>>", self.description)
-        print("description:>>", self.description)
-        id = pk
+        post_data = request.data
         employee = Employee.objects.get(id=id)
+        user = User.objects.get(id=employee.user.id)
+        user.username = post_data['user']['username']
+        user.first_name = post_data['user']['first_name']
+        user.last_name = post_data['user']['last_name']
+        user.email = post_data['user']['email']
+        user.address = post_data['user']['address']
+        user.user_type = 'SHOPKEEPER'
+        user.save()
         serializer = EmployeeSerializer(employee, data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -186,8 +81,20 @@ class EmployeeViewSetApi(viewsets.ViewSet):
         return Response(serializer.data, status=status.HTTP_400_BAD_REQUEST)
 
     def partial_update(self, request, pk):
-        id = pk
-        employee = Employee.objects.get(id=id)
+        post_data=request.data
+
+        user_data = post_data.get('user', None)
+        if user_data:
+            employee = Employee.objects.get(id=pk)
+            user = User.objects.get(id=employee.user.id)
+            user.username = user_data.get('username', user.username)
+            user.first_name = user_data.get('first_name', user.first_name)
+            user.last_name = user_data.get('last_name', user.last_name)
+            user.email = user_data.get('email', user.email)
+            user.address = user_data.get('address', user.address)
+            user.user_type = 'STAFF'
+            user.save()
+
         serializer = EmployeeSerializer(employee, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
@@ -197,27 +104,35 @@ class EmployeeViewSetApi(viewsets.ViewSet):
             return Response(response, status=status.HTTP_200_OK)
         return Response(serializer.data, status=status.HTTP_400_BAD_REQUEST)
 
-    def destroy(self, request, pk):
-        employee = Employee.objects.get(id=pk)
-        employee.delete()
-        response = {
-            'message': 'Record Deleted Successfully'
-        }
-        return Response(response, status=status.HTTP_200_OK)
+    # def destroy(self, request, pk):
+    #     employee = Employee.objects.get(id=pk)
+    #     employee.delete()
+    #     response = {
+    #         'message': 'Record Deleted Successfully'
+    #     }
+    #     return Response(response, status=status.HTTP_200_OK)
 
 
 class ShopkeeperViewSetApi(viewsets.ViewSet):
-    def list(self, request):
-        dukandar = Shopkeeper.objects.all()
-        serializer = ShopkeeperSerializer(dukandar, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    # def list(self, request):
+    #
+    #     dukandar = Shopkeeper.objects.all()
+    #     serializer = ShopkeeperSerializer(dukandar, many=True)
+    #     return Response(serializer.data, status=status.HTTP_200_OK)
 
     def retrieve(self, request, pk=None):
-        id = pk
-        if id is not None:
-            dukandar = Shopkeeper.objects.get(id=id)
+        authentication_classes = [JWTAuthentication]
+        permission_classes = [IsAuthenticated]
+        try:
+            dukandar = Shopkeeper.objects.get(id=pk)
             serializer = ShopkeeperSerializer(dukandar)
             return Response(serializer.data, status=status.HTTP_200_OK)
+        except Shopkeeper.DoesNotExist:
+            response = {
+                'Message': 'No Record Found'
+            }
+            return Response(response, status=status.HTTP_400_BAD_REQUEST)
 
     def create(self, request):
         try:
@@ -286,6 +201,9 @@ class ShopkeeperViewSetApi(viewsets.ViewSet):
 
 
     def update(self, request, pk):
+        authentication_classes = [JWTAuthentication]
+        permission_classes = [IsAuthenticated]
+
         post_data = request.data
         dukandar = Shopkeeper.objects.get(id=pk)
         user = User.objects.get(id=dukandar.user.id)
@@ -307,6 +225,8 @@ class ShopkeeperViewSetApi(viewsets.ViewSet):
         return Response(serializer.data, status=status.HTTP_400_BAD_REQUEST)
 
     def partial_update(self, request, pk):
+        authentication_classes = [JWTAuthentication]
+        permission_classes = [IsAuthenticated]
         post_data = request.data
         dukandar = Shopkeeper.objects.get(id=pk)
 
@@ -337,8 +257,6 @@ class ShopkeeperViewSetApi(viewsets.ViewSet):
             'message': 'Record Deleted Successfully'
         }
         return Response(response, status=status.HTTP_200_OK)
-
-
 
 
 class CustomerViewSetApi(viewsets.ViewSet):
@@ -394,11 +312,15 @@ class CustomerViewSetApi(viewsets.ViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def retrieve(self, request, pk=None):
-        id = pk
-        if id is not None:
-            customer = Customer.objects.get(id=id)
+        try:
+            customer = Customer.objects.get(id=pk)
             serializer = CustomerSerializer(customer)
             return Response(serializer.data, status=status.HTTP_200_OK)
+        except Customer.DoesNotExist:
+            response = {
+                'message': 'No Record Found'
+            }
+            return Response(response, status=status.HTTP_200_OK)
 
     def update(self, request, pk):
         post_data = request.data
@@ -452,17 +374,26 @@ class CustomerViewSetApi(viewsets.ViewSet):
 
 
 class ProductViewSetApi(viewsets.ViewSet):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
     def list(self, request):
         products = Product.objects.all()
         serializer = ProductSerializer(products, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def retrieve(self, request, pk=None):
-        id = pk
-        if id is not None:
-            product = Product.objects.get(id=id)
+
+        try:
+            product = Product.objects.get(id=pk)
             serializer = ProductSerializer(product)
             return Response(serializer.data, status=status.HTTP_200_OK)
+        except Product.DoesNotExist:
+
+             response = {
+                        'message': 'No Product Found'
+                    }
+
+             return Response(response, status=status.HTTP_200_OK)
 
     # def create(self, request):
     #     serializer = ProductSerializer(data=request.data)
@@ -507,32 +438,6 @@ class ProductViewSetApi(viewsets.ViewSet):
     #     }
     #     return Response(response, status=status.HTTP_200_OK)
 
-
-class UserRegister(viewsets.ViewSet):
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
-
-    def list(self, request):
-        user = request.user
-        if user is not None:
-            users = User.objects.filter(email=user)
-        else:
-            users = User.objects.all()
-        print('user is>> ', users)
-        serializer = UserRegistrationSerializer(users, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-    def create(self, request):
-        print(request.data)
-        serializer = UserRegistrationSerializer(data=request.data)
-        print(serializer)
-        if serializer.is_valid():
-            serializer.save()
-            response = {
-                'message': 'Record Created Successfully !'
-            }
-            return Response(response, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class userRegistration(viewsets.ViewSet):
@@ -602,118 +507,130 @@ class userRegistration(viewsets.ViewSet):
 
 
 class OrderViewSetApi(viewsets.ViewSet):
-    def list(self, request):
-        orders = Order.objects.all()
-        serializer = OrderSerializer(orders, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+    # def list(self, request):
+    #     orders = Order.objects.all()
+    #     serializer = OrderSerializer(orders, many=True)
+    #     return Response(serializer.data, status=status.HTTP_200_OK)
 
     def retrieve(self, request, pk=None):
-        id = pk
-        if id is not None:
+        try:
             order = Order.objects.get(id=id)
             serializer = OrderSerializer(order)
             return Response(serializer.data, status=status.HTTP_200_OK)
+        except Order.DoesNotExist:
+            response = {
+                        'message': 'No Order Found'
+                    }
+            return Response(response, status=status.HTTP_200_OK)
+
+
 
     def create(self, request):
 
-        post_data=request.data
-        
-        customer_id =post_data.get('customer', None)
-        shopkeeper_id =post_data.get('shopkeeper', None)
+        try:
+            post_data=request.data
 
-        if customer_id:
-            try:
-                customer_obj=Customer.objects.get(id=customer_id)
-                if customer_obj:
-                    serializer = OrderSerializer(data=post_data)
-                    
-                    if serializer.is_valid():
+            customer_id =post_data.get('customer', None)
+            shopkeeper_id =post_data.get('shopkeeper', None)
 
-                        serializer.save()
-                        print('serializer',serializer)
-                        response = {
-                        'message': 'Order Created Successfully'
+            if customer_id:
+                try:
+                    customer_obj=Customer.objects.get(id=customer_id)
+                    if customer_obj:
+                        serializer = OrderSerializer(data=post_data)
+
+                        if serializer.is_valid():
+
+                            serializer.save()
+                            print('serializer',serializer)
+                            response = {
+                            'message': 'Order Created Successfully'
+                                }
+                            return Response(response, status=status.HTTP_201_CREATED)
+                except  Customer.DoesNotExist:
+                    response = {
+                        'message': 'Customer with Id Does Not Exist For this Order'
                             }
-                        return Response(response, status=status.HTTP_201_CREATED)  
-            except  Customer.DoesNotExist:
-                response = {
-                    'message': 'Customer with Id Does Not Exist For this Order'
-                        }
-                return Response(response,status=status.HTTP_400_BAD_REQUEST)
-        
-        else:
-            
-            try:
-                shopkeeper_obj=Shopkeeper.objects.get(id=shopkeeper_id)
-                if shopkeeper_obj:
-                    serializer = OrderSerializer(data=post_data)
-                    
-                    if serializer.is_valid():
-                        order =serializer.save()
-                        amount=float(post_data['amount'])
-                        if amount > float(100000) and amount < float(250000):
-                            wallet =Wallet.objects.create(shopkeeper=shopkeeper_obj,order=order,amount=1000)
-                            wallet.save()
-                          
-                        if amount > float(250000) and amount < float(500000):
-                            wallet =Wallet.objects.create(shopkeeper=shopkeeper_obj,order=order,amount=2500)
-                            wallet.save()
-                        if amount > float(500000):
-                            wallet =Wallet.objects.create(shopkeeper=shopkeeper_obj,order=order,amount=7500)
-                            wallet.save()
-                        if amount > float(250000) and amount < float(500000):
-                            spine =Spines.objects.create(shopkeeper=shopkeeper_obj,order=order,amount=1)
-                            spine.save()        
-                        if amount > float(500000) and amount < float(1000000):
-                            spine =Spines.objects.create(shopkeeper=shopkeeper_obj,order=order,amount=2)
-                            spine.save()
-                        response = {
-                        'message': 'Order Created Successfully',
-                        'order_id':order.id
+                    return Response(response,status=status.HTTP_400_BAD_REQUEST)
 
+            else:
+
+                try:
+                    shopkeeper_obj=Shopkeeper.objects.get(id=shopkeeper_id)
+                    if shopkeeper_obj:
+                        serializer = OrderSerializer(data=post_data)
+
+                        if serializer.is_valid():
+                            order =serializer.save()
+                            amount=float(post_data['amount'])
+                            if amount > float(100000) and amount < float(250000):
+                                wallet =Wallet.objects.create(shopkeeper=shopkeeper_obj,order=order,amount=1000)
+                                wallet.save()
+
+                            if amount > float(250000) and amount < float(500000):
+                                wallet =Wallet.objects.create(shopkeeper=shopkeeper_obj,order=order,amount=2500)
+                                wallet.save()
+                            if amount > float(500000):
+                                wallet =Wallet.objects.create(shopkeeper=shopkeeper_obj,order=order,amount=7500)
+                                wallet.save()
+                            if amount > float(250000) and amount < float(500000):
+                                spine =Spines.objects.create(shopkeeper=shopkeeper_obj,order=order,amount=1)
+                                spine.save()
+                            if amount > float(500000) and amount < float(1000000):
+                                spine =Spines.objects.create(shopkeeper=shopkeeper_obj,order=order,amount=2)
+                                spine.save()
+                            response = {
+                            'message': 'Order Created Successfully',
+                            'order_id':order.id
+
+                                }
+                            return Response(response, status=status.HTTP_201_CREATED)
+
+                except  Shopkeeper.DoesNotExist:
+
+                    response = {
+                        'message': 'Shopkeeper with Id Does Not Exist For this Order'
                             }
-                        return Response(response, status=status.HTTP_201_CREATED)  
-                    
-            except  Customer.DoesNotExist:
-                response = {
-                    'message': 'Shopkeeper with Id Does Not Exist For this Order'
-                        }
-                return Response(response,status=status.HTTP_400_BAD_REQUEST)
-        response = {
-                    'message': 'Bad Request'
-                        }
-        return Response(response, status=status.HTTP_400_BAD_REQUEST)
+                    return Response(response,status=status.HTTP_400_BAD_REQUEST)
+        except:
 
-    def update(self, request, pk):
-        print("********List*******")
-        print("BaseName:>>", self.basename)
-        print("action:>>", self.action)
-        print("detail:>>", self.detail)
-        print("suffix:>>", self.suffix)
-        print("description:>>", self.description)
-        print("description:>>", self.description)
-        id = pk
-        order = Order.objects.get(id=id)
-        serializer = OrderSerializer(order, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
             response = {
-                'message': 'Complete Record Update Successfully'
-            }
-            return Response(response, status=status.HTTP_200_OK)
-        return Response(serializer.data, status=status.HTTP_400_BAD_REQUEST)
+                        'message': 'Please Provide Orders Parmeter'
+                            }
+            return Response(response, status=status.HTTP_400_BAD_REQUEST)
 
-    def partial_update(self, request, pk):
-        id = pk
-        order = Order.objects.get(id=id)
-        serializer = OrderSerializer(order, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            response = {
-                'message': 'Partial Record Update Successfully'
-            }
-            return Response(response, status=status.HTTP_200_OK)
-        return Response(serializer.data, status=status.HTTP_400_BAD_REQUEST)
+    # def update(self, request, pk):
+    #     print("********List*******")
+    #     print("BaseName:>>", self.basename)
+    #     print("action:>>", self.action)
+    #     print("detail:>>", self.detail)
+    #     print("suffix:>>", self.suffix)
+    #     print("description:>>", self.description)
+    #     print("description:>>", self.description)
+    #     id = pk
+    #     order = Order.objects.get(id=id)
+    #     serializer = OrderSerializer(order, data=request.data)
+    #     if serializer.is_valid():
+    #         serializer.save()
+    #         response = {
+    #             'message': 'Complete Record Update Successfully'
+    #         }
+    #         return Response(response, status=status.HTTP_200_OK)
+    #     return Response(serializer.data, status=status.HTTP_400_BAD_REQUEST)
+    #
+    # def partial_update(self, request, pk):
+    #     id = pk
+    #     order = Order.objects.get(id=id)
+    #     serializer = OrderSerializer(order, data=request.data, partial=True)
+    #     if serializer.is_valid():
+    #         serializer.save()
+    #         response = {
+    #             'message': 'Partial Record Update Successfully'
+    #         }
+    #         return Response(response, status=status.HTTP_200_OK)
+    #     return Response(serializer.data, status=status.HTTP_400_BAD_REQUEST)
 
     # def destroy(self, request, pk):
     #     order = Order.objects.get(id=pk)

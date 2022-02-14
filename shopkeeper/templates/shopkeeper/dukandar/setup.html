@@ -106,7 +106,13 @@
 
         <script>
         $(document).ready(function () {
-            $('ul').find("li#product_tabs").addClass("active");
+            $('ul').find("li#dukandar_page").addClass("active");
+            $('ul').find("li#dukandar_page").addClass("active");
+            $('ul').find("li#dukandar_page").addClass("active");
+            $('ul').find("li#dukandar_page").find("a").addClass("collapsed");
+            $('ul').find("li#dukandar_page").find("a").attr("aria-expanded","true");
+            $('ul#dukandar_control').addClass('show')
+            $('#du_setup').addClass('active')
             setTimeout(function() {
               $('div.alert').fadeOut('slow');
           }, 5000);
