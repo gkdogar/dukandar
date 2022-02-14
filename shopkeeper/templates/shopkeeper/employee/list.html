@@ -76,6 +76,7 @@
     <script>
         $(document).ready(function () {
             $('ul').find("li#employee_page").addClass("active");
+             $('ul').find("li#employee_page").find('data-target')
             $('#employeeTable').DataTable();
 
         });

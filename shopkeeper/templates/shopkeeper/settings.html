@@ -99,10 +99,7 @@
 
         <script>
         $(document).ready(function () {
-            $('ul').find("li#employee_page").addClass("active");
-            setTimeout(function() {
-              $('div.alert').fadeOut('slow');
-          }, 5000);
+
           $(".checkbox").on('change', function () {
             if ($(this).is(':checked')) {
                 $(this).attr('value', 'True');
@@ -112,6 +109,7 @@
 
             }
         });
+            $('#settings').addClass('active')
         });
     </script>
 {% endblock %}

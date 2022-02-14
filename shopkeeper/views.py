@@ -33,7 +33,9 @@ def admin_login(request):
                 return redirect('shopkeeper:admin_login')
             else:
                 if email_user.user_type == 'SUPER_ADMIN':
+                    print('asaa')
                     login(request, email_user)
+                    print('hello')
                     return redirect('shopkeeper:dashboard')
         else:
             messages.add_message(request, messages.ERROR, 'UserName or Password Not Given')
@@ -73,8 +75,6 @@ def dashboard(request):
     locationlist =[]
     map = folium.Map(location=[31.5204, 74.3587], zoom_start=12)
     df_counters = pd.DataFrame(list(Shopkeeper.objects.all().values('latitude', 'longitude', 'shop_name')))
-
-
     locations = df_counters[['latitude', 'longitude']]
     locationlist = locations.values.tolist()
     for point in range(0, len(locationlist)):
