@@ -491,13 +491,13 @@ def productSetup(request):
             prod_obj.is_active=request.POST.get('is_active')or False
             prod_obj.save()
             messages.add_message(request, messages.SUCCESS, 'Record Updated Successfully')
-            return redirect('shopkeeper:product_ist')
+            return redirect('shopkeeper:product_list')
         else:
             form = ProductForm(request.POST or None, request.FILES or None)
             if form.is_valid():
                 form.save()
                 messages.success(request, 'Record Created Successfully')
-                return redirect('shopkeeper:product_ist')
+                return redirect('shopkeeper:product_list')
             else:
                
                 messages.error(request, 'Something Went Wrong')
