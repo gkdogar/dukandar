@@ -3,6 +3,7 @@ import re
 from numpy import product
 from rest_framework import viewsets
 from rest_framework.decorators import api_view
+from rest_framework.generics import GenericAPIView
 from rest_framework.views import APIView
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from shopkeeper.models.models import *
@@ -12,6 +13,7 @@ from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser, IsAuthenticatedOrReadOnly, \
     DjangoModelPermissions, DjangoModelPermissionsOrAnonReadOnly
 
+from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render
 from rest_framework import viewsets
 from rest_framework.response import Response
@@ -651,3 +653,15 @@ class WalletViewSetApi(viewsets.ViewSet):
             wallet = Wallet.objects.all()
             serializer = OrderSerializer(wallet, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
+
+# class LoginAPI(GenericAPIView):
+#     serializer_class = LoginSerializer
+#     def post(self,request):
+#         username=request.data.get('username')
+#         password = request.data.get('password')
+#         user=authenticate(username=username, password=password)
+#         if user:
+#             serializer =self.serializer_class(user)
+#
+#             return Response(serializer.data, status=status.HTTP_200_OK)
+#         return Response({'message:" Invalid Credentail"'}, status=status.HTTP_401_UNAUTHORIZED)

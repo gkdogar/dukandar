@@ -2,6 +2,10 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from shopkeeper.models.customManager import *
 from django.utils.translation import gettext_lazy as _
+import  jwt
+from django.conf import settings
+from datetime import datetime, timedelta
+
 USER_CHOICES = (
 
     ('SUPER_ADMIN', 'Super Admin'),
@@ -28,6 +32,10 @@ class User(AbstractUser):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    # @property
+    # def token(self):
+    #     token=jwt.encode({'username':self.username, 'email':self.email, 'exp':datetime.utcnow()+timedelta(minutes=15)}, settings.SECRET_KEY, algorithm='HS256')
+    #     return token
    
 
 

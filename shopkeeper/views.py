@@ -1,8 +1,7 @@
-
 from django.shortcuts import render, redirect
 from bootstrap_modal_forms.generic import BSModalCreateView
 # Create your views here.
-from django.contrib.auth import authenticate, login,logout
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from .forms import *
 from .models.models import *
@@ -18,7 +17,7 @@ import json
 
 def admin_login(request):
     if request.method == 'POST':
-        print('request.POST',request.POST)
+        print('request.POST', request.POST)
         username = request.POST['username']
         password = request.POST['password']
         email_user = authenticate(username=username, password=password)
@@ -33,11 +32,10 @@ def admin_login(request):
                 return redirect('shopkeeper:admin_login')
             else:
                 if email_user.user_type == 'SUPER_ADMIN':
-                  
                     login(request, email_user)
                     print('hello')
                     return redirect('shopkeeper:dashboard')
-        
+
                 messages.error(request, "You are Not Admin ! Sorry You Can't Login ")
                 return redirect('shopkeeper:admin_login')
 
@@ -47,50 +45,49 @@ def admin_login(request):
     else:
         return render(request, 'shopkeeper/registration/login.html')
 
+
 @login_required(login_url='shopkeeper:admin_login')
 def admin_settings(request):
-
-        if request.POST:
-            user = User.objects.get(id=request.user.id)
-            user.username= request.POST.get('username')
-            user.first_name= request.POST.get('first_name')
-            user.last_name= request.POST.get('last_name')
-            user.email= request.POST.get('email')
-            user.address= request.POST.get('address')
-            user.save()
-            messages.add_message(request, messages.SUCCESS, 'Record Updated Successfully')
-            return redirect('shopkeeper:admin_setting')
-        else:
-            user = User.objects.get(id=request.user.id)
-            context={
-             'user':user   
-            }
-            return render(request, 'shopkeeper/settings.html',context)    
+    if request.POST:
+        user = User.objects.get(id=request.user.id)
+        user.username = request.POST.get('username')
+        user.first_name = request.POST.get('first_name')
+        user.last_name = request.POST.get('last_name')
+        user.email = request.POST.get('email')
+        user.address = request.POST.get('address')
+        user.save()
+        messages.add_message(request, messages.SUCCESS, 'Record Updated Successfully')
+        return redirect('shopkeeper:admin_setting')
+    else:
+        user = User.objects.get(id=request.user.id)
+        context = {
+            'user': user
+        }
+        return render(request, 'shopkeeper/settings.html', context)
 
 
 @login_required(login_url='shopkeeper:admin_login')
 def dashboard(request):
-    employees=Employee.objects.all().count()
-    customers=Customer.objects.all().count()
-    dukandars_list=Shopkeeper.objects.all()
+    employees = Employee.objects.all().count()
+    customers = Customer.objects.all().count()
+    dukandars_list = Shopkeeper.objects.all()
     dukandars = dukandars_list.count()
-    products=Product.objects.all().count()
-    orders=Order.objects.all().count()
-    total_order=Order.objects.filter(status='DELIVERED')
-    toal_sale=0
+    products = Product.objects.all().count()
+    orders = Order.objects.all().count()
+    total_order = Order.objects.filter(status='DELIVERED')
+    toal_sale = 0
     for t in total_order:
-        toal_sale +=t.amount
-    
+        toal_sale += t.amount
 
-    locationlist =[]
+    locationlist = []
     map = folium.Map(location=[31.5204, 74.3587], zoom_start=12)
-    df_counters = pd.DataFrame(list(Shopkeeper.objects.all().values('latitude', 'longitude', 'shop_name'))) 
+    df_counters = pd.DataFrame(list(Shopkeeper.objects.all().values('latitude', 'longitude', 'shop_name')))
     if not df_counters.empty:
         locations = df_counters[['latitude', 'longitude']]
         locationlist = locations.values.tolist()
         for point in range(0, len(locationlist)):
-            folium.Marker(locationlist[point], popup=df_counters['shop_name'][point], tooltip=df_counters['shop_name'][point]).add_to(map)
-
+            folium.Marker(locationlist[point], popup=df_counters['shop_name'][point],
+                          tooltip=df_counters['shop_name'][point]).add_to(map)
 
     # folium.Marker(location=[31.5047, 74.3315], popup='Default popup Marker1',
     #               tooltip='Click here to see Popup').add_to(map)
@@ -99,64 +96,65 @@ def dashboard(request):
 
     print('mmm', map)
     map = map._repr_html_()
-    context ={
-        'employees':employees,
-        'dukandars':dukandars,
-        'customers':customers,
-        'products':products,
-        'orders':orders,
-        'map':map,
-        'toal_sale':toal_sale
-        
+    context = {
+        'employees': employees,
+        'dukandars': dukandars,
+        'customers': customers,
+        'products': products,
+        'orders': orders,
+        'map': map,
+        'toal_sale': toal_sale
+
     }
-    return render(request, 'shopkeeper/dashboard.html',context)
+    return render(request, 'shopkeeper/dashboard.html', context)
+
 
 @login_required(login_url='shopkeeper:admin_login')
-def employeeList(request): 
-    employee_list =Employee.objects.all()
-    context={
-        'employee_list':employee_list
+def employeeList(request):
+    employee_list = Employee.objects.all()
+    context = {
+        'employee_list': employee_list
     }
-    return render(request, 'shopkeeper/employee/list.html',context)
+    return render(request, 'shopkeeper/employee/list.html', context)
 
 
 @login_required(login_url='shopkeeper:admin_login')
 def employeeSetup(request):
     if request.POST:
-        
+
         employee_id = request.POST.get('employee_id') or None
-        if employee_id :
+        if employee_id:
             employee_obj = Employee.objects.get(id=employee_id)
-            user =User.objects.get(id=employee_obj.user.id)
-            user.username= request.POST.get('username')
-            user.first_name= request.POST.get('first_name')
-            user.last_name= request.POST.get('last_name')
-            user.email= request.POST.get('email')
-            user.address= request.POST.get('address')
+            user = User.objects.get(id=employee_obj.user.id)
+            user.username = request.POST.get('username')
+            user.first_name = request.POST.get('first_name')
+            user.last_name = request.POST.get('last_name')
+            user.email = request.POST.get('email')
+            user.address = request.POST.get('address')
             user.save()
-            employee_obj.user=user
-            employee_obj.phone_no=request.POST.get('phone_no')
-            employee_obj.description=request.POST.get('description')
-            employee_obj.target_assign=request.POST.get('target_assign')
-            employee_obj.target_achieved=request.POST.get('target_achieved')
-            employee_obj.area_designated=request.POST.get('area_designated')
-            employee_obj.is_active=request.POST.get('is_active')or False
+            employee_obj.user = user
+            employee_obj.phone_no = request.POST.get('phone_no')
+            employee_obj.description = request.POST.get('description')
+            employee_obj.target_assign = request.POST.get('target_assign')
+            employee_obj.target_achieved = request.POST.get('target_achieved')
+            employee_obj.area_designated = request.POST.get('area_designated')
+            employee_obj.is_active = request.POST.get('is_active') or False
             employee_obj.save()
             messages.add_message(request, messages.SUCCESS, 'Record Updated Successfully')
             return redirect('shopkeeper:employee_list')
 
         else:
-            print('user Exist',request.POST)
-            username= request.POST.get('username')
-            password= request.POST.get('password')
-            password1= request.POST.get('password1')
+            print('user Exist', request.POST)
+            username = request.POST.get('username')
+            password = request.POST.get('password')
+            password1 = request.POST.get('password1')
             check_user = User.objects.filter(username=username)
             if check_user.count() == 1:
                 messages.error(request, 'UserName Already Existed')
                 return redirect('shopkeeper:employee_setup')
             if password != password1:
                 reg = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!#%*?&]{6,20}$"
-                pat = re.compile(reg)               
+                pat = re.compile(reg)
                 mat = re.search(pat, password)
                 if mat:
                     print("Password is valid.")
@@ -165,24 +163,29 @@ def employeeSetup(request):
                     return redirect('shopkeeper:employee_setup')
                 messages.error(request, 'Password must be matched!')
                 return redirect('shopkeeper:employee_setup')
-            user= User.objects.create_user(username=username,password=password)
-            user.first_name=request.POST.get('first_name')
-            user.last_name=request.POST.get('last_name')
-            user.email=request.POST.get('email')
-            user.address=request.POST.get('address')
-            user.user_type='STAFF'
-            employee=Employee.objects.create(user=user, phone_no =request.POST.get('phone_no'), target_assign=request.POST.get('target_assign'), target_achieved=request.POST.get('target_achieved'), area_designated=request.POST.get('area_designated'), description =request.POST.get('description'),is_active =request.POST.get('is_active') or False)
+            user = User.objects.create_user(username=username, password=password)
+            user.first_name = request.POST.get('first_name')
+            user.last_name = request.POST.get('last_name')
+            user.email = request.POST.get('email')
+            user.address = request.POST.get('address')
+            user.user_type = 'STAFF'
+            employee = Employee.objects.create(user=user, phone_no=request.POST.get('phone_no'),
+                                               target_assign=request.POST.get('target_assign'),
+                                               target_achieved=request.POST.get('target_achieved'),
+                                               area_designated=request.POST.get('area_designated'),
+                                               description=request.POST.get('description'),
+                                               is_active=request.POST.get('is_active') or False)
             employee.save()
             user.save()
             messages.success(request, 'Record Created Successfully')
             return redirect('shopkeeper:employee_list')
     else:
- 
+
         return render(request, 'shopkeeper/employee/setup.html')
 
 
 @login_required(login_url='shopkeeper:admin_login')
-def employeeUpdate(request,pk):
+def employeeUpdate(request, pk):
     employee_obj = Employee.objects.get(id=pk)
     context = {
         'employee_id': employee_obj.id,
@@ -195,69 +198,72 @@ def employeeUpdate(request,pk):
         'is_active': employee_obj.is_active,
     }
 
-    return render(request, 'shopkeeper/employee/setup.html',context)
+    return render(request, 'shopkeeper/employee/setup.html', context)
+
 
 @login_required(login_url='shopkeeper:admin_login')
-def employeeDelete(request,pk):
+def employeeDelete(request, pk):
     employee_obj = Employee.objects.get(id=pk)
     employee_obj.delete()
     messages.add_message(request, messages.SUCCESS, 'Record Deleted Successfully')
     return redirect('shopkeeper:employee_list')
 
- 
+
 @login_required(login_url='shopkeeper:admin_login')
 def dukandarList(request):
-    dukandars_list=Shopkeeper.objects.all()
-    order_list=None
+    dukandars_list = Shopkeeper.objects.all()
+    order_list = None
+    walet_list = None
+    spines_list = None
     for dukan in dukandars_list:
-      order_list =Order.objects.filter(shopkeeper=dukan.id) 
-      walet_list =Wallet.objects.filter(shopkeeper=dukan.id)
-      spines_list = Spines.objects.filter(shopkeeper=dukan.id)
+        order_list = Order.objects.filter(shopkeeper=dukan.id)
+        walet_list = Wallet.objects.filter(shopkeeper=dukan.id)
+        spines_list = Spines.objects.filter(shopkeeper=dukan.id)
 
-
-    context ={
-        'dukandars_list':dukandars_list,
-        'order_list':order_list,
-        'walet_list':walet_list,
-        'spines_list':spines_list
+    context = {
+        'dukandars_list': dukandars_list,
+        'order_list': order_list,
+        'walet_list': walet_list,
+        'spines_list': spines_list
     }
-    return render(request, 'shopkeeper/dukandar/list.html',context)
+    return render(request, 'shopkeeper/dukandar/list.html', context)
+
 
 @login_required(login_url='shopkeeper:admin_login')
 def dukandarSetup(request):
-    
     if request.POST:
         dukandar_id = request.POST.get('dukandar_id') or None
         dukandar_obj = Shopkeeper.objects.get(id=dukandar_id)
-        print('dukandar_obj',dukandar_obj)
-        user =User.objects.get(id=dukandar_obj.user.id)
-        user.username= request.POST.get('username')
-        user.first_name= request.POST.get('first_name')
-        user.last_name= request.POST.get('last_name')
-        user.email= request.POST.get('email')
-        user.address= request.POST.get('address')
-        user.email= request.POST.get('email')
+        print('dukandar_obj', dukandar_obj)
+        user = User.objects.get(id=dukandar_obj.user.id)
+        user.username = request.POST.get('username')
+        user.first_name = request.POST.get('first_name')
+        user.last_name = request.POST.get('last_name')
+        user.email = request.POST.get('email')
+        user.address = request.POST.get('address')
+        user.email = request.POST.get('email')
         user.save()
-        dukandar_obj.user=user
-        dukandar_obj.shop_name=request.POST.get('shop_name')
-        dukandar_obj.phone_no=request.POST.get('phone_no')
-        dukandar_obj.description=request.POST.get('description')
+        dukandar_obj.user = user
+        dukandar_obj.shop_name = request.POST.get('shop_name')
+        dukandar_obj.phone_no = request.POST.get('phone_no')
+        dukandar_obj.description = request.POST.get('description')
         # dukandar_obj.latitude=request.POST.get('first_name')
         # dukandar_obj.longitude=request.POST.get('first_name')
-        dukandar_obj.is_active=request.POST.get('is_active')or False
+        dukandar_obj.is_active = request.POST.get('is_active') or False
         dukandar_obj.save()
         messages.add_message(request, messages.SUCCESS, 'Record Updated Successfully')
         return redirect('shopkeeper:dukandar_list')
     else:
-      return render(request, 'shopkeeper/dukandar/setup.html')
+        return render(request, 'shopkeeper/dukandar/setup.html')
+
 
 @login_required(login_url='shopkeeper:admin_login')
 def dukandarUpdate(request, pk):
     dukandar_obj = Shopkeeper.objects.get(id=pk)
     context = {
-        'dukandar_id':dukandar_obj.id,
+        'dukandar_id': dukandar_obj.id,
         'emp_id': dukandar_obj.emp_id,
-         'user': dukandar_obj.user,
+        'user': dukandar_obj.user,
         'shop_name': dukandar_obj.shop_name,
         'phone_no': dukandar_obj.phone_no,
         'description': dukandar_obj.description,
@@ -265,8 +271,9 @@ def dukandarUpdate(request, pk):
     }
     return render(request, 'shopkeeper/dukandar/setup.html', context)
 
+
 @login_required(login_url='shopkeeper:admin_login')
-def dukandarDelete(request,pk):
+def dukandarDelete(request, pk):
     dukandar_obj = Shopkeeper.objects.get(id=pk)
     dukandar_obj.delete()
     messages.add_message(request, messages.SUCCESS, 'Record Deleted Successfully')
@@ -326,7 +333,8 @@ def customerSetup(request):
             messages.success(request, 'Record Created Successfully')
             return redirect('shopkeeper:customer_list')
     else:
-         return render(request, 'shopkeeper/customer/setup.html')
+        return render(request, 'shopkeeper/customer/setup.html')
+
 
 @login_required(login_url='shopkeeper:admin_login')
 def customerList(request):
@@ -334,14 +342,16 @@ def customerList(request):
     context = {
         'customer_list': customer_list
     }
-    return render(request, 'shopkeeper/customer/list.html',context)
+    return render(request, 'shopkeeper/customer/list.html', context)
+
 
 @login_required(login_url='shopkeeper:admin_login')
 def customerDetail(request):
     return render(request, 'shopkeeper/customer/setup.html')
 
+
 @login_required(login_url='shopkeeper:admin_login')
-def customerDelete(request,pk):
+def customerDelete(request, pk):
     customer_obj = Customer.objects.get(id=pk)
     customer_obj.delete()
     messages.add_message(request, messages.SUCCESS, 'Record Deleted Successfully')
@@ -356,18 +366,18 @@ def customerDelete(request,pk):
 #     success_url = reverse_lazy('index')
 @login_required(login_url='shopkeeper:admin_login')
 def parent_category_list(request):
-    parent_list=ParentCategory.objects.all()
-    context={
-        'parent_list':parent_list
+    parent_list = ParentCategory.objects.all()
+    context = {
+        'parent_list': parent_list
     }
     return render(request, 'shopkeeper/parent/list.html', context)
 
+
 @login_required(login_url='shopkeeper:admin_login')
 def parent_category_detail(request, pk):
-
     parent_obj = ParentCategory.objects.get(id=pk)
     context = {
-        'paren_id':parent_obj.id,
+        'paren_id': parent_obj.id,
         'name': parent_obj.name,
         'description': parent_obj.description,
         'meta_keywords': parent_obj.meta_keywords,
@@ -378,12 +388,14 @@ def parent_category_detail(request, pk):
     }
     return render(request, 'shopkeeper/product/parent_category_setup.html', context)
 
+
 @login_required(login_url='shopkeeper:admin_login')
-def parent_category_delete(request,pk):
+def parent_category_delete(request, pk):
     parent_delete = ParentCategory.objects.get(id=pk)
     parent_delete.delete()
 
     return redirect('shopkeeper:parent_category_list')
+
 
 class ParentCategorySetupView(View):
 
@@ -393,16 +405,16 @@ class ParentCategorySetupView(View):
 
     def post(self, request, *args, **kwargs):
 
-        paren_id =request.POST.get('paren_id') or None
+        paren_id = request.POST.get('paren_id') or None
         if paren_id:
             parent_obj = ParentCategory.objects.get(id=paren_id)
-            img =parent_obj.image
-            parent_obj.name=request.POST.get('name')
+            img = parent_obj.image
+            parent_obj.name = request.POST.get('name')
             parent_obj.description = request.POST.get('description')
             parent_obj.meta_keywords = request.POST.get('meta_keywords')
             parent_obj.meta_description = request.POST.get('meta_description')
-            parent_obj.image=request.FILES.get('image') or img
-            parent_obj.is_active=request.POST.get('is_active')or False
+            parent_obj.image = request.FILES.get('image') or img
+            parent_obj.is_active = request.POST.get('is_active') or False
             parent_obj.save()
             messages.add_message(request, messages.SUCCESS, 'Record Updated Successfully')
             return redirect('shopkeeper:parent_category_list')
@@ -416,27 +428,30 @@ class ParentCategorySetupView(View):
                 messages.error(request, 'Something Went Wrong')
                 return redirect('shopkeeper:parent_category_setup')
 
+
 @login_required(login_url='shopkeeper:admin_login')
 def sub_categoryList(request):
-    sub_category_list=SubCategory.objects.all()
-    context={
-        'sub_category_list':sub_category_list
+    sub_category_list = SubCategory.objects.all()
+    context = {
+        'sub_category_list': sub_category_list
     }
     return render(request, 'shopkeeper/sub/list.html', context)
+
+
 @login_required(login_url='shopkeeper:admin_login')
 def sub_categorySetup(request):
     if request.POST:
-        sub_id =request.POST.get('sub_id') or None
+        sub_id = request.POST.get('sub_id') or None
         if sub_id:
             sub_obj = SubCategory.objects.get(id=sub_id)
-            img =sub_obj.image
+            img = sub_obj.image
             sub_obj.parent = ParentCategory.objects.get(id=request.POST.get('parent'))
-            sub_obj.name=request.POST.get('name')
+            sub_obj.name = request.POST.get('name')
             sub_obj.description = request.POST.get('description')
             sub_obj.meta_keywords = request.POST.get('meta_keywords')
             sub_obj.meta_description = request.POST.get('meta_description')
-            sub_obj.image=request.FILES.get('image') or img
-            sub_obj.is_active=request.POST.get('is_active')or False
+            sub_obj.image = request.FILES.get('image') or img
+            sub_obj.is_active = request.POST.get('is_active') or False
             sub_obj.save()
             messages.add_message(request, messages.SUCCESS, 'Record Updated Successfully')
             return redirect('shopkeeper:parent_sub_category_list')
@@ -451,20 +466,21 @@ def sub_categorySetup(request):
                 messages.error(request, 'Something Went Wrong')
                 return redirect('shopkeeper:parent_sub_category_setup')
     else:
-        parent_cat_list =ParentCategory.objects.filter(is_active=True)
-        context ={
-            'parent_cat_list':parent_cat_list
+        parent_cat_list = ParentCategory.objects.filter(is_active=True)
+        context = {
+            'parent_cat_list': parent_cat_list
         }
-        return render(request, 'shopkeeper/sub/setup.html',context)
+        return render(request, 'shopkeeper/sub/setup.html', context)
+
 
 @login_required(login_url='shopkeeper:admin_login')
 def sub_categoryUpdate(request, pk):
     sub_obj = SubCategory.objects.get(id=pk)
-    parent_cat_list =ParentCategory.objects.all()
+    parent_cat_list = ParentCategory.objects.all()
     context = {
-        'parent_cat_list':parent_cat_list,
-        'sub_id':sub_obj.id,
-        'parent_id':sub_obj.parent.id,
+        'parent_cat_list': parent_cat_list,
+        'sub_id': sub_obj.id,
+        'parent_id': sub_obj.parent.id,
         'name': sub_obj.name,
         'description': sub_obj.description,
         'meta_keywords': sub_obj.meta_keywords,
@@ -474,38 +490,40 @@ def sub_categoryUpdate(request, pk):
     }
     return render(request, 'shopkeeper/sub/setup.html', context)
 
+
 @login_required(login_url='shopkeeper:admin_login')
 def sub_categoryDelete(request, pk):
-     sub_obj = SubCategory.objects.get(id=pk)
-     sub_obj.delete()
-     messages.success(request, 'Record Deleted Successfully')
-     return redirect('shopkeeper:parent_sub_category_list')
+    sub_obj = SubCategory.objects.get(id=pk)
+    sub_obj.delete()
+    messages.success(request, 'Record Deleted Successfully')
+    return redirect('shopkeeper:parent_sub_category_list')
+
 
 @login_required(login_url='shopkeeper:admin_login')
 def productList(request):
-    products_list =Product.objects.all()
-    context={
-        'products_list':products_list
+    products_list = Product.objects.all()
+    context = {
+        'products_list': products_list
     }
     return render(request, 'shopkeeper/product/list.html', context)
 
+
 @login_required(login_url='shopkeeper:admin_login')
 def productSetup(request):
-
     if request.POST:
-        product_id =request.POST.get('product_id') or None
+        product_id = request.POST.get('product_id') or None
         if product_id:
             prod_obj = Product.objects.get(id=product_id)
-            img =prod_obj.image
+            img = prod_obj.image
             prod_obj.parent = ParentCategory.objects.get(id=request.POST.get('parent'))
             prod_obj.sub_cat = SubCategory.objects.get(id=request.POST.get('sub_cat'))
-            prod_obj.name=request.POST.get('name')
+            prod_obj.name = request.POST.get('name')
             prod_obj.description = request.POST.get('description')
             prod_obj.price = request.POST.get('price')
             prod_obj.quantity = request.POST.get('quantity')
             prod_obj.discount = request.POST.get('discount')
-            prod_obj.image=request.FILES.get('image') or img
-            prod_obj.is_active=request.POST.get('is_active')or False
+            prod_obj.image = request.FILES.get('image') or img
+            prod_obj.is_active = request.POST.get('is_active') or False
             prod_obj.save()
             messages.add_message(request, messages.SUCCESS, 'Record Updated Successfully')
             return redirect('shopkeeper:product_list')
@@ -516,30 +534,31 @@ def productSetup(request):
                 messages.success(request, 'Record Created Successfully')
                 return redirect('shopkeeper:product_list')
             else:
-               
+
                 messages.error(request, 'Something Went Wrong')
                 return redirect('shopkeeper:product_setup')
 
     else:
-        parent_cat_list =ParentCategory.objects.filter(is_active=True)
-        parent_sub_list=SubCategory.objects.filter(is_active=True)
-        context={
-            'parent_cat_list':parent_cat_list,
-            'parent_sub_list':parent_sub_list
+        parent_cat_list = ParentCategory.objects.filter(is_active=True)
+        parent_sub_list = SubCategory.objects.filter(is_active=True)
+        context = {
+            'parent_cat_list': parent_cat_list,
+            'parent_sub_list': parent_sub_list
         }
-        return render(request, 'shopkeeper/product/setup.html',context)
+        return render(request, 'shopkeeper/product/setup.html', context)
+
 
 @login_required(login_url='shopkeeper:admin_login')
 def productUpdate(request, pk):
     prod_obj = Product.objects.get(id=pk)
-    parent_cat_list =ParentCategory.objects.filter(is_active=True)
-    parent_sub_list=SubCategory.objects.filter(is_active=True)
+    parent_cat_list = ParentCategory.objects.filter(is_active=True)
+    parent_sub_list = SubCategory.objects.filter(is_active=True)
     context = {
-        'parent_cat_list':parent_cat_list,
-        'parent_sub_list':parent_sub_list,
-        'product_id':prod_obj.id,
-        'parent_id':prod_obj.parent.id,
-        'sub_cat_id':prod_obj.sub_cat.id,
+        'parent_cat_list': parent_cat_list,
+        'parent_sub_list': parent_sub_list,
+        'product_id': prod_obj.id,
+        'parent_id': prod_obj.parent.id,
+        'sub_cat_id': prod_obj.sub_cat.id,
         'name': prod_obj.name,
         'image': prod_obj.image,
         'description': prod_obj.description,
@@ -550,48 +569,55 @@ def productUpdate(request, pk):
     }
     return render(request, 'shopkeeper/product/setup.html', context)
 
+
 @login_required(login_url='shopkeeper:admin_login')
 def productDelete(request):
     return render(request, 'shopkeeper/product/setup.html')
 
+
 @login_required(login_url='shopkeeper:admin_login')
 def ordersList(request):
-    orders_list =Order.objects.all()
-    context={
-        'orders_list':orders_list
+    orders_list = Order.objects.all()
+    context = {
+        'orders_list': orders_list
     }
-    return render(request, 'shopkeeper/order/list.html',context)
+    return render(request, 'shopkeeper/order/list.html', context)
+
 
 @login_required(login_url='shopkeeper:admin_login')
 def ordersDetails(request, pk):
     if request.POST:
-        orders_obj =Order.objects.get(id=pk)
-        orders_obj.status=request.POST['status']
+        orders_obj = Order.objects.get(id=pk)
+        orders_obj.status = request.POST['status']
         orders_obj.save()
         messages.success(request, 'Order Status Successfully')
         return redirect('shopkeeper:orders_list')
     else:
-        orders_obj =Order.objects.get(id=pk)
-        context={
-            'order_id':orders_obj.id,
+        orders_obj = Order.objects.get(id=pk)
+        context = {
+            'order_id': orders_obj.id,
             'product': orders_obj.product,
-            'dukandar':orders_obj.shopkeeper,
+            'dukandar': orders_obj.shopkeeper,
             # 'customer':orders_obj.customer,
             'order_date': orders_obj.order_date,
-            'amount':orders_obj.amount,
-            'order_upto':orders_obj.order_upto,
+            'amount': orders_obj.amount,
+            'order_upto': orders_obj.order_upto,
             'quantity': orders_obj.quantity,
-            'status':orders_obj.status,
+            'status': orders_obj.status,
 
         }
-        return render(request, 'shopkeeper/order/detail.html',context)
+        return render(request, 'shopkeeper/order/detail.html', context)
+
+
 @login_required(login_url='shopkeeper:admin_login')
 def walletList(request):
     return render(request, 'shopkeeper/wallet/list.html')
 
+
 @login_required(login_url='shopkeeper:admin_login')
 def spinesList(request):
     return render(request, 'shopkeeper/spins/list.html')
+
 
 @login_required(login_url='shopkeeper:admin_login')
 def register(request):
@@ -602,7 +628,7 @@ def register(request):
         if form.is_valid() and shopkeeper_form.is_valid():
             user = form.save()
             print('user >', user)
-            user.user_type='SHOPKEEPER'
+            user.user_type = 'SHOPKEEPER'
             print('userId >', user.id)
             shopkeeper = shopkeeper_form.save(commit=False)
             shopkeeper.user = user
@@ -632,43 +658,46 @@ def register(request):
     }
     return render(request, 'shopkeeper/dukandar/setup.html', context)
 
+
 @login_required(login_url='shopkeeper:admin_login')
 def google_map(request):
-
-    locationlist=[]
+    locationlist = []
     # for point in range(0, len(locationlist)):
     #     folium.Marker(locationlist[point], popup=df_counters['Name'][point]).add_to(map)
-    
-    m=folium.Map(location=[31.5204, 74.3587], zoom_start=12)
+
+    m = folium.Map(location=[31.5204, 74.3587], zoom_start=12)
 
     folium.Marker(location=[31.5047, 74.3315], popup='Default popup Marker1',
                   tooltip='Click here to see Popup').add_to(m)
     folium.Marker(location=[31.511996, 74.343018], popup='Default popup Marker1',
                   tooltip='Click here to see Popup').add_to(m)
 
-
-    print('mmm',m)
+    print('mmm', m)
     m = m._repr_html_()
-    context={
-        'map':m
+    context = {
+        'map': m
     }
 
     return render(request, 'shopkeeper/dukandar/google_map.html', context)
+
+
 @login_required(login_url='shopkeeper:admin_login')
 def parent_sub_ajax_data(request):
-    parentID= json.loads(str(request.POST.get('parentID')))
-    parent_sub_list =SubCategory.objects.filter(parent=parentID, is_active=True)
-    sub_list=[]
+    parentID = json.loads(str(request.POST.get('parentID')))
+    parent_sub_list = SubCategory.objects.filter(parent=parentID, is_active=True)
+    sub_list = []
     for sub in parent_sub_list:
         sub_list.append({
-            'id':sub.id,
-            'name':sub.name
+            'id': sub.id,
+            'name': sub.name
         })
-    context={
-           'parent_sub_list': json.dumps(sub_list)
+    context = {
+        'parent_sub_list': json.dumps(sub_list)
     }
 
     return JsonResponse(context, status=200)
+
+
 @login_required(login_url='shopkeeper:admin_login')
 def admin_logout(request):
     logout(request)
