@@ -76,6 +76,12 @@ def dashboard(request):
     dukandars = dukandars_list.count()
     products=Product.objects.all().count()
     orders=Order.objects.all().count()
+    total_order=Order.objects.filter(status='DELIVERED')
+    toal_sale=0
+    for t in total_order:
+        toal_sale +=t.amount
+    
+
     locationlist =[]
     map = folium.Map(location=[31.5204, 74.3587], zoom_start=12)
     df_counters = pd.DataFrame(list(Shopkeeper.objects.all().values('latitude', 'longitude', 'shop_name'))) 
@@ -99,7 +105,8 @@ def dashboard(request):
         'customers':customers,
         'products':products,
         'orders':orders,
-        'map':map
+        'map':map,
+        'toal_sale':toal_sale
         
     }
     return render(request, 'shopkeeper/dashboard.html',context)
