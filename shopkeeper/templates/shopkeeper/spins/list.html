@@ -8,7 +8,71 @@
 {% endblock %}
 
 {% block content %}
-<h1> Spines List</h1>
+<div class="container">
+        <h1 class="text-center mt-5 mb-5 font-weight-bold">Spines List</h1>
+
+            {% if messages %}
+                {% for message in messages %}
+                    <div {% if message.tags %}class="alert alert-{{ message.tags }}" {% endif %} role="alert">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+
+        <div class="row">
+
+          <div class="col-12">
+            {% comment %} <a type="submit" href="{% url 'product_setup' %}" class="btn btn-primary float-right mb-1" name="employee">Add
+                Product</a> {% endcomment %}
+              <table class="table" id="spine_table">
+                <thead class="thead-dark">
+                <tr>
+                    <th scope="col">#</th>
+
+                    <th scope="col">Dukandar Name</th>
+
+                    <th scope="col">Order Date</th>
+                    <th scope="col">Amount</th>
+                    <th scope="col">Spine No</th>
+                     <th scope="col">Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                {% for spine in spine_list %}
+
+                    <tr>
+                        <th scope="row">{{ forloop.counter }}</th>
+
+                        <td>{{ spine.shopkeeper.user.first_name }} {{ spine.shopkeeper.user.last_name }}</td>
+
+
+                        <td>{{ spine.order.order_date }}</td>
+                        <td>{{ spine.amount }}</td>
+                        <td>{{ spine.spine_no }}</td>
+
+
+
+                     <td>
+                        <a href="{% url 'shopkeeper:order_details'  order.id %}" class="mr-3" data-toggle="tooltip" title="Hooray!"> <i class="fas fa-trash-alt"  style="color:red;"></i></a>
+                        <a href="{% url 'shopkeeper:order_details'  order.id %}">  <i class="fas fa-edit" style="color:blue;"></i></a>
+                    </td>
+                    </tr>
+                {% endfor %}
+
+
+                </tbody>
+            </table>
+
+
+          </div>
+
+        </div>
+
+      </div>
+
+
 
       <script>
         $(document).ready(function () {
@@ -20,6 +84,7 @@
             $('ul').find("li#dukandar_page").find("a").attr("aria-expanded","true");
             $('ul#dukandar_control').addClass('show')
             $('#du_spine').addClass('active')
+              $('#spine_table').DataTable();
 
         });
     </script>

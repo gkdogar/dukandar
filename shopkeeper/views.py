@@ -611,12 +611,20 @@ def ordersDetails(request, pk):
 
 @login_required(login_url='shopkeeper:admin_login')
 def walletList(request):
-    return render(request, 'shopkeeper/wallet/list.html')
+    wallet_list=Wallet.objects.all()
+    context ={
+        'wallet_list':wallet_list,
+    }
+    return render(request, 'shopkeeper/wallet/list.html',context)
 
 
 @login_required(login_url='shopkeeper:admin_login')
 def spinesList(request):
-    return render(request, 'shopkeeper/spins/list.html')
+    spine_list = Spines.objects.all()
+    context = {
+        'spine_list': spine_list,
+    }
+    return render(request, 'shopkeeper/spins/list.html',context)
 
 
 @login_required(login_url='shopkeeper:admin_login')
