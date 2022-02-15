@@ -38,6 +38,7 @@
                     <th scope="col">Location</th>
                     <th scope="col">Added by Employee</th>
                     <th scope="col">Order's</th>
+                    <th scope="col">Wallet</th>
                     <th scope="col">Spines</th>
                     <th scope="col">Actions</th>
                     
@@ -53,14 +54,26 @@
                     <td>{{dukandar.user.email}}</td>
                     <td>{{dukandar.phone_no}}</td>
                     <td>{{dukandar.shop_name}}</td>
-                    <td></td>
+                    <td>{{dukandar.user.address}}</td>
                     
                     <td>{{dukandar.emp_id.user.first_name}} {{dukandar.emp_id.user.last_name}}</td>
-                    <td></td>
-                    <td></td>
+
+                    <td> {% for ord in order_list %}
+                      <a href="{% url 'shopkeeper:order_details' ord.id %}" data-toggle="tooltip" title="View Order Detail!"> {{ord.amount}}</a>
+                    {% endfor %}</td>
+                    <td>
+                      {% for wal in walet_list %}
+                       {{wal.amount}}
+                      {% endfor %}
+                    </td>
+                    <td>
+                      {% for spin in spines_list %}
+                      {{spin.amount}}
+                     {% endfor %}
+                    </td>
                     <td>
 
-                        <a href="{% url 'shopkeeper:dukandar_update' dukandar.id %}" class="mr-3" data-toggle="tooltip" title="Hooray!"> <i class="fas fa-trash-alt"  style="color:red;"></i></a>
+                        <a href="{% url 'shopkeeper:dukandar_update' dukandar.id %}" class="mr-3" data-toggle="tooltip" title="Edit Record"> <i class="fas fa-trash-alt"  style="color:red;"></i></a>
                         <a href="{% url 'shopkeeper:dukandar_update'  dukandar.id %}">  <i class="fas fa-edit" style="color:blue;"></i></a>
                     </td>
                   </tr>

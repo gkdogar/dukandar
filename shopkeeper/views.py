@@ -208,8 +208,18 @@ def employeeDelete(request,pk):
 @login_required(login_url='shopkeeper:admin_login')
 def dukandarList(request):
     dukandars_list=Shopkeeper.objects.all()
+    order_list=None
+    for dukan in dukandars_list:
+      order_list =Order.objects.filter(shopkeeper=dukan.id) 
+      walet_list =Wallet.objects.filter(shopkeeper=dukan.id)
+      spines_list = Spines.objects.filter(shopkeeper=dukan.id)
+
+
     context ={
-        'dukandars_list':dukandars_list
+        'dukandars_list':dukandars_list,
+        'order_list':order_list,
+        'walet_list':walet_list,
+        'spines_list':spines_list
     }
     return render(request, 'shopkeeper/dukandar/list.html',context)
 
