@@ -45,18 +45,21 @@ def check(email):
 
 
 class EmployeeViewSetApi(viewsets.ViewSet):
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
+    # authentication_classes = [JWTAuthentication]
+    # permission_classes = [IsAuthenticated]
 
-    # def list(self, request):
-    #     print('list Employee')
-    #     employees = Employee.objects.all()
-    #     serializer = EmployeeSerializer(employees, many=True)
-    #     return Response(serializer.data, status=status.HTTP_200_OK)
+    def list(self, request):
+        print('list Employee')
+
+        # employees = Employee.objects.all()
+        # serializer = EmployeeSerializer(employees, many=True)
+        return Response(status=status.HTTP_200_OK)
 
     def retrieve(self, request, pk=None):
+        tokenCheck(request)
         try:
-            employee = Employee.objects.get(id=pk)
+            user = User.objects.get(id=pk)
+            employee = Employee.objects.get(user=user)
             serializer = EmployeeSerializer(employee)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Employee.DoesNotExist:
@@ -77,14 +80,16 @@ class EmployeeViewSetApi(viewsets.ViewSet):
     #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def update(self, request, pk):
+        tokenCheck(request)
         post_data = request.data
-        employee = Employee.objects.get(id=id)
-        user = User.objects.get(id=employee.user.id)
-        user.username = post_data['user']['username']
-        user.first_name = post_data['user']['first_name']
-        user.last_name = post_data['user']['last_name']
-        user.email = post_data['user']['email']
-        user.address = post_data['user']['address']
+        user = User.objects.get(id=pk)
+        employee = Employee.objects.get(user=user)
+        user.first_name = post_data['first_name']
+        user.last_name = post_data['last_name']
+        user.email = post_data['email']
+        user.address = post_data['address']
+        user.city = post_data['city']
+        user.phone_no = post_data['phone_no']
         user.user_type = 'SHOPKEEPER'
         user.save()
         serializer = EmployeeSerializer(employee, data=request.data)
@@ -97,19 +102,18 @@ class EmployeeViewSetApi(viewsets.ViewSet):
         return Response(serializer.data, status=status.HTTP_400_BAD_REQUEST)
 
     def partial_update(self, request, pk):
+        tokenCheck(request)
         post_data = request.data
-
-        user_data = post_data.get('user', None)
-        if user_data:
-            employee = Employee.objects.get(id=pk)
-            user = User.objects.get(id=employee.user.id)
-            user.username = user_data.get('username', user.username)
-            user.first_name = user_data.get('first_name', user.first_name)
-            user.last_name = user_data.get('last_name', user.last_name)
-            user.email = user_data.get('email', user.email)
-            user.address = user_data.get('address', user.address)
-            user.user_type = 'STAFF'
-            user.save()
+        user = User.objects.get(id=pk)
+        employee = Employee.objects.get(user=user)
+        user.first_name = post_data.get('first_name', user.first_name)
+        user.last_name = post_data.get('last_name', user.last_name)
+        user.email = post_data.get('email', user.email)
+        user.address = post_data.get('address', user.address)
+        user.city = post_data.get('city', user.username)
+        user.phone_no = post_data.get('phone_no', user.username)
+        user.user_type = 'STAFF'
+        user.save()
 
         serializer = EmployeeSerializer(employee, data=request.data, partial=True)
         if serializer.is_valid():
@@ -341,6 +345,7 @@ class CustomerViewSetApi(viewsets.ViewSet):
             return Response(response, status=status.HTTP_200_OK)
 
     def update(self, request, pk):
+        tokenCheck(request)
 
         post_data = request.data
         print('post_data Update', post_data)
@@ -368,6 +373,7 @@ class CustomerViewSetApi(viewsets.ViewSet):
         return Response(serializer.data, status=status.HTTP_400_BAD_REQUEST)
 
     def partial_update(self, request, pk):
+        tokenCheck(request)
         post_data = request.data
         customer = Customer.objects.get(id=pk)
         user = User.objects.get(id=customer.user.id)

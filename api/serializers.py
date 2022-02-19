@@ -38,7 +38,7 @@ class EmployeeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Employee
-        fields = ['user','target_assign','target_achieved','area_designated','phone_no','description']
+        fields = ['user','target_assign','target_achieved','area_designated','description']
 
 
 class CustomerSerializer(serializers.ModelSerializer):

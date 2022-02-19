@@ -29,12 +29,9 @@
     <div class="row">
     
       <div class="col-4">
-        <div class="form-group ">
-          <input type="hidden" name="employee_id" value="{{ employee_id }}">
-            <label for="exampleInputusername">Username</label>
-            <input type="text" class="form-control" id="username" name="username", value="{{user.username}}" >
-          </div>
-          <div class="form-group mt-1">
+
+          <div class="form-group">
+                 <input type="hidden" name="employee_id" value="{{ employee_id }}">
             <label for="exampleInputEmail1">Email address</label>
             <input type="email" class="form-control" id="exampleInputEmail1" name="email" value="{{user.email}}">
             
@@ -47,16 +44,16 @@
             <label for="exampleInputPassword1">Re Password</label>
             <input type="password" class="form-control" id="exampleInputPassword1" name="password1">
           </div>
-         
+           <div class="form-group mt-1">
+            <label for="exampleInputFirst_Name">First Name</label>
+            <input type="text" class="form-control" id="first_name" name="first_name" value="{{user.first_name}}">
+
+          </div>
    
       </div>
       <div class="col-4">
       
-        <div class="form-group mt-1">
-            <label for="exampleInputFirst_Name">First Name</label>
-            <input type="text" class="form-control" id="first_name" name="first_name" value="{{user.first_name}}">
-           
-          </div>
+
             <div class="form-group mt-1">
               <label for="exampleInputlast_name">Last Name</label>
               <input type="text" class="form-control" id="last_name" name="last_name" value="{{user.last_name}}">
@@ -68,21 +65,26 @@
                 {% comment %} <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea> {% endcomment %}
                 <input type="text" class="form-control" id="address" name="address" value="{{user.address}}">
               </div>
+
               <div class="form-group mt-1">
                 <label for="exampleInputphone_no">Phone#</label>
-                <input type="text" class="form-control" id="phone_no"  name="phone_no"  value="{{phone_no}}">
+                <input type="text" class="form-control" id="phone_no"  name="phone_no"  value="{{user.phone_no}}">
               </div>
-           
+           <div class="form-group mt-1">
+          <label for="exampleInputdescription">Description</label>
+          <input type="text" class="form-control" id="description"  name="description"  value="{{description}}">
+        </div>
               
 
            
       </div>
       <div class="col-4">
-        <div class="form-group mt-1">
-          <label for="exampleInputdescription">Description</label>
-          <input type="text" class="form-control" id="description"  name="description"  value="{{description}}">
+
+    <div class="form-group mt-1">
+            <label for="city">City</label>
+            <input type="text" class="form-control" id="phone_no" aria-describedby="city" name="city"
+                  value="{{user.city}}">
         </div>
-   
         <div class="form-group mt-1">
             <label for="exampleInputarea_designated">Area Designate</label>
             <input type="text" class="form-control" id="area_designated"  name="area_designated" value="{{area_designated}}">
@@ -95,7 +97,7 @@
             <label for="exampleInputtarget_achieved">Target Achieved</label>
             <input type="text" class="form-control" id="target_achieved"  name="target_achieved" value="{{target_achieved}}">
           </div>
-          <div class="form-check mt-5">
+          <div class="form-check mt-4">
             <input type="checkbox" class="form-check-input checkbox" id="is_active"
             name="is_active" {% if is_active %} checked
             value="True"   {% endif %} value="False">

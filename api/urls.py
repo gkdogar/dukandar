@@ -12,7 +12,7 @@ from rest_framework_simplejwt.views import (
 
 # router.register('user', views.UserRegister,basename='user')
 # router.register('account/registration', views.userRegistration,basename='registration')
-router.register('employee', views.EmployeeViewSetApi, basename='employees')
+
 router.register('dukandar', views.ShopkeeperViewSetApi, basename='dukandar')
 router.register('customer', views.CustomerViewSetApi, basename='customers')
 router.register('parent/category/list', views.ParentCategoryView, basename='parentCategory')
@@ -21,6 +21,7 @@ router.register('products/list', views.ProductViewSetApi, basename='products')
 router.register('orders', views.OrderViewSetApi, basename='orders')
 router.register('wallet', views.WalletViewSetApi, basename='wallet')
 router.register('spines', views.SpinesViewSetApi, basename='spines')
+router.register('employee', views.EmployeeViewSetApi, basename='employee')
 
 # router.register('login', views.LoginAPI.as_view(),basename='Login_User')
 app_name = 'api'

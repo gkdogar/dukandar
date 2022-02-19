@@ -126,14 +126,15 @@ def employeeSetup(request):
         if employee_id:
             employee_obj = Employee.objects.get(id=employee_id)
             user = User.objects.get(id=employee_obj.user.id)
-            user.username = request.POST.get('username')
             user.first_name = request.POST.get('first_name')
             user.last_name = request.POST.get('last_name')
             user.email = request.POST.get('email')
             user.address = request.POST.get('address')
+            user.city = request.POST.get('city')
+            user.phone_no = request.POST.get('phone_no')
             user.save()
             employee_obj.user = user
-            employee_obj.phone_no = request.POST.get('phone_no')
+
             employee_obj.description = request.POST.get('description')
             employee_obj.target_assign = request.POST.get('target_assign')
             employee_obj.target_achieved = request.POST.get('target_achieved')
@@ -145,10 +146,10 @@ def employeeSetup(request):
 
         else:
             print('user Exist', request.POST)
-            username = request.POST.get('username')
+            email = request.POST.get('email')
             password = request.POST.get('password')
             password1 = request.POST.get('password1')
-            check_user = User.objects.filter(username=username)
+            check_user = User.objects.filter(email=email)
             if check_user.count() == 1:
                 messages.error(request, 'UserName Already Existed')
                 return redirect('shopkeeper:employee_setup')
@@ -163,13 +164,15 @@ def employeeSetup(request):
                     return redirect('shopkeeper:employee_setup')
                 messages.error(request, 'Password must be matched!')
                 return redirect('shopkeeper:employee_setup')
-            user = User.objects.create_user(username=username, password=password)
+            user = User.objects.create_user(email=email, password=password)
             user.first_name = request.POST.get('first_name')
             user.last_name = request.POST.get('last_name')
             user.email = request.POST.get('email')
             user.address = request.POST.get('address')
+            user.city = request.POST.get('city')
+            user.phone_no = request.POST.get('phone_no')
             user.user_type = 'STAFF'
-            employee = Employee.objects.create(user=user, phone_no=request.POST.get('phone_no'),
+            employee = Employee.objects.create(user=user,
                                                target_assign=request.POST.get('target_assign'),
                                                target_achieved=request.POST.get('target_achieved'),
                                                area_designated=request.POST.get('area_designated'),
@@ -190,7 +193,6 @@ def employeeUpdate(request, pk):
     context = {
         'employee_id': employee_obj.id,
         'user': employee_obj.user,
-        'phone_no': employee_obj.phone_no,
         'target_assign': employee_obj.target_assign,
         'target_achieved': employee_obj.target_achieved,
         'description': employee_obj.description,
