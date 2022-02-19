@@ -22,7 +22,10 @@ CATEGORY_FOR_CHOICES = (('BRAND', 'For Brand'), ('RETAIL', 'For Retail'),
                         ('CULTURE', 'For Culture'), ('AUTO', 'For Auto'))
 
 class User(AbstractUser):
+
+    city = models.CharField(max_length=250, null=True)
     address = models.CharField(max_length=250, null=True)
+    phone_no = models.CharField(max_length=250, null=True)
     user_type = models.CharField(max_length=16,
                                  choices=USER_CHOICES,
                                  default="CUSTOMER")
@@ -31,24 +34,27 @@ class User(AbstractUser):
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    email = models.EmailField(_('email address'), unique=True)
+    username = None
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = []
 
-    # @property
-    # def token(self):
-    #     token=jwt.encode({'username':self.username, 'email':self.email, 'exp':datetime.utcnow()+timedelta(minutes=15)}, settings.SECRET_KEY, algorithm='HS256')
-    #     return token
-   
+    @property
+    def token(self):
+        token=jwt.encode({'email':self.email, 'exp':datetime.utcnow()+timedelta(minutes=15)}, settings.SECRET_KEY, algorithm='HS256')
+        return token
+    objects = UserManager()
 
 
 
     def __str__(self):
-        return self.first_name + ' ' + self.last_name
+        return self.email
 
 class Employee(models.Model):
-    user = models.OneToOneField(User, related_name='user', on_delete=models.CASCADE, null=False)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, related_name='user', on_delete=models.CASCADE, null=False)
     target_assign = models.CharField(max_length=10, null=True)
     target_achieved = models.CharField(max_length=10, null=True)
     area_designated = models.CharField(max_length=250, null=True, blank=True)
-    phone_no = models.CharField(max_length=20, null=True)
     description = models.TextField(null=True)
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -62,7 +68,7 @@ class Employee(models.Model):
 
 class Customer(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=False)
-    phone_no = models.CharField(max_length=20, null=True)
+
     is_active = models.BooleanField(default=True)
 
     def __str__(self):
@@ -72,7 +78,6 @@ class Shopkeeper(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=False)
     emp_id = models.ForeignKey(Employee, on_delete=models.CASCADE, null=True )
     shop_name = models.CharField(max_length=255, null=False)
-    phone_no = models.CharField(max_length=20, null=False)
     description = models.TextField(null=False)
     latitude = models.CharField(max_length=50, null=False)
     longitude = models.CharField(max_length=50, null=False)

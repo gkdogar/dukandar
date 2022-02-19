@@ -17,7 +17,7 @@ class ExtendUserCreationForm(UserCreationForm):
 
     class Meta:
         model =User
-        fields =('username', 'email','first_name','last_name')
+        fields =('email','first_name','last_name')
 
     def save(self, commit=True):
         user =super().save(commit=False)
@@ -34,7 +34,7 @@ class ShopkeeperForm(ModelForm):
 
     class Meta:
         model =Shopkeeper
-        fields=('emp_id', 'shop_name', 'phone_no','description')
+        fields=('emp_id', 'shop_name','description')
 
 class ParentCategoryForm(ModelForm):
 
