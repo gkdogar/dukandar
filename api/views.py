@@ -1,4 +1,6 @@
 import re
+from copy import deepcopy
+
 from numpy import product
 from django.conf import settings
 from datetime import datetime, timedelta
@@ -49,6 +51,7 @@ class EmployeeViewSetApi(viewsets.ViewSet):
     # permission_classes = [IsAuthenticated]
 
     def list(self, request):
+        tokenCheck(request)
         print('list Employee')
 
         # employees = Employee.objects.all()
@@ -135,17 +138,20 @@ class EmployeeViewSetApi(viewsets.ViewSet):
 
 class ShopkeeperViewSetApi(viewsets.ViewSet):
 
-    # def list(self, request):
-    #
-    #     dukandar = Shopkeeper.objects.all()
-    #     serializer = ShopkeeperSerializer(dukandar, many=True)
-    #     return Response(serializer.data, status=status.HTTP_200_OK)
+    def list(self, request):
+
+        dukandar = Shopkeeper.objects.all()
+        serializer = ShopkeeperSerializer(dukandar, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
 
     def retrieve(self, request, pk=None):
-        authentication_classes = [JWTAuthentication]
-        permission_classes = [IsAuthenticated]
+        # authentication_classes = [JWTAuthentication]
+        # permission_classes = [IsAuthenticated]
+        tokenCheck(request)
         try:
-            dukandar = Shopkeeper.objects.get(id=pk)
+            user = User.objects.get(id=pk)
+            dukandar = Shopkeeper.objects.get(user=user)
             serializer = ShopkeeperSerializer(dukandar)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Shopkeeper.DoesNotExist:
@@ -156,14 +162,12 @@ class ShopkeeperViewSetApi(viewsets.ViewSet):
 
     def create(self, request):
         try:
-
             post_data = request.data
-            username = post_data['username']
             email = post_data['email']
-            user_exist = User.objects.filter(username=username)
+            user_exist = User.objects.filter(email=email)
             if user_exist:
                 response = {
-                    'Error': 'Same User Name is already Existed ' + username
+                    'Message': 'Email is Already Existed'
                 }
                 return Response(response, status=status.HTTP_400_BAD_REQUEST)
             validate_email = check(email)
@@ -181,25 +185,27 @@ class ShopkeeperViewSetApi(viewsets.ViewSet):
                 return Response(response, status=status.HTTP_400_BAD_REQUEST)
             try:
                 employ_id = post_data.get('emp_id', None)
-                copyied_dict = post_data.copy()
-                print('emp_exitsss')
-                employee_obj = Employee.objects.get(id=employ_id)
-                print('emp_exit', employee_obj)
+                emp_user =User.objects.get(email=employ_id)
+                employee_obj=Employee.objects.get(user=emp_user)
+
+
+
                 if employee_obj:
-                    user = User.objects.create(username=post_data['username'], password=post_data['password'],
-                                               email=post_data['email'], first_name=post_data['first_name'],
-                                               last_name='last_name',
-                                               address=post_data['address'])
+                    user = User.objects.create_user(email=post_data['email'],password=post_data['password'])
+                    user.first_name=post_data['first_name'],
+                    user.last_name = post_data['last_name'],
+                    user.address=post_data['address']
+                    user.city = post_data['city'],
+                    user.phone_no = post_data['phone_no']
                     user.user_type = 'SHOPKEEPER'
                     user.save()
-                    employee = Employee.objects.get(id=post_data['emp_id'])
                     dukandar = Shopkeeper.objects.create(user=user, shop_name=post_data['shop_name'],
-                                                         phone_no=post_data['phone_no'], latitude=post_data['latitude'],
+                                                        latitude=post_data['latitude'],
                                                          longitude=post_data['longitude'], emp_id=employee_obj)
                     dukandar.save()
             except Employee.DoesNotExist:
                 response = {
-                    'message': 'Employee Does Not Exist'
+                    'message': 'Employee with this Email Does Not Exist'
                 }
                 return Response(response, status=status.HTTP_400_BAD_REQUEST)
 
@@ -207,33 +213,40 @@ class ShopkeeperViewSetApi(viewsets.ViewSet):
             print(serializer)
 
             response = {
-                'message': 'Record Created Successfully !'
+                'message': 'Record ddCreated Successfully !'
             }
             return Response(response, status=status.HTTP_201_CREATED)
 
-        except User.DoesNotExist:
-            response = {
-                'message': 'User Already Exist'
-            }
-
-            return Response(response, status=status.HTTP_400_BAD_REQUEST)
+        except:
+            serializer = ShopkeeperSerializer(data=request.data)
+            if serializer.is_valid():
+                response = {
+                    'message': 'Something Went Wrong'
+                }
+                return Response(response, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def update(self, request, pk):
-        authentication_classes = [JWTAuthentication]
-        permission_classes = [IsAuthenticated]
 
         post_data = request.data
-        dukandar = Shopkeeper.objects.get(id=pk)
+        dukandar = Shopkeeper.objects.get(user=pk)
         user = User.objects.get(id=dukandar.user.id)
-        user.username = post_data['user']['username']
-        user.first_name = post_data['user']['first_name']
-        user.last_name = post_data['user']['last_name']
-        user.email = post_data['user']['email']
-        user.address = post_data['user']['address']
+
+        user.email = post_data['email']
+        user.first_name = post_data['first_name']
+        user.last_name = post_data['last_name']
+        user.city = post_data['city']
+        user.address = post_data['address']
+        user.phone_no = post_data['phone_no']
         user.user_type = 'SHOPKEEPER'
         user.save()
 
-        serializer = ShopkeeperSerializer(dukandar, data=request.data)
+
+        user_obj =User.objects.get(email=post_data['emp_id'])
+        employee =Employee.objects.get(user=user_obj)
+        dukandar.emp_id=employee
+        dukandar.save()
+        serializer = ShopkeeperSerializer(dukandar,data=post_data)
         if serializer.is_valid():
             serializer.save()
             response = {
@@ -243,22 +256,20 @@ class ShopkeeperViewSetApi(viewsets.ViewSet):
         return Response(serializer.data, status=status.HTTP_400_BAD_REQUEST)
 
     def partial_update(self, request, pk):
-        authentication_classes = [JWTAuthentication]
-        permission_classes = [IsAuthenticated]
-        post_data = request.data
-        dukandar = Shopkeeper.objects.get(id=pk)
 
-        user_data = post_data.get('user', None)
-        if user_data:
-            dukandar = Shopkeeper.objects.get(id=pk)
-            user = User.objects.get(id=dukandar.user.id)
-            user.username = user_data.get('username', user.username)
-            user.first_name = user_data.get('first_name', user.first_name)
-            user.last_name = user_data.get('last_name', user.last_name)
-            user.email = user_data.get('email', user.email)
-            user.address = user_data.get('address', user.address)
-            user.user_type = 'SHOPKEEPER'
-            user.save()
+        post_data = request.data
+
+        dukandar = Shopkeeper.objects.get(user=pk)
+        user = User.objects.get(id=dukandar.user.id)
+        user.email = post_data.get('email', user.email)
+
+        user.first_name = post_data.get('first_name', user.first_name)
+        user.last_name = post_data.get('last_name', user.last_name)
+        user.address = post_data.get('address', user.address)
+        user.city = post_data.get('city', user.city)
+        user.phone_no = post_data.get('phone_no', user.phone_no)
+        user.user_type = 'SHOPKEEPER'
+        user.save()
         serializer = ShopkeeperSerializer(dukandar, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()

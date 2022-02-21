@@ -71,16 +71,20 @@ class CustomerSerializer(serializers.ModelSerializer):
 
 class ShopkeeperSerializer(serializers.ModelSerializer):
     user = UserRegistrationSerializer(many=False, read_only=True)
+    email = serializers.CharField(style={'input_type': 'email'}, write_only=True)
     first_name = serializers.CharField(style={'input_type': 'text'}, write_only=True)
     last_name = serializers.CharField(style={'input_type': 'text'}, write_only=True)
     address = serializers.CharField(style={'input_type': 'text'}, write_only=True)
+    city = serializers.CharField(style={'input_type': 'text'}, write_only=True)
+    phone_no = serializers.CharField(style={'input_type': 'text'}, write_only=True)
+    # emp_id = EmployeeSerializer(many=False, read_only=True)
     password = serializers.CharField(style={'input_type': 'password'}, write_only=True)
     password2 = serializers.CharField(style={'input_type': 'password'}, write_only=True)
 
     class Meta:
         model = Shopkeeper
-        fields = ['id','user', 'emp_id', 'shop_name', 'phone_no', 'description', 'latitude', 'longitude',
-                  'last_name', 'password', 'password2','address', 'first_name']
+        fields = ['id','user','email', 'first_name', 'last_name','address','city','phone_no', 'emp_id', 'shop_name','description', 'latitude', 'longitude',
+                  'password', 'password2']
         # fields = '__all__'
         # depth = 1
 

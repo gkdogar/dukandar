@@ -89,7 +89,7 @@ class Shopkeeper(models.Model):
         ordering = ['user']
 
     def __str__(self):
-        return self.user.username
+        return str(self.user.email)
 
 class ParentCategory(models.Model):
     name = models.CharField(max_length=100, null=False)
