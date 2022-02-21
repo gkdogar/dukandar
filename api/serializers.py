@@ -164,6 +164,12 @@ class LoginSerializer(serializers.ModelSerializer):
         fields = ['email', 'password', 'token']
         read_only_fields=['token']
 
+class GiftSpineSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = GiftSpin
+        fields = ['name', 'quantity', 'amount']
+
 
 #
 # class MyTokenObtainPairSerializer(TokenObtainPairSerializer):

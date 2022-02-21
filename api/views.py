@@ -227,7 +227,7 @@ class ShopkeeperViewSetApi(viewsets.ViewSet):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def update(self, request, pk):
-
+        tokenCheck(request)
         post_data = request.data
         dukandar = Shopkeeper.objects.get(user=pk)
         user = User.objects.get(id=dukandar.user.id)
@@ -256,7 +256,7 @@ class ShopkeeperViewSetApi(viewsets.ViewSet):
         return Response(serializer.data, status=status.HTTP_400_BAD_REQUEST)
 
     def partial_update(self, request, pk):
-
+        tokenCheck(request)
         post_data = request.data
 
         dukandar = Shopkeeper.objects.get(user=pk)
@@ -671,6 +671,17 @@ class WalletViewSetApi(viewsets.ViewSet):
         wallet = Wallet.objects.all()
         serializer = OrderSerializer(wallet, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+class GiftSpineViewSetApi(viewsets.ViewSet):
+
+    def list(self, request):
+        tokenCheck(request)
+        gifts = GiftSpin.objects.all()
+        serializer = GiftSpineSerializer(gifts, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+
 
 
 class LoginAPI(GenericAPIView):

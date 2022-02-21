@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from shopkeeper.models.customManager import *
 from django.utils.translation import gettext_lazy as _
-import  jwt
+import jwt
 from django.conf import settings
 from datetime import datetime, timedelta
 
@@ -15,14 +15,14 @@ USER_CHOICES = (
 )
 
 ORDER_CHOICES = (('CANCELLED', 'cancelled'), ('DELIVERED', 'delivered '),
-                        ('PROCESSING', 'processing'),
-                        )
+                 ('PROCESSING', 'processing'),
+                 )
 CATEGORY_FOR_CHOICES = (('BRAND', 'For Brand'), ('RETAIL', 'For Retail'),
                         ('WSALE', 'For Whole Sale'),
                         ('CULTURE', 'For Culture'), ('AUTO', 'For Auto'))
 
-class User(AbstractUser):
 
+class User(AbstractUser):
     city = models.CharField(max_length=250, null=True)
     address = models.CharField(max_length=250, null=True)
     phone_no = models.CharField(max_length=250, null=True)
@@ -41,14 +41,15 @@ class User(AbstractUser):
 
     @property
     def token(self):
-        token=jwt.encode({'email':self.email, 'exp':datetime.utcnow()+timedelta(minutes=15)}, settings.SECRET_KEY, algorithm='HS256')
+        token = jwt.encode({'email': self.email, 'exp': datetime.utcnow() + timedelta(minutes=15)}, settings.SECRET_KEY,
+                           algorithm='HS256')
         return token
+
     objects = UserManager()
-
-
 
     def __str__(self):
         return self.email
+
 
 class Employee(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, related_name='user', on_delete=models.CASCADE, null=False)
@@ -66,6 +67,7 @@ class Employee(models.Model):
     def __str__(self):
         return str(self.user.first_name + ' ' + self.user.last_name)
 
+
 class Customer(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=False)
 
@@ -74,9 +76,10 @@ class Customer(models.Model):
     def __str__(self):
         return str(self.user.first_name + ' ' + self.user.last_name)
 
+
 class Shopkeeper(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=False)
-    emp_id = models.ForeignKey(Employee, on_delete=models.CASCADE, null=True )
+    emp_id = models.ForeignKey(Employee, on_delete=models.CASCADE, null=True)
     shop_name = models.CharField(max_length=255, null=False)
     description = models.TextField(null=False)
     latitude = models.CharField(max_length=50, null=False)
@@ -90,6 +93,7 @@ class Shopkeeper(models.Model):
 
     def __str__(self):
         return str(self.user.email)
+
 
 class ParentCategory(models.Model):
     name = models.CharField(max_length=100, null=False)
@@ -106,6 +110,7 @@ class ParentCategory(models.Model):
 
     def __str__(self):
         return self.name + " - " + self.category_for
+
 
 class SubCategory(models.Model):
     parent = models.ForeignKey(ParentCategory,
@@ -124,6 +129,7 @@ class SubCategory(models.Model):
 
     def __str__(self):
         return str(self.name)
+
 
 class Product(models.Model):
     # shopkeeper = models.ForeignKey(Shopkeeper, on_delete=models.CASCADE)
@@ -153,61 +159,63 @@ class Product(models.Model):
     def __str__(self):
         return self.name
 
+
 class Order(models.Model):
     product = models.ForeignKey(Product,
-                               on_delete=models.CASCADE,
-                               null=True)
+                                on_delete=models.CASCADE,
+                                null=True)
     shopkeeper = models.ForeignKey(Shopkeeper,
-                               on_delete=models.CASCADE,
-                               null=True,
-                               blank=True
-                               )
-    customer = models.ForeignKey(Customer,
                                    on_delete=models.CASCADE,
-                                    blank=True,
-                                   null=True)
+                                   null=True,
+                                   blank=True
+                                   )
+    customer = models.ForeignKey(Customer,
+                                 on_delete=models.CASCADE,
+                                 blank=True,
+                                 null=True)
     order_date = models.DateTimeField(auto_now=True)
     amount = models.BigIntegerField()
     order_upto = models.DecimalField(default=0, max_digits=7, decimal_places=2)
     quantity = models.IntegerField(default=0)
-    status=models.CharField(choices=ORDER_CHOICES,
-                                    max_length=12,
-                                    default='PROCESSING')
+    status = models.CharField(choices=ORDER_CHOICES,
+                              max_length=12,
+                              default='PROCESSING')
 
     def __str__(self):
         return str(self.order_date)
 
-class OrderHistory(models.Model):
 
+class OrderHistory(models.Model):
     previouse_order = models.ForeignKey(Order,
-                               on_delete=models.CASCADE,
-                             )
+                                        on_delete=models.CASCADE,
+                                        )
     product = models.ForeignKey(Product,
-                               on_delete=models.CASCADE,
-                               null=True)
+                                on_delete=models.CASCADE,
+                                null=True)
     shopkeeper = models.ForeignKey(Shopkeeper,
-                               on_delete=models.CASCADE,
-                               null=True)
-    cutomer = models.ForeignKey(Customer,
                                    on_delete=models.CASCADE,
                                    null=True)
+    cutomer = models.ForeignKey(Customer,
+                                on_delete=models.CASCADE,
+                                null=True)
     order_date = models.DateTimeField(auto_now=True)
     amount = models.IntegerField(default=0)
-    order_upto =  models.IntegerField(default=0)
+    order_upto = models.IntegerField(default=0)
     quantity = models.IntegerField(default=0)
-    status=models.CharField(choices=ORDER_CHOICES,
-                                    max_length=12,
-                                    default='PROCESSING')
+    status = models.CharField(choices=ORDER_CHOICES,
+                              max_length=12,
+                              default='PROCESSING')
+
 
 class Discount(models.Model):
     product = models.ForeignKey(Product,
-                               on_delete=models.CASCADE,
-                               null=True,
-                               related_name = 'discount_on_product',
-    )
-    shopkeeper = models.ForeignKey(Shopkeeper,
                                 on_delete=models.CASCADE,
-                                null=True)
+                                null=True,
+                                related_name='discount_on_product',
+                                )
+    shopkeeper = models.ForeignKey(Shopkeeper,
+                                   on_delete=models.CASCADE,
+                                   null=True)
     discount = models.IntegerField(default=0)
     start_from = models.DateTimeField(auto_now=True)
     end_from = models.DateTimeField(auto_now=True)
@@ -215,43 +223,56 @@ class Discount(models.Model):
     def __str__(self):
         return self.discount
 
+
 class Wallet(models.Model):
     shopkeeper = models.ForeignKey(Shopkeeper,
-                                on_delete=models.CASCADE,
-                                null=True)
+                                   on_delete=models.CASCADE,
+                                   null=True)
     order = models.ForeignKey(Order,
-                                on_delete=models.CASCADE,
-                                null=True)
+                              on_delete=models.CASCADE,
+                              null=True)
     amount = models.IntegerField(default=0)
 
     def __str__(self):
         return str(self.amount)
 
+
 class Complaint(models.Model):
     shopkeeper = models.ForeignKey(Shopkeeper,
-                                on_delete=models.CASCADE,
-                                null=True)
-    employee = models.ForeignKey(Employee,
                                    on_delete=models.CASCADE,
                                    null=True)
+    employee = models.ForeignKey(Employee,
+                                 on_delete=models.CASCADE,
+                                 null=True)
     order = models.ForeignKey(Order,
-                                on_delete=models.CASCADE,
-                                null=True)
+                              on_delete=models.CASCADE,
+                              null=True)
     message = models.CharField(max_length=255, null=False)
 
     def __str__(self):
         return self.message
 
+
 class Spines(models.Model):
     shopkeeper = models.ForeignKey(Shopkeeper,
-                                on_delete=models.CASCADE,
-                                null=True)
+                                   on_delete=models.CASCADE,
+                                   null=True)
     order = models.ForeignKey(Order,
-                                on_delete=models.CASCADE,
-                                null=True)
+                              on_delete=models.CASCADE,
+                              null=True)
     amount = models.IntegerField(default=0)
 
-    spine_no = models.CharField(max_length=20, null=True)
+    spine_no = models.IntegerField(default=0)
 
     def __str__(self):
         return str(self.amount)
+
+
+class GiftSpin(models.Model):
+    name = models.CharField(max_length=250, null=True)
+    quantity = models.IntegerField(default=0)
+    amount= models.IntegerField(default=0)
+    shopkeeper = models.ForeignKey(Shopkeeper,
+                                   on_delete=models.CASCADE,
+                                   null=True, blank=True)
+

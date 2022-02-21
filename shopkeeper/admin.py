@@ -21,7 +21,7 @@ class UserAdmin(ImportExportModelAdmin, DjangoUserAdmin):
     search_fields = ('email', 'first_name', 'last_name', 'user_type')
     ordering = ('email', )
 
-
+admin.site.register(GiftSpin)
 admin.site.register(Shopkeeper)
 admin.site.register(Employee)
 admin.site.register(Customer)
