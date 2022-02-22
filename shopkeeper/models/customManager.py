@@ -45,5 +45,5 @@ class UserManager(BaseUserManager):
 #
 #     USERNAME_FIELD = 'email'
 #     REQUIRED_FIELDS = []
-#
+
 #     objects = UserManager()

@@ -17,30 +17,28 @@ import json
 
 def admin_login(request):
     if request.method == 'POST':
-        print('request.POST', request.POST)
-        username = request.POST['username']
+        email = request.POST['email']
         password = request.POST['password']
-        email_user = authenticate(username=username, password=password)
-        print('email_user', email_user)
+        email_user = authenticate(email=email, password=password)
         if email_user:
-            check_user = User.objects.filter(username=email_user)
-            if (username is None) or (password is None):
+            check_user = User.objects.filter(email=email_user)
+            if (email is None) or (password is None):
                 messages.error(request, "Email or Password not given")
                 return redirect('shopkeeper:admin_login')
-            elif (password is None) and (username is None):
+            elif (password is None) and (email is None):
                 messages.error(request, "Credentials can't be empty")
                 return redirect('shopkeeper:admin_login')
             else:
                 if email_user.user_type == 'SUPER_ADMIN':
                     login(request, email_user)
-                    print('hello')
+                    
                     return redirect('shopkeeper:dashboard')
 
                 messages.error(request, "You are Not Admin ! Sorry You Can't Login ")
                 return redirect('shopkeeper:admin_login')
 
         else:
-            messages.add_message(request, messages.ERROR, 'UserName or Password Not Given')
+            messages.add_message(request, messages.ERROR, 'Email or Password not Given')
             return redirect('shopkeeper:admin_login')
     else:
         return render(request, 'shopkeeper/registration/login.html')
@@ -50,10 +48,11 @@ def admin_login(request):
 def admin_settings(request):
     if request.POST:
         user = User.objects.get(id=request.user.id)
-        user.username = request.POST.get('username')
+       
         user.first_name = request.POST.get('first_name')
         user.last_name = request.POST.get('last_name')
         user.email = request.POST.get('email')
+        user.city = request.POST.get('city')
         user.address = request.POST.get('address')
         user.save()
         messages.add_message(request, messages.SUCCESS, 'Record Updated Successfully')
@@ -126,14 +125,15 @@ def employeeSetup(request):
         if employee_id:
             employee_obj = Employee.objects.get(id=employee_id)
             user = User.objects.get(id=employee_obj.user.id)
-            user.username = request.POST.get('username')
             user.first_name = request.POST.get('first_name')
             user.last_name = request.POST.get('last_name')
             user.email = request.POST.get('email')
             user.address = request.POST.get('address')
+            user.city = request.POST.get('city')
+            user.phone_no = request.POST.get('phone_no')
             user.save()
             employee_obj.user = user
-            employee_obj.phone_no = request.POST.get('phone_no')
+
             employee_obj.description = request.POST.get('description')
             employee_obj.target_assign = request.POST.get('target_assign')
             employee_obj.target_achieved = request.POST.get('target_achieved')
@@ -145,10 +145,10 @@ def employeeSetup(request):
 
         else:
             print('user Exist', request.POST)
-            username = request.POST.get('username')
+            email = request.POST.get('email')
             password = request.POST.get('password')
             password1 = request.POST.get('password1')
-            check_user = User.objects.filter(username=username)
+            check_user = User.objects.filter(email=email)
             if check_user.count() == 1:
                 messages.error(request, 'UserName Already Existed')
                 return redirect('shopkeeper:employee_setup')
@@ -163,13 +163,15 @@ def employeeSetup(request):
                     return redirect('shopkeeper:employee_setup')
                 messages.error(request, 'Password must be matched!')
                 return redirect('shopkeeper:employee_setup')
-            user = User.objects.create_user(username=username, password=password)
+            user = User.objects.create_user(email=email, password=password)
             user.first_name = request.POST.get('first_name')
             user.last_name = request.POST.get('last_name')
             user.email = request.POST.get('email')
             user.address = request.POST.get('address')
+            user.city = request.POST.get('city')
+            user.phone_no = request.POST.get('phone_no')
             user.user_type = 'STAFF'
-            employee = Employee.objects.create(user=user, phone_no=request.POST.get('phone_no'),
+            employee = Employee.objects.create(user=user,
                                                target_assign=request.POST.get('target_assign'),
                                                target_achieved=request.POST.get('target_achieved'),
                                                area_designated=request.POST.get('area_designated'),
@@ -190,7 +192,6 @@ def employeeUpdate(request, pk):
     context = {
         'employee_id': employee_obj.id,
         'user': employee_obj.user,
-        'phone_no': employee_obj.phone_no,
         'target_assign': employee_obj.target_assign,
         'target_achieved': employee_obj.target_achieved,
         'description': employee_obj.description,
@@ -236,16 +237,16 @@ def dukandarSetup(request):
         dukandar_obj = Shopkeeper.objects.get(id=dukandar_id)
         print('dukandar_obj', dukandar_obj)
         user = User.objects.get(id=dukandar_obj.user.id)
-        user.username = request.POST.get('username')
+        
         user.first_name = request.POST.get('first_name')
         user.last_name = request.POST.get('last_name')
         user.email = request.POST.get('email')
         user.address = request.POST.get('address')
-        user.email = request.POST.get('email')
+        user.city = request.POST.get('city')
+        user.phone_no = request.POST.get('phone_no')
         user.save()
         dukandar_obj.user = user
         dukandar_obj.shop_name = request.POST.get('shop_name')
-        dukandar_obj.phone_no = request.POST.get('phone_no')
         dukandar_obj.description = request.POST.get('description')
         # dukandar_obj.latitude=request.POST.get('first_name')
         # dukandar_obj.longitude=request.POST.get('first_name')
@@ -265,7 +266,6 @@ def dukandarUpdate(request, pk):
         'emp_id': dukandar_obj.emp_id,
         'user': dukandar_obj.user,
         'shop_name': dukandar_obj.shop_name,
-        'phone_no': dukandar_obj.phone_no,
         'description': dukandar_obj.description,
         'is_active': dukandar_obj.is_active,
     }
@@ -274,8 +274,12 @@ def dukandarUpdate(request, pk):
 
 @login_required(login_url='shopkeeper:admin_login')
 def dukandarDelete(request, pk):
+
     dukandar_obj = Shopkeeper.objects.get(id=pk)
+    user_obj=User.objects.get(id=dukandar_obj.user.id)
     dukandar_obj.delete()
+    user_obj.delete()
+
     messages.add_message(request, messages.SUCCESS, 'Record Deleted Successfully')
     return redirect('shopkeeper:dukandar_list')
 
@@ -287,25 +291,25 @@ def customerSetup(request):
         if customer_id:
             customer_obj = Customer.objects.get(id=customer_id)
             user = User.objects.get(id=customer_obj.user.id)
-            user.username = request.POST.get('username')
             user.first_name = request.POST.get('first_name')
             user.last_name = request.POST.get('last_name')
             user.email = request.POST.get('email')
             user.address = request.POST.get('address')
+            user.city = request.POST.get('city')
+            user.phone_no = request.POST.get('phone_no')
             user.save()
             customer_obj.user = user
-            customer_obj.phone_no = request.POST.get('phone_no')
             customer_obj.is_active = request.POST.get('is_active') or False
             customer_obj.save()
             messages.add_message(request, messages.SUCCESS, 'Record Updated Successfully')
-            return redirect('shopkeeper:employee_list')
+            return redirect('shopkeeper:customer_list')
 
         else:
 
-            username = request.POST.get('username')
+            email = request.POST.get('email')
             password = request.POST.get('password')
             password1 = request.POST.get('password1')
-            check_user = User.objects.filter(username=username)
+            check_user = User.objects.filter(email=email)
             if check_user.count() == 1:
                 messages.error(request, 'UserName Already Existed')
                 return redirect('shopkeeper:customer_setup')
@@ -320,7 +324,7 @@ def customerSetup(request):
                     return redirect('shopkeeper:employee_setup')
                 messages.error(request, 'Password must be matched!')
                 return redirect('shopkeeper:customer_setup')
-            user = User.objects.create_user(username=username, password=password)
+            user = User.objects.create_user(email=email, password=password)
             user.first_name = request.POST.get('first_name')
             user.last_name = request.POST.get('last_name')
             user.email = request.POST.get('email')
@@ -346,13 +350,23 @@ def customerList(request):
 
 
 @login_required(login_url='shopkeeper:admin_login')
-def customerDetail(request):
-    return render(request, 'shopkeeper/customer/setup.html')
+def customerDetail(request, pk):
+
+    if request.POST:
+        pass
+    else:
+        customer =Customer.objects.get(id=pk)
+        user=User.objects.get(customer=pk)
+        context ={
+            'user':user,
+            'id':pk
+        }
+        return render(request, 'shopkeeper/customer/setup.html',context)
 
 
 @login_required(login_url='shopkeeper:admin_login')
 def customerDelete(request, pk):
-    customer_obj = Customer.objects.get(id=pk)
+    customer_obj = User.objects.get(customer=pk)
     customer_obj.delete()
     messages.add_message(request, messages.SUCCESS, 'Record Deleted Successfully')
     return redirect('shopkeeper:customer_list')
@@ -534,7 +548,7 @@ def productSetup(request):
                 messages.success(request, 'Record Created Successfully')
                 return redirect('shopkeeper:product_list')
             else:
-
+                print('Form Error', form.errors)
                 messages.error(request, 'Something Went Wrong')
                 return redirect('shopkeeper:product_setup')
 

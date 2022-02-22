@@ -10,18 +10,18 @@ class UserAdmin(ImportExportModelAdmin, DjangoUserAdmin):
     """Define admin model for custom User model with no email field."""
     fieldsets = ((None, {
         'fields':
-        ('first_name', 'last_name','username', 'email', 'password', 'groups',
+        ('first_name', 'last_name', 'email','city', 'phone_no','password', 'groups',
         'address','user_type')
     }), )
     add_fieldsets = ((None, {
         'classes': ('wide', ),
         'fields': ('email', 'password1', 'password2'),
     }), )
-    list_display = ('username','email', 'first_name', 'last_name', 'is_staff')
-    search_fields = ('email', 'first_name', 'last_name', 'business_type')
+    list_display = ('email', 'first_name', 'last_name', 'user_type')
+    search_fields = ('email', 'first_name', 'last_name', 'user_type')
     ordering = ('email', )
 
-
+admin.site.register(GiftSpin)
 admin.site.register(Shopkeeper)
 admin.site.register(Employee)
 admin.site.register(Customer)

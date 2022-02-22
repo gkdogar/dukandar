@@ -33,10 +33,9 @@
       <div class="col-6">
         <input type="hidden" name="dukandar_id" value="{{ dukandar_id }}">
         <div class="form-group">
-            
-            <label for="employeeFname">User Name</label>
-            <input type="text" class="form-control" id="username" aria-describedby="username" name="username"
-                  value="{{user.username}}">
+            <label for="employeeFname">Email</label>
+            <input type="text" class="form-control" id="username" aria-describedby="email" name="email"
+                  value="{{user.email}}">
         </div>
 
         <div class="form-group">
@@ -49,27 +48,23 @@
             <input type="text" class="form-control" id="last_name" aria-describedby="last_name" name="last_name"
             value="{{user.last_name}}">
         </div>
-        <div class="form-group">
-            <label for="employeeFname">Email</label>
-            <input type="text" class="form-control" id="username" aria-describedby="email" name="email"
-                  value="{{user.email}}">
-        </div>
+       
         <div class="form-group">
             <label for="employeeFname">Phone#</label>
             <input type="text" class="form-control" id="phone_no" aria-describedby="phone_no" name="phone_no"
-                  value="{{phone_no}}">
+                  value="{{user.phone_no}}">
         </div>
-       
-       
-       
-         
-      </div>
-      <div class="col-6">
         <div class="form-group">
             <label for="employeeFname"> Register By Employee</label>
             <input type="text" class="form-control" id="emp_id" aria-describedby="emp_id" name="emp_id"
                    value="{{emp_id.user.first_name}} {{emp_id.user.last_name}}" readonly>
         </div>
+       
+       
+         
+      </div>
+      <div class="col-6">
+      
         <div class="form-group">
             <label for="employeeFname">Shop Name</label>
             <input type="text" class="form-control" id="shop_name" aria-describedby="shop_name" name="shop_name"
@@ -80,15 +75,20 @@
             <input type="text" class="form-control" id="phone_no" aria-describedby="address" name="address"
                   value="{{user.address}}">
         </div>
+        <div class="form-group">
+            <label for="city">City</label>
+            <input type="text" class="form-control" id="phone_no" aria-describedby="city" name="city"
+                  value="{{user.city}}">
+        </div>
 
-          <div class="form-group mt-1">
+          <div class="form-group ">
             <label for="exampleInputDescription">Description</label>
             <input type="text" class="form-control" id="cate" aria-describedby="description"
                                name="description" value="{{ description }}"
                                >
           </div>
           
-            <div class="form-check mt-5">
+            <div class="form-check mt-3">
                 <input type="checkbox" class="form-check-input checkbox" id="is_active"
                 name="is_active" {% if is_active %} checked
                 value="True"   {% endif %} value="False">
