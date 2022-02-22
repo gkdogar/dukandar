@@ -567,6 +567,11 @@ class OrderViewSetApi(viewsets.ViewSet):
                         if serializer.is_valid():
                             order =serializer.save()
                             amount=float(post_data['amount'])
+
+                            if amount < float(100000):
+                                wallet =Wallet.objects.create(shopkeeper=shopkeeper_obj,order=order,amount=0)
+                                wallet.save()
+
                             if amount > float(100000) and amount < float(250000):
                                 wallet =Wallet.objects.create(shopkeeper=shopkeeper_obj,order=order,amount=1000)
                                 wallet.save()
@@ -574,15 +579,15 @@ class OrderViewSetApi(viewsets.ViewSet):
                             if amount > float(250000) and amount < float(500000):
                                 wallet =Wallet.objects.create(shopkeeper=shopkeeper_obj,order=order,amount=2500)
                                 wallet.save()
+                                spine =Spines.objects.create(shopkeeper=shopkeeper_obj,order=order,amount=1)
+                                spine.save()
+        
                             if amount > float(500000):
                                 wallet =Wallet.objects.create(shopkeeper=shopkeeper_obj,order=order,amount=7500)
                                 wallet.save()
-                            if amount > float(250000) and amount < float(500000):
-                                spine =Spines.objects.create(shopkeeper=shopkeeper_obj,order=order,amount=1)
-                                spine.save()
-                            if amount > float(500000) and amount < float(1000000):
                                 spine =Spines.objects.create(shopkeeper=shopkeeper_obj,order=order,amount=2)
                                 spine.save()
+                           
                             response = {
                             'message': 'Order Created Successfully',
                             'order_id':order.id
