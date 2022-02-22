@@ -138,11 +138,11 @@ class EmployeeViewSetApi(viewsets.ViewSet):
 
 class ShopkeeperViewSetApi(viewsets.ViewSet):
 
-    def list(self, request):
+    # def list(self, request):
 
-        dukandar = Shopkeeper.objects.all()
-        serializer = ShopkeeperSerializer(dukandar, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+    #     dukandar = Shopkeeper.objects.all()
+    #     serializer = ShopkeeperSerializer(dukandar, many=True)
+    #     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
     def retrieve(self, request, pk=None):
@@ -191,6 +191,7 @@ class ShopkeeperViewSetApi(viewsets.ViewSet):
 
 
                 if employee_obj:
+                   
                     user = User.objects.create_user(email=post_data['email'],password=post_data['password'])
                     user.first_name=post_data['first_name'],
                     user.last_name = post_data['last_name'],
@@ -210,7 +211,7 @@ class ShopkeeperViewSetApi(viewsets.ViewSet):
                 return Response(response, status=status.HTTP_400_BAD_REQUEST)
 
             serializer = ShopkeeperSerializer(data=post_data)
-            print(serializer)
+           
 
             response = {
                 'message': 'Record ddCreated Successfully !'
@@ -529,8 +530,8 @@ class SubCategoryView(viewsets.ViewSet):
 
 
 class OrderViewSetApi(viewsets.ViewSet):
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
+    # authentication_classes = [JWTAuthentication]
+    # permission_classes = [IsAuthenticated]
 
     # def list(self, request):
     #     orders = Order.objects.all()
@@ -538,21 +539,26 @@ class OrderViewSetApi(viewsets.ViewSet):
     #     return Response(serializer.data, status=status.HTTP_200_OK)
 
     def retrieve(self, request, pk=None):
+
+        tokenCheck(request)
         try:
-            order = Order.objects.get(id=id)
-            serializer = OrderSerializer(order)
+            shopkeeper=Shopkeeper.objects.get(user_id=pk)
+            order = Order.objects.filter(shopkeeper_id=shopkeeper.id)
+
+            serializer = OrderSerializer(order,many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
-        except Order.DoesNotExist:
+        except Shopkeeper.DoesNotExist:
             response = {
                 'message': 'No Order Found'
             }
             return Response(response, status=status.HTTP_200_OK)
 
     def create(self, request):
-
+        tokenCheck(request)
         try:
             post_data = request.data
-
+            post_Data=deepcopy(post_data)
+            products =post_Data.get('products', None)
             customer_id = post_data.get('customer', None)
             shopkeeper_id = post_data.get('shopkeeper', None)
 
@@ -578,32 +584,46 @@ class OrderViewSetApi(viewsets.ViewSet):
             else:
 
                 try:
-                    shopkeeper_obj = Shopkeeper.objects.get(id=shopkeeper_id)
+                    # user = User.objects.get(id=shopkeeper_id)
+                    # print('user',user)
+                    shopkeeper_obj = Shopkeeper.objects.get(user=shopkeeper_id)
                     if shopkeeper_obj:
-                        serializer = OrderSerializer(data=post_data)
+                    
+                        post_Data['shopkeeper']=shopkeeper_obj.id
 
+                        serializer = OrderSerializer(data=post_Data)
                         if serializer.is_valid():
                             order =serializer.save()
-                            amount=float(post_data['amount'])
-
-                            if amount < float(100000):
+                            for index in range(len(products)):
+                                
+                                product_id=products[index]['id']
+                                qty=products[index]['quantity']
+                                price=products[index]['amount']
+                                sub_total=products[index]['subtotal']
+                              
+                             
+                                order_prod= ProductOrder.objects.create(order_id=order.id, product_id=product_id, quantity=qty, sub_total=sub_total, price=price)
+                               
+                                order_prod.save()
+                            total_amount=float(post_data['total_amount'])
+                            if total_amount < float(100000):
                                 wallet =Wallet.objects.create(shopkeeper=shopkeeper_obj,order=order,amount=0)
                                 wallet.save()
 
-                            if amount > float(100000) and amount < float(250000):
+                            if total_amount > float(100000) and total_amount < float(250000):
                                 wallet = Wallet.objects.create(shopkeeper=shopkeeper_obj, order=order, amount=1000)
                                 wallet.save()
 
-                            if amount > float(250000) and amount < float(500000):
+                            if total_amount > float(250000) and total_amount < float(500000):
                                 wallet = Wallet.objects.create(shopkeeper=shopkeeper_obj, order=order, amount=2500)
                                 wallet.save()
-                                spine =Spines.objects.create(shopkeeper=shopkeeper_obj,order=order,amount=1)
+                                spine =Spines.objects.create(shopkeeper=shopkeeper_obj,order=order,spine_no=1)
                                 spine.save()
         
-                            if amount > float(500000):
+                            if total_amount > float(500000):
                                 wallet = Wallet.objects.create(shopkeeper=shopkeeper_obj, order=order, amount=7500)
                                 wallet.save()
-                                spine =Spines.objects.create(shopkeeper=shopkeeper_obj,order=order,amount=2)
+                                spine =Spines.objects.create(shopkeeper=shopkeeper_obj,order=order,spine_no=2)
                                 spine.save()
                            
                             response = {
@@ -612,7 +632,9 @@ class OrderViewSetApi(viewsets.ViewSet):
 
                             }
                             return Response(response, status=status.HTTP_201_CREATED)
+                        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+                    
                 except  Shopkeeper.DoesNotExist:
 
                     response = {

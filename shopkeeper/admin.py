@@ -22,6 +22,7 @@ class UserAdmin(ImportExportModelAdmin, DjangoUserAdmin):
     ordering = ('email', )
 
 admin.site.register(GiftSpin)
+admin.site.register(ProductOrder)
 admin.site.register(Shopkeeper)
 admin.site.register(Employee)
 admin.site.register(Customer)

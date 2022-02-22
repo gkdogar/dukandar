@@ -213,14 +213,33 @@ def employeeDelete(request, pk):
 @login_required(login_url='shopkeeper:admin_login')
 def dukandarList(request):
     dukandars_list = Shopkeeper.objects.all()
-    order_list = None
-    walet_list = None
-    spines_list = None
+    order_list = []
+    walet_list = []
+    spines_list = []
     for dukan in dukandars_list:
-        order_list = Order.objects.filter(shopkeeper=dukan.id)
-        walet_list = Wallet.objects.filter(shopkeeper=dukan.id)
-        spines_list = Spines.objects.filter(shopkeeper=dukan.id)
-
+        order_li = Order.objects.filter(shopkeeper=dukan.id)
+        for ord in order_li:
+            order_list.append({
+                'id':ord.id,
+                'amount':ord.total_amount,
+                'shopkeeper':ord.shopkeeper
+            })
+        walet_li = Wallet.objects.filter(shopkeeper=dukan.id)
+        for wlt in walet_li:
+            walet_list.append({
+                'id':wlt.id,
+                'amount':wlt.amount,
+                'shopkeeper':wlt.shopkeeper
+            })
+        spines_li = Spines.objects.filter(shopkeeper=dukan.id)
+        for spin in spines_li:
+            spines_list.append({
+                'id':spin.id,
+                'amount':spin.order,
+                'spine_no':spin.spine_no,
+                'shopkeeper':spin.shopkeeper
+            })
+    print('order_list',order_list)
     context = {
         'dukandars_list': dukandars_list,
         'order_list': order_list,
@@ -591,9 +610,15 @@ def productDelete(request):
 
 @login_required(login_url='shopkeeper:admin_login')
 def ordersList(request):
+    
     orders_list = Order.objects.all()
+    shopkeeper=None
+    for order in orders_list:
+        shopkeeper =order.shopkeeper.user
+
     context = {
-        'orders_list': orders_list
+        'orders_list': orders_list,
+        'shopkeeper':shopkeeper
     }
     return render(request, 'shopkeeper/order/list.html', context)
 
@@ -608,19 +633,30 @@ def ordersDetails(request, pk):
         return redirect('shopkeeper:orders_list')
     else:
         orders_obj = Order.objects.get(id=pk)
+        product_orders =ProductOrder.objects.filter(order_id=pk)
         context = {
             'order_id': orders_obj.id,
-            'product': orders_obj.product,
+            'products': product_orders,
             'dukandar': orders_obj.shopkeeper,
             # 'customer':orders_obj.customer,
             'order_date': orders_obj.order_date,
-            'amount': orders_obj.amount,
+            'amount': orders_obj.total_amount,
+             'discount': orders_obj.discount,
             'order_upto': orders_obj.order_upto,
-            'quantity': orders_obj.quantity,
+           
             'status': orders_obj.status,
 
         }
         return render(request, 'shopkeeper/order/detail.html', context)
+
+def ordersDelete(request, pk):
+        orders_obj = Order.objects.get(id=pk)
+        product_ord=ProductOrder.objects.filter(order_id=pk)
+        product_ord.delete()
+        orders_obj.delete()
+        messages.success(request, 'Order Deleted Successfully')
+        return redirect('shopkeeper:orders_list')
+
 
 
 @login_required(login_url='shopkeeper:admin_login')

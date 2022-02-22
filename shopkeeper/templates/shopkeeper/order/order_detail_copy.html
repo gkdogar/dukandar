@@ -1,0 +1,123 @@
+{% extends 'shopkeeper/base/base.html' %}
+{% load static %}
+{% block stylesheet %}
+    <style>
+
+    </style>
+
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+  <h1 class="text-center mt-3 mb-5 font-weight-bold">
+   Order Detail</h1>
+    {% if messages %}
+    {% for message in messages %}
+        <div {% if message.tags %}class="alert alert-{{ message.tags }}" {% endif %} role="alert">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
+
+
+    <div class="row col-2 offset-10">
+        <a type="submit" href="{% url 'shopkeeper:orders_list' %}" class="btn btn-primary float-right mb-1" name="product_list">Order Lists</a>
+     
+    </div>
+    <form id="subCateForm" method="post" class="" name="subCateForm" enctype="multipart/form-data"
+                  action="{% url 'shopkeeper:order_details' order_id %}">
+    {% csrf_token %}
+    <div class="row">
+    
+      <div class="col-6">
+       
+       
+        
+          <div class="form-group mt-1">
+            <label for="exampleInputName">Product Name</label>
+            <input type="text" class="form-control" name="product" value="{{ product.name }}" readonly>
+          </div>
+          {% if customer %}
+
+          <div class="form-group mt-1">
+            <label for="exampleInputcustomer">Customer Name</label>
+            <input type="text" class="form-control" name="customer" value="{{ customer.user.first_name }}" readonly>
+          </div>
+          {% endif %}
+
+          {% if dukandar %}
+          <div class="form-group mt-1">
+            <label for="exampleInputName">Dukandar Name</label>
+            <input type="text" class="form-control" name="dukandar" value="{{ dukandar.user.first_name }}" readonly>
+          </div>
+          {% endif %}      
+            <div class="form-group mt-1">
+            <label for="exampleInputorder_date">Order Date</label>
+            <input type="text" class="form-control" name="order_date" value="{{ order_date }}" readonly >
+          </div>
+
+        
+      </div>
+      <div class="col-6">
+   
+          <div class="form-group mt-1">
+            <label for="exampleInputquantity">Quantity</label>
+            <input type="number" class="form-control" id="quantity" aria-describedby="quantity" value="{{quantity}}" readonly>
+          </div>
+          <div class="form-group mt-1">
+            <label for="exampleInputamount">Amount</label>
+            <input type="text" class="form-control" id="price"
+            aria-describedby="amount" value="{{ amount }}"
+            name="amount" readonly>
+          </div>
+          
+          <div class="form-group mt-1">
+            <label for="exampleInputorder_upto">Order Upto</label>
+            <input type="number" class="form-control" id="order_upto" aria-describedby="order_upto"
+            name="order_upto" value="{{ order_upto }}" readonly>
+          </div>
+        
+            
+            <div class="form-group mt-3">
+                <select class="form-select" aria-label="Default select example" name ="status">
+                   
+                    <option >Change Order Status</option>
+                    <option value="CANCELLED" {% if status == "CANCELLED"%} selected{% endif %}>Cancelled</option>
+                    <option value="DELIVERED" {% if status == "DELIVERED"%} selected{% endif %} >Delivered</option>
+                    <option value="PROCESSING" {% if status == "PROCESSING"%} selected{% endif %}>Processing</option>
+                  </select>
+              </div>
+
+           
+      </div>
+
+    </div>
+    <button type="submit" class="btn btn-primary float-right mt-1">Submit</button>
+</form>
+  </div>
+
+
+        <script>
+        $(document).ready(function () {
+            $('ul').find("li#product_tabs").addClass("active");
+            setTimeout(function() {
+              $('div.alert').fadeOut('slow');
+          }, 5000);
+          
+        });
+        function preview() {
+            frame.src = URL.createObjectURL(event.target.files[0]);
+        }
+         $(".checkbox").on('change', function () {
+                if ($(this).is(':checked')) {
+                    $(this).attr('value', 'True');
+
+                } else {
+                    $(this).attr('value', 'False');
+
+                }
+            });
+    </script>
+    {% include 'shopkeeper/product/ajax.html' %}
+{% endblock %}

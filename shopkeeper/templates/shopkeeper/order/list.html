@@ -29,12 +29,17 @@
                 <thead class="thead-dark">
                 <tr>
                     <th scope="col">#</th>
-                    <th scope="col">Product Name</th>
+                  {% if shopkeeper %}
                     <th scope="col">Dukandar Name</th>
+                    {% else %}
                     <th scope="col">Customer Name</th>
+                   {% endif %}
                     <th scope="col">Order Date</th>
+                    <th scope="col">Discount</th>
                     <th scope="col">Amount</th>
-                    <th scope="col">Quantity</th>
+
+                   
+                    {% comment %} <th scope="col">Quantity</th> {% endcomment %}
                      <th scope="col">Status</th>
                      <th scope="col">Actions</th>
                 </tr>
@@ -45,18 +50,34 @@
                   
                     <tr>
                         <th scope="row">{{ forloop.counter }}</th>
-                        <td>{{ order.product.name }}</td>
+                        {% comment %} <td>{{ order.product.name }}</td> {% endcomment %}
+                        {% if order.shopkeeper.user %}
                         <td>{{ order.shopkeeper.user.first_name }} {{ order.shopkeeper.user.last_name }}</td>
+                        {% endif %}
+                        {% if order.cutomer.user %}
                         <td>{{ order.cutomer.user.first_name }}{{ order.cutomer.user.first_name }}</td>
+                        {% endif %}
                        
                         <td>{{ order.order_date }}</td>
-                        <td>{{ order.amount }}</td>
-                        <td>{{ order.quantity }}</td>
+                        <td>{{ order.discount }}</td>
+                        <td>{{ order.total_amount }}</td>
+                     
+                        {% comment %} <td>{{ order.quantity }}</td> {% endcomment %}
                        
-                        <td>{{ order.status }}</td>
+                        <td>{% if order.status == "CANCELLED" %}
+                           <span class="text-danger"> <b>{{ order.status }}</b></span>
+                           {% endif %}
+                           {% if order.status == "PROCESSING" %}
+                           <span class="text-warning" ><b> {{ order.status }}<b></span>
+                            {% endif %}
+                            {% if order.status == "DELIVERED" %}
+                            <span class="text-success"> <b>{{ order.status }}</b></span>
+                             {% endif %}
+                        </td>
+                            
                         
                      <td>
-                        <a href="{% url 'shopkeeper:order_details'  order.id %}" class="mr-3" data-toggle="tooltip" title="Hooray!"> <i class="fas fa-trash-alt"  style="color:red;"></i></a>
+                        <a href="{% url 'shopkeeper:order_delete'  order.id %}" class="mr-3" data-toggle="tooltip" title="Hooray!"> <i class="fas fa-trash-alt"  style="color:red;"></i></a>
                         <a href="{% url 'shopkeeper:order_details'  order.id %}">  <i class="fas fa-edit" style="color:blue;"></i></a>
                     </td> 
                     </tr>

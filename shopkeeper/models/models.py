@@ -161,9 +161,6 @@ class Product(models.Model):
 
 
 class Order(models.Model):
-    product = models.ForeignKey(Product,
-                                on_delete=models.CASCADE,
-                                null=True)
     shopkeeper = models.ForeignKey(Shopkeeper,
                                    on_delete=models.CASCADE,
                                    null=True,
@@ -174,15 +171,29 @@ class Order(models.Model):
                                  blank=True,
                                  null=True)
     order_date = models.DateTimeField(auto_now=True)
-    amount = models.BigIntegerField()
+    total_amount = models.BigIntegerField()
     order_upto = models.DecimalField(default=0, max_digits=7, decimal_places=2)
-    quantity = models.IntegerField(default=0)
+    discount = models.IntegerField(default=0) 
     status = models.CharField(choices=ORDER_CHOICES,
                               max_length=12,
                               default='PROCESSING')
 
     def __str__(self):
         return str(self.order_date)
+
+class ProductOrder(models.Model):
+    order = models.ForeignKey(Order,
+                                on_delete=models.CASCADE,
+                                null=True)
+    product = models.ForeignKey(Product,
+                                on_delete=models.CASCADE,
+                                null=True)
+    quantity = models.IntegerField(default=0)   
+
+    price = models.IntegerField(default=0) 
+    
+    sub_total = models.IntegerField(default=0)     
+
 
 
 class OrderHistory(models.Model):

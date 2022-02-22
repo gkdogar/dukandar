@@ -28,72 +28,113 @@
     <form id="subCateForm" method="post" class="" name="subCateForm" enctype="multipart/form-data"
                   action="{% url 'shopkeeper:order_details' order_id %}">
     {% csrf_token %}
-    <div class="row">
-    
-      <div class="col-6">
-       
-       
-        
-          <div class="form-group mt-1">
-            <label for="exampleInputName">Product Name</label>
-            <input type="text" class="form-control" name="product" value="{{ product.name }}" readonly>
-          </div>
-          {% if customer %}
 
-          <div class="form-group mt-1">
-            <label for="exampleInputcustomer">Customer Name</label>
-            <input type="text" class="form-control" name="customer" value="{{ customer.user.first_name }}" readonly>
-          </div>
-          {% endif %}
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Order#</th>
+            {% if product.order.shopkeeper.user.first_name %}
+            <th scope="col" >shopkeeper</th>
+            {% else %}
+            <th scope="col" >Customer</th>
+            {% endif %}
+            <th scope="col" >Product Name</th>
+            <th scope="col" >Quantity</th>
+            <th scope="col" >Price</th>
+            <th scope="col" >Amount</th>
+        </tr>
+        </thead>
+        <tbody>
 
-          {% if dukandar %}
-          <div class="form-group mt-1">
-            <label for="exampleInputName">Dukandar Name</label>
-            <input type="text" class="form-control" name="dukandar" value="{{ dukandar.user.first_name }}" readonly>
-          </div>
-          {% endif %}      
-            <div class="form-group mt-1">
-            <label for="exampleInputorder_date">Order Date</label>
-            <input type="text" class="form-control" name="order_date" value="{{ order_date }}" readonly >
-          </div>
-
-        
-      </div>
-      <div class="col-6">
-   
-          <div class="form-group mt-1">
-            <label for="exampleInputquantity">Quantity</label>
-            <input type="number" class="form-control" id="quantity" aria-describedby="quantity" value="{{quantity}}" readonly>
-          </div>
-          <div class="form-group mt-1">
-            <label for="exampleInputamount">Amount</label>
-            <input type="text" class="form-control" id="price"
-            aria-describedby="amount" value="{{ amount }}"
-            name="amount" readonly>
-          </div>
-          
-          <div class="form-group mt-1">
-            <label for="exampleInputorder_upto">Order Upto</label>
-            <input type="number" class="form-control" id="order_upto" aria-describedby="order_upto"
-            name="order_upto" value="{{ order_upto }}" readonly>
-          </div>
-        
-            
-            <div class="form-group mt-3">
-                <select class="form-select" aria-label="Default select example" name ="status">
+        {% for product in products %}
+            <tr>
+                <td > {{ forloop.counter }}
+                  
+                </td>
+                <td >
                    
-                    <option >Change Order Status</option>
-                    <option value="CANCELLED" {% if status == "CANCELLED"%} selected{% endif %}>Cancelled</option>
-                    <option value="DELIVERED" {% if status == "DELIVERED"%} selected{% endif %} >Delivered</option>
-                    <option value="PROCESSING" {% if status == "PROCESSING"%} selected{% endif %}>Processing</option>
-                  </select>
-              </div>
+                    {{ product.order.id }}
+                </td>
 
-           
+                <td >
+                  {% if product.order.shopkeeper.user.first_name %}
+                  {{ product.order.shopkeeper.user.first_name }}
+                  {{ product.order.shopkeeper.user.last_name }}
+                  {% else %}
+                  {{ product.order.customer.user.first_name }}
+                  {{ product.order.customer.user.last_name }}
+                  {% endif %}
+              </td>
+              <td >
+                   
+                {{ product.product.name }}
+            </td>
+            <td >
+                   
+              {{ product.quantity }}
+          </td>
+              <td>
+                {{ product.price }}
+              </td>
+              <td>
+                {{ product.sub_total }}
+
+              </td>
+                
+            </tr>
+        {% endfor %}
+        </tbody>
+        <tfoot>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td><b> Discount</b></td>
+            <td>{{discount}}</td>
+          </tr>
+
+        <tr>
+
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td><b>
+              Total Amount:
+            </b></td>
+          
+
+            <td><b> {{amount }} <b>
+              
+            </td>
+                   
+        </tr>
+
+        </tfoot>
+
+    </table>
+    <div class="row">
+      <div class="form-group col-6 justify-content-md-end">
+      <label class="">Want to Change Order Status ?</label>
       </div>
-
+    <div class="form-group col-6">
+     
+      <select class="form-select" aria-label="Default select example" name ="status">
+         
+          <option >Change Order Status</option>
+          <option value="CANCELLED" {% if status == "CANCELLED"%} selected{% endif %}>Cancelled</option>
+          <option value="DELIVERED" {% if status == "DELIVERED"%} selected{% endif %} >Delivered</option>
+          <option value="PROCESSING" {% if status == "PROCESSING"%} selected{% endif %}>Processing</option>
+        </select>
     </div>
-    <button type="submit" class="btn btn-primary float-right mt-1">Submit</button>
+  </div>
+
+
+    <button type="submit" class="btn btn-primary float-right mt-5">Submit</button>
 </form>
   </div>
 

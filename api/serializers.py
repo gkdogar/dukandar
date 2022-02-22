@@ -124,20 +124,35 @@ class ProductSerializer(serializers.ModelSerializer):
         model = Product
         fields = '__all__'
 
+class ProductOrderSerializer(serializers.ModelSerializer):
+   
+    # product = serializers.CharField(style={'input_type': 'text'}, write_only=True)
+    # amount = serializers.CharField(style={'input_type': 'text'}, write_only=True)
+    # quantity = serializers.CharField(style={'input_type': 'text'}, write_only=True)
+    class Meta:
+        model = ProductOrder
+        fields = '__all__'
+      
 
 class OrderSerializer(serializers.ModelSerializer):
+   
+    # product = serializers.CharField(style={'input_type': 'text'}, write_only=True)
+    # amount = serializers.CharField(style={'input_type': 'text'}, write_only=True)
+    # quantity = serializers.CharField(style={'input_type': 'text'}, write_only=True)
     class Meta:
         model = Order
-        fields = ['id', 'product', 'shopkeeper', 'customer', 'amount', 'quantity']
+        fields ='__all__'
         extra_kwargs = {
-            'product': {'required': True},
-
+         
             # 'cutomer': {'cutomer': True},
             # 'shopkeeper':{'required': True},
-            'amount': {'required': True},
-            'quantity': {'required': True},
+            'total_amount': {'required': True},
+             'discount': {'required': True},
+           
 
         }
+
+
 
 
 class DiscountSerializer(serializers.ModelSerializer):
