@@ -247,6 +247,8 @@ class Wallet(models.Model):
 
     def __str__(self):
         return str(self.amount)
+    
+    
 
 
 class Complaint(models.Model):

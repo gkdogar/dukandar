@@ -11,6 +11,7 @@ from django.contrib import messages
 import folium
 import pandas as pd
 import re
+import datetime
 from django.http import JsonResponse
 import json
 
@@ -210,6 +211,7 @@ def employeeDelete(request, pk):
     return redirect('shopkeeper:employee_list')
 
 
+
 @login_required(login_url='shopkeeper:admin_login')
 def dukandarList(request):
     dukandars_list = Shopkeeper.objects.all()
@@ -217,6 +219,14 @@ def dukandarList(request):
     walet_list = []
     spines_list = []
     winSpin_list=[]
+    current_date =datetime.datetime.now()
+    first_date_month = current_date.replace(day=1) 
+    if current_date.date() == first_date_month.date():
+         walt_obj =Wallet.objects.all()
+         for wlt in walt_obj:
+             wlt.amount =0
+             wlt.save()
+
     for dukan in dukandars_list:
         order_li = Order.objects.filter(shopkeeper=dukan.id)
         for ord in order_li:
