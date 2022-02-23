@@ -564,12 +564,26 @@ class OrderViewSetApi(viewsets.ViewSet):
 
             if customer_id:
                 try:
-                    customer_obj = Customer.objects.get(id=customer_id)
+                    customer_obj = Customer.objects.get(user=customer_id)
+                    print('customer_obj',customer_obj)
                     if customer_obj:
+                        post_Data['customer']=customer_obj.id
                         serializer = OrderSerializer(data=post_data)
 
                         if serializer.is_valid():
                             serializer.save()
+                            order =serializer.save()
+                            for index in range(len(products)):
+                                
+                                product_id=products[index]['id']
+                                qty=products[index]['quantity']
+                                price=products[index]['amount']
+                                sub_total=products[index]['subtotal']
+                              
+                             
+                                order_prod= ProductOrder.objects.create(order_id=order.id, product_id=product_id, quantity=qty, sub_total=sub_total, price=price)
+                               
+                                order_prod.save()
                             print('serializer', serializer)
                             response = {
                                 'message': 'Order Created Successfully'
@@ -648,50 +662,12 @@ class OrderViewSetApi(viewsets.ViewSet):
             }
             return Response(response, status=status.HTTP_400_BAD_REQUEST)
 
-    # def update(self, request, pk):
-    #     print("********List*******")
-    #     print("BaseName:>>", self.basename)
-    #     print("action:>>", self.action)
-    #     print("detail:>>", self.detail)
-    #     print("suffix:>>", self.suffix)
-    #     print("description:>>", self.description)
-    #     print("description:>>", self.description)
-    #     id = pk
-    #     order = Order.objects.get(id=id)
-    #     serializer = OrderSerializer(order, data=request.data)
-    #     if serializer.is_valid():
-    #         serializer.save()
-    #         response = {
-    #             'message': 'Complete Record Update Successfully'
-    #         }
-    #         return Response(response, status=status.HTTP_200_OK)
-    #     return Response(serializer.data, status=status.HTTP_400_BAD_REQUEST)
-    #
-    # def partial_update(self, request, pk):
-    #     id = pk
-    #     order = Order.objects.get(id=id)
-    #     serializer = OrderSerializer(order, data=request.data, partial=True)
-    #     if serializer.is_valid():
-    #         serializer.save()
-    #         response = {
-    #             'message': 'Partial Record Update Successfully'
-    #         }
-    #         return Response(response, status=status.HTTP_200_OK)
-    #     return Response(serializer.data, status=status.HTTP_400_BAD_REQUEST)
-
-    # def destroy(self, request, pk):
-    #     order = Order.objects.get(id=pk)
-    #     order.delete()
-    #     response = {
-    #         'message': 'Record Deleted Successfully'
-    #     }
-    #     return Response(response, status=status.HTTP_200_OK)
 
 
 class SpinesViewSetApi(viewsets.ViewSet):
     def list(self, request):
         spines = Spines.objects.all()
-        serializer = OrderSerializer(spines, many=True)
+        serializer = SpineSerializer(spines, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
@@ -746,7 +722,7 @@ class LoginView(APIView):
                 'iat': datetime.utcnow(),
                 # 'user_type':user.user_type,
             }
-            token = token = jwt.encode({'id': user.id, 'exp': datetime.utcnow() + timedelta(minutes=15)},
+            token = token = jwt.encode({'id': user.id, 'exp': datetime.utcnow() + timedelta(minutes=10)},
                                        settings.SECRET_KEY, algorithm='HS256')
             response = Response()
             response.set_cookie(key='jwt', value=token, httponly=True)

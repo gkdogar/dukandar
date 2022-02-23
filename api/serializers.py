@@ -185,6 +185,12 @@ class GiftSpineSerializer(serializers.ModelSerializer):
         model = GiftSpin
         fields = ['name', 'quantity', 'amount']
 
+class SpineSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Spines
+        fields = ['spine_no', 'shopkeeper', 'order']
+
 
 #
 # class MyTokenObtainPairSerializer(TokenObtainPairSerializer):

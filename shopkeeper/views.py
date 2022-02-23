@@ -613,12 +613,15 @@ def ordersList(request):
     
     orders_list = Order.objects.all()
     shopkeeper=None
+    customer =None
     for order in orders_list:
-        shopkeeper =order.shopkeeper.user
-
+        shopkeeper =order.shopkeeper
+        customer =order.customer
+    print('shopkeeper',customer)
     context = {
         'orders_list': orders_list,
-        'shopkeeper':shopkeeper
+        'shopkeeper':shopkeeper,
+        'customer':customer
     }
     return render(request, 'shopkeeper/order/list.html', context)
 
