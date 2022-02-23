@@ -52,12 +52,15 @@
                     <td>{{customer.user.phone_no}}</td>
                        <td>{{customer.user.address}}</td>
                        <td>{{customer.user.city}}</td>
-                  <td>{{ customer.order.id }}</td>
-
+                       <td> {% for ord in order_list %}
+                        {% if ord.customer.user.id == customer.user.id%}
+                     <a href="{% url 'shopkeeper:order_details' ord.id %}" data-toggle="tooltip" title="View Order Detail!"> {{ord.id}}</a>
+                     {% endif %}
+                   {% endfor %}</td>
                     <td>
 
-                        <a href="{% url 'shopkeeper:customer_delete' customer.id %}" class="mr-3" data-toggle="tooltip" title="Hooray!"> <i class="fas fa-trash-alt"  style="color:red;"></i></a>
-                        <a href="{% url 'shopkeeper:customer_update'  customer.id %}">  <i class="fas fa-edit" style="color:blue;"></i></a>
+                        <a href="{% url 'shopkeeper:customer_delete' customer.id %}" class="mr-3" > <i class="fas fa-trash-alt"  style="color:red;" data-toggle="tooltip" title="Delete Record"></i></a>
+                        <a href="{% url 'shopkeeper:customer_update'  customer.id %}">  <i class="fas fa-edit" data-toggle="tooltip" title="Edit Record"  style="color:blue;"></i></a>
                     </td>
                   </tr>
                   {% endfor %}

@@ -69,6 +69,7 @@ class CustomerSerializer(serializers.ModelSerializer):
         }
 
 
+
 class ShopkeeperSerializer(serializers.ModelSerializer):
     user = UserRegistrationSerializer(many=False, read_only=True)
     email = serializers.CharField(style={'input_type': 'email'}, write_only=True)
@@ -80,7 +81,7 @@ class ShopkeeperSerializer(serializers.ModelSerializer):
     # emp_id = EmployeeSerializer(many=False, read_only=True)
     password = serializers.CharField(style={'input_type': 'password'}, write_only=True)
     password2 = serializers.CharField(style={'input_type': 'password'}, write_only=True)
-
+   
     class Meta:
         model = Shopkeeper
         fields = ['id','user','email', 'first_name', 'last_name','address','city','phone_no', 'emp_id', 'shop_name','description', 'latitude', 'longitude',
@@ -185,12 +186,13 @@ class GiftSpineSerializer(serializers.ModelSerializer):
         model = GiftSpin
         fields = ['name', 'quantity', 'amount']
 
+
 class SpineSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Spines
-        fields = ['spine_no', 'shopkeeper', 'order']
-
+        fields ='__all__'
+        # fields = ['spine_no', 'shopkeeper', 'order']
 
 #
 # class MyTokenObtainPairSerializer(TokenObtainPairSerializer):

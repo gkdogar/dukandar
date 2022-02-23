@@ -62,4 +62,9 @@ urlpatterns = [
     path('parent/sub/category/ajax/lists/', parent_sub_ajax_data, name='parent_sub_ajax_data'),
     path('logout', admin_logout, name='admin_logout'),
 
+    # //Gifts 
+    path('gift/lists', giftList, name='gift_List'),
+    path('gift/setup', giftSetup, name='gift_Setup'), 
+      path('gift/detail/<int:pk>/', giftDetails, name='gift_detail'),
+    path('gift/delete/<int:pk>/', giftDelete, name='gift_delete'),
 ]

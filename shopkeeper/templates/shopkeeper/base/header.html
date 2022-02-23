@@ -173,6 +173,24 @@
 
                 </ul>
             </li>
+
+        </li>
+        <li class="sidebar-header">
+        Gifts
+      </li>
+      <li class="sidebar-item  mb-5" id="gift_page">
+          <a data-target="#gift_control" data-toggle="collapse" class="sidebar-link collapsed">
+             <span class="iconify" data-icon="fe:list-order"></span> <span
+                  class="align-middle">Gifts</span>
+          </a>
+          <ul id="gift_control" class="sidebar-dropdown list-unstyled collapse " data-parent="#sidebar">
+              <li class="sidebar-item" id="gift_list"><a class="sidebar-link" href="{% url 'shopkeeper:gift_List' %}">Gift List</a>
+              </li>
+            <li class="sidebar-item" id="gift_setup"><a class="sidebar-link" href="{% url 'shopkeeper:gift_Setup' %}">Gift Setup</a>
+            </li>
+
+        </ul>
+      </li>
         </ul>
     </div>
 </nav>

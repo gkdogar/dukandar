@@ -54,3 +54,7 @@ class ProductForm(ModelForm):
         model =Product
         fields='__all__'
 
+class GiftSpinForm(ModelForm):
+    class Meta:
+        model =GiftSpin
+        fields=['name', 'quantity', 'amount']

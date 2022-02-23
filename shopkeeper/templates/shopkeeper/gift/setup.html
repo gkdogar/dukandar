@@ -1,0 +1,102 @@
+{% extends 'shopkeeper/base/base.html' %}
+{% load static %}
+
+{% block stylesheet %}
+    <style>
+        .cashImg {
+            width: 60%;
+        }
+
+
+    </style>
+
+{% endblock %}
+{% load static %}
+
+{% block content %}
+
+
+
+
+    <div class="container mt-5">
+        {#        <div class="modal-header">#}
+        {##}
+        {#            <h5 class="modal-title">Create Employee Setup</h5>#}
+        {#        </div>#}
+
+        <div class="row justify-content-center">
+            <h2 class="justify-content-center text-center">Gift Setup</h2>
+        </div>
+        {% if messages %}
+            {% for message in messages %}
+                <div {% if message.tags %}class="alert alert-{{ message.tags }}" {% endif %} role="alert">
+                    {{ message }}
+                </div>
+                {#                {% if message.tags == 'error' %}#}
+                {#                      <div class="alert alert-danger" role="alert">#}
+                {#                      {{ message }}#}
+                {#                    </div>#}
+                {#                {% endif %}#}
+
+
+
+            {% endfor %}
+        {% endif %}
+
+        <div class="row col-2 offset-7">
+            <a type="submit" href="{% url 'shopkeeper:gift_List' %}" class="btn btn-primary float-right mb-1" name="gift_list">Gifts Lists</a>
+         
+        </div>
+     <form id="subCateForm" method="post" class="" name="subCateForm" enctype="multipart/form-data"
+    action="{% url 'shopkeeper:gift_Setup' %}">
+    {% csrf_token %}
+    <div class="row">
+
+      <div class="col-6 offset-3">
+        <input type="hidden" name="id" value="{{ id }}">
+         <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" class="form-control" id="name" aria-describedby="name" name="name"
+                  value="{{gift_obj.name}}">
+        </div>
+
+        <div class="form-group">
+            <label for="equantity"> Quantity</label>
+            <input type="number" class="form-control" id="quantity" aria-describedby="quantity" name="quantity"
+            value="{{gift_obj.quantity}}" >
+        </div>
+       
+        <div class="form-group">
+            <label for="employeeFname">Amount</label>
+            <input type="number" class="form-control" id="amount" aria-describedby="amount" name="amount"
+                  value="{{gift_obj.amount}}">
+        </div>
+
+
+
+        <button type="submit" class="btn btn-primary float-center mt-1">Add Gift</button>
+      </div>
+     
+
+    </div>
+    
+</form>
+
+    </div>
+
+
+
+    <script>
+        $(document).ready(function () {
+
+            $('ul').find("li#gift_page").addClass("active");
+            $('ul').find("li#gift_page").addClass("active");
+            $('ul').find("li#gift_page").addClass("active");
+            $('ul').find("li#gift_page").find("a").addClass("collapsed");
+            $('ul').find("li#gift_page").find("a").attr("aria-expanded", "true");
+            $('ul#gift_control').addClass('show')
+            $('#gift_setup').addClass('active')
+
+        });
+    </script>
+{% endblock %}

@@ -55,8 +55,8 @@
                     <td>{{employee.is_active}}</td>
                     <td>
 
-                        <a href="{% url 'shopkeeper:employee_update' employee.id %}" class="mr-3" data-toggle="tooltip" title="Hooray!"> <i class="fas fa-trash-alt"  style="color:red;"></i></a>
-                        <a href="{% url 'shopkeeper:employee_update'  employee.id %}">  <i class="fas fa-edit" style="color:blue;"></i></a>
+                        <a href="{% url 'shopkeeper:employee_update' employee.id %}" class="mr-3" > <i class="fas fa-trash-alt" data-toggle="tooltip" title="Delete Record"  style="color:red;"></i></a>
+                        <a href="{% url 'shopkeeper:employee_update'  employee.id %}">  <i class="fas fa-edit" data-toggle="tooltip" title="Edit Record" style="color:blue;"></i></a>
                     </td>
                   </tr>
                   {% endfor %}

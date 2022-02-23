@@ -1,6 +1,6 @@
 import re
 from copy import deepcopy
-
+import json
 from numpy import product
 from django.conf import settings
 from datetime import datetime, timedelta
@@ -151,9 +151,26 @@ class ShopkeeperViewSetApi(viewsets.ViewSet):
         tokenCheck(request)
         try:
             user = User.objects.get(id=pk)
+          
             dukandar = Shopkeeper.objects.get(user=user)
+           
+            total_orders=Order.objects.filter(shopkeeper=dukandar.id).count()
+            walt_obj=Wallet.objects.filter(shopkeeper=dukandar.id)
+            walt_amount=0
+            if walt_obj :
+                walt_amount=walt_obj[0].amount
+            spin_obj=Spines.objects.filter(shopkeeper=dukandar.id)
+            total_spin=0
+            if spin_obj :
+                total_spin=spin_obj[0].spine_no            
             serializer = ShopkeeperSerializer(dukandar)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            context={
+                   'shopkeeper':serializer.data,
+                   'spin':total_spin,
+                   'wallet':walt_amount,
+                   'orders':total_orders
+            }
+            return Response(context, status=status.HTTP_200_OK)
         except Shopkeeper.DoesNotExist:
             response = {
                 'Message': 'No Record Found'
@@ -280,14 +297,14 @@ class ShopkeeperViewSetApi(viewsets.ViewSet):
             return Response(response, status=status.HTTP_200_OK)
         return Response(serializer.data, status=status.HTTP_400_BAD_REQUEST)
 
-    def destroy(self, request, pk):
-        tokenCheck(request)
-        dukandar = Shopkeeper.objects.get(id=pk)
-        dukandar.delete()
-        response = {
-            'message': 'Record Deleted Successfully'
-        }
-        return Response(response, status=status.HTTP_200_OK)
+    # def destroy(self, request, pk):
+    #     tokenCheck(request)
+    #     dukandar = Shopkeeper.objects.get(id=pk)
+    #     dukandar.delete()
+    #     response = {
+    #         'message': 'Record Deleted Successfully'
+    #     }
+    #     return Response(response, status=status.HTTP_200_OK)
 
 
 class CustomerViewSetApi(viewsets.ViewSet):
@@ -350,7 +367,13 @@ class CustomerViewSetApi(viewsets.ViewSet):
             user =User.objects.get(id=pk)
             customer = Customer.objects.get(user=user)
             serializer = CustomerSerializer(customer)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            context={
+                   'customer':serializer.data,
+              
+                   'orders':Order.objects.filter(customer=customer.id).count()
+            }
+            return Response(context, status=status.HTTP_200_OK)
+         
         except Customer.DoesNotExist:
             response = {
                 'message': 'No Record Found'

@@ -76,7 +76,7 @@ def dashboard(request):
     total_order = Order.objects.filter(status='DELIVERED')
     toal_sale = 0
     for t in total_order:
-        toal_sale += t.amount
+        toal_sale += t.total_amount
 
     locationlist = []
     map = folium.Map(location=[31.5204, 74.3587], zoom_start=12)
@@ -362,8 +362,18 @@ def customerSetup(request):
 @login_required(login_url='shopkeeper:admin_login')
 def customerList(request):
     customer_list = Customer.objects.all()
+    order_list = []
+    for customer in customer_list:
+        order_li = Order.objects.filter(customer=customer.id)
+        for ord in order_li:
+                order_list.append({
+                'id':ord.id,
+                'amount':ord.total_amount,
+                'customer':ord.customer
+            })
     context = {
-        'customer_list': customer_list
+        'customer_list': customer_list,
+        'order_list':order_list
     }
     return render(request, 'shopkeeper/customer/list.html', context)
 
@@ -763,3 +773,59 @@ def parent_sub_ajax_data(request):
 def admin_logout(request):
     logout(request)
     return redirect('shopkeeper:admin_login')
+
+
+@login_required(login_url='shopkeeper:admin_login')
+def giftList(request):
+    gift_list = GiftSpin.objects.all()
+    context = {
+        'gift_list': gift_list,
+    }
+    return render(request, 'shopkeeper/gift/list.html',context)
+
+@login_required(login_url='shopkeeper:admin_login')
+def giftSetup(request):
+
+    if request.POST:
+            gift_ID =request.POST.get('id', None)
+            if gift_ID:
+                    gift_obj =GiftSpin.objects.get(id=gift_ID)
+                    gift_obj.name=request.POST.get('name', gift_obj.name)
+                    gift_obj.quantity=request.POST.get('quantity', gift_obj.quantity)
+                    gift_obj.amount=request.POST.get('amount', gift_obj.amount)
+                    gift_obj.save()
+                    messages.success(request, 'Gift Updated  Successfully ')
+                    return redirect('shopkeeper:gift_List')
+            
+            else:
+                form =GiftSpinForm(request.POST)
+                if form.is_valid():
+                    form.save()
+                    messages.success(request, 'Gift Added  Successfully ')
+                    return redirect('shopkeeper:gift_List')
+
+                else:
+                    messages.error(request, 'Invalid Data')
+                    return redirect('shopkeeper:gift_Setup')
+
+    else:
+     return render(request, 'shopkeeper/gift/setup.html')
+
+def giftDetails(request, pk):
+    try:
+        gift_obj =GiftSpin.objects.get(id=pk)
+
+        context = {
+            'gift_obj': gift_obj,
+            'id':pk
+        }
+        return render(request, 'shopkeeper/gift/setup.html',context)
+    except GiftSpin.DoesNotExist:
+        messages.error(request, 'Record Not Found')
+        return redirect('shopkeeper:gift_Setup')
+
+def giftDelete(request, pk):
+    gift_obj =GiftSpin.objects.get(id=pk)
+    gift_obj.delete()
+    messages.error(request, 'Record Deleted')
+    return redirect('shopkeeper:gift_List')

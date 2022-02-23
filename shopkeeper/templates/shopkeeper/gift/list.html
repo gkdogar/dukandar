@@ -1,0 +1,78 @@
+{% extends 'shopkeeper/base/base.html' %}
+{% load static %}
+{% block stylesheet %}
+    <style>
+
+    </style>
+
+{% endblock %}
+
+{% block content %}
+<div class="container">
+        <h1 class="text-center mt-5 mb-5 font-weight-bold">Gift's List</h1>
+     
+            {% if messages %}
+                {% for message in messages %}
+                    <div {% if message.tags %}class="alert alert-{{ message.tags }}" {% endif %} role="alert">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+      
+     
+        <div class="row">
+            
+          <div class="col-12">
+            <a type="submit" href="{% url 'shopkeeper:gift_Setup' %}" class="btn btn-primary float-right" name="employee">Add
+             Gift</a>
+            <table class="table" id="customerTable">
+                <thead class="thead-dark">
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Quantity</th>
+                    <th scope="col">Amount</th>
+                    <th scope="col">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                    {% for gift in gift_list%}
+                  <tr>
+                    <th scope="row">{{forloop.counter}}</th>
+                    <td>{{gift.name}}</td>
+                    <td>{{gift.quantity}}</td>
+                    <td>{{gift.amount}}</td>
+                    <td>
+
+                        <a href="{% url 'shopkeeper:gift_delete' gift.id %}" class="mr-3" > <i class="fas fa-trash-alt"  style="color:red;" data-toggle="tooltip" title="Delete Record"></i></a>
+                        <a href="{% url 'shopkeeper:gift_detail'  gift.id %}">  <i class="fas fa-edit" data-toggle="tooltip" title="Edit Record"  style="color:blue;"></i></a>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                  
+                </tbody>
+              </table>
+              
+        
+          </div>
+      
+        </div>
+       
+      </div>
+    
+
+      <script>
+        $(document).ready(function () {
+            $('ul').find("li#gift_page").addClass("active");
+            $('ul').find("li#gift_page").addClass("active");
+            $('ul').find("li#gift_page").addClass("active");
+            $('ul').find("li#gift_page").find("a").addClass("collapsed");
+            $('ul').find("li#gift_page").find("a").attr("aria-expanded", "true");
+            $('ul#gift_control').addClass('show')
+            $('#gift_list').addClass('active')
+            $('#customerTable').DataTable();
+        });
+    </script>
+{% endblock %}
+
+

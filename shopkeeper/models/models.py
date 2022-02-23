@@ -87,6 +87,7 @@ class Shopkeeper(models.Model):
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    
 
     class Meta:
         ordering = ['user']
@@ -276,7 +277,7 @@ class Spines(models.Model):
     spine_no = models.IntegerField(default=0)
 
     def __str__(self):
-        return str(self.amount)
+        return str(self.spine_no)
 
 
 class GiftSpin(models.Model):
