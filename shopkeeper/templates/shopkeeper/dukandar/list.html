@@ -40,7 +40,8 @@
                     <th scope="col">Added by Employee</th>
                     <th scope="col">Order's</th>
                     <th scope="col">Wallet</th>
-                    <th scope="col">Spines</th>
+                    <th scope="col">Spins</th>
+                    <th scope="col">Gifts</th>
                     <th scope="col">Actions</th>
                     
                   </tr>
@@ -76,6 +77,14 @@
                       {% for spin in spines_list %}
                       {% if spin.shopkeeper.user.id == dukandar.user.id%}
                       {{spin.spine_no}}
+                      {% endif %}
+                     {% endfor %}
+                    </td>
+                    <td>
+                      {% for spin in winSpin_list %}
+                      {% if spin.shopkeeper.user.id == dukandar.user.id%}
+                      <a href="{% url 'shopkeeper:gift_List'  %}" data-toggle="tooltip" title="View Order Detail!">  {{spin.giftspins.name}}</a>
+                     
                       {% endif %}
                      {% endfor %}
                     </td>

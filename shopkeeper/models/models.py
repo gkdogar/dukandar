@@ -284,7 +284,15 @@ class GiftSpin(models.Model):
     name = models.CharField(max_length=250, null=True)
     quantity = models.IntegerField(default=0)
     amount= models.IntegerField(default=0)
+
+    def __str__(self):
+     return self.name
+
+class WinSpin(models.Model):
     shopkeeper = models.ForeignKey(Shopkeeper,
                                    on_delete=models.CASCADE,
-                                   null=True, blank=True)
+                                   null=True)
+    giftSpin = models.ForeignKey(GiftSpin,
+                              on_delete=models.CASCADE,
+                              null=True)
 

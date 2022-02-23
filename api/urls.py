@@ -22,7 +22,7 @@ router.register('orders', views.OrderViewSetApi, basename='orders')
 router.register('wallet', views.WalletViewSetApi, basename='wallet')
 router.register('spines', views.SpinesViewSetApi, basename='spines')
 router.register('employee', views.EmployeeViewSetApi, basename='employee')
-router.register('gift/spine', views.GiftSpineViewSetApi, basename='giftspine')
+router.register('gift/spin', views.GiftSpineViewSetApi, basename='giftspin')
 
 # router.register('login', views.LoginAPI.as_view(),basename='Login_User')
 app_name = 'api'

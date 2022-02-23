@@ -216,6 +216,7 @@ def dukandarList(request):
     order_list = []
     walet_list = []
     spines_list = []
+    winSpin_list=[]
     for dukan in dukandars_list:
         order_li = Order.objects.filter(shopkeeper=dukan.id)
         for ord in order_li:
@@ -239,12 +240,22 @@ def dukandarList(request):
                 'spine_no':spin.spine_no,
                 'shopkeeper':spin.shopkeeper
             })
+
+        winspin_list=WinSpin.objects.filter(shopkeeper =dukan.id)
+        for spin in winspin_list:
+            winSpin_list.append({
+                'id': spin.id,
+                'shopkeeper': spin.shopkeeper,
+                'giftspins': spin.giftSpin,
+                
+            })
     print('order_list',order_list)
     context = {
         'dukandars_list': dukandars_list,
         'order_list': order_list,
         'walet_list': walet_list,
-        'spines_list': spines_list
+        'spines_list': spines_list,
+        'winSpin_list':winSpin_list
     }
     return render(request, 'shopkeeper/dukandar/list.html', context)
 

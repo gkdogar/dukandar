@@ -384,9 +384,7 @@ class CustomerViewSetApi(viewsets.ViewSet):
         tokenCheck(request)
 
         post_data = request.data
-        print('post_data Update', post_data)
-        id = pk
-        customer = Customer.objects.get(id=id)
+        customer = Customer.objects.get(id=pk)
         user = User.objects.get(id=customer.user.id)
         # user.email = post_data['email']
         user.first_name = post_data['first_name']
@@ -688,25 +686,62 @@ class OrderViewSetApi(viewsets.ViewSet):
 
 
 class SpinesViewSetApi(viewsets.ViewSet):
+    
+
     def list(self, request):
+        tokenCheck(request)
         spines = Spines.objects.all()
         serializer = SpineSerializer(spines, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class WalletViewSetApi(viewsets.ViewSet):
+    
     def list(self, request):
+        tokenCheck(request)
         wallet = Wallet.objects.all()
         serializer = OrderSerializer(wallet, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 class GiftSpineViewSetApi(viewsets.ViewSet):
-
+    
     def list(self, request):
         tokenCheck(request)
-        gifts = GiftSpin.objects.all()
+        gifts = GiftSpin.objects.filter(quantity__gt =0)
         serializer = GiftSpineSerializer(gifts, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def create(self, request):
+        tokenCheck(request)
+        post_data=request.data
+        post_Data=deepcopy(post_data)
+        shop_id=request.data['shopkeeper']
+        giftSpin=request.data['giftSpin']
+        user=User.objects.get(id=shop_id)
+        shopkeeper_obj=Shopkeeper.objects.get(user_id=user.id)
+        post_Data['shopkeeper']=shopkeeper_obj.id
+        serializer = WinSpinSerializer(data=post_Data)
+        if serializer.is_valid():
+            serializer.save()
+            giftSpin=GiftSpin.objects.get(id=giftSpin)
+            qty =giftSpin.quantity
+            newQty =qty-1
+            giftSpin.quantity =newQty
+            giftSpin.save()
+
+            spins_obj=Spines.objects.filter(shopkeeper=shopkeeper_obj.id)
+            if spins_obj:
+                spin_count=spins_obj[0].spine_no
+                total_spin=spin_count-1
+                spins_obj[0].spine_no=total_spin
+                spins_obj[0].save()
+            
+
+            response = {
+                'message': 'You have successfully win the Spin'
+            }
+            return Response(response, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 
@@ -716,11 +751,11 @@ class LoginAPI(GenericAPIView):
     serializer_class = LoginSerializer
 
     def post(self, request):
-        print('rew', request.data)
+       
         email = request.data.get('email')
         password = request.data.get('password')
         user = authenticate(username=email, password=password)
-        print('user', user)
+       
         if user:
             serializer = self.serializer_class(user)
 
