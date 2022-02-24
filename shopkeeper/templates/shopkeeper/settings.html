@@ -50,11 +50,7 @@
 
       <div class="col-4" >
    
-        <div class="form-group ">
-          <input type="hidden" name="employee_id" value="{{ employee_id }}">
-            <label for="exampleInputusername">Username</label>
-            <input type="text" class="form-control" id="username" name="username", value="{{user.username}}" >
-          </div>
+    
           <div class="form-group mt-1">
             <label for="exampleInputEmail1">Email address</label>
             <input type="email" class="form-control" id="exampleInputEmail1" name="email" value="{{user.email}}">
@@ -78,8 +74,13 @@
                 <input type="text" class="form-control" id="address" name="address" value="{{user.address}}">
               </div>
               <div class="form-group mt-1">
+                <label for="city">City</label>
+                {% comment %} <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea> {% endcomment %}
+                <input type="text" class="form-control" id="city" name="city" value="{{user.city}}">
+              </div>
+              <div class="form-group mt-1">
                 <label for="exampleInputphone_no">Phone#</label>
-                <input type="text" class="form-control" id="phone_no"  name="phone_no"  value="{{phone_no}}">
+                <input type="text" class="form-control" id="phone_no"  name="phone_no"  value="{{user.phone_no}}">
               </div>
            
               

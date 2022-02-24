@@ -6,14 +6,20 @@ from django.contrib.auth.decorators import login_required
 from .forms import *
 from .models.models import *
 from django.views import View
-from django.views.generic import ListView
+from django.views.generic import ListView, View
 from django.contrib import messages
 import folium
 import pandas as pd
 import re
 import datetime
+import reportlab  
 from django.http import JsonResponse
 import json
+from .utils import *
+from django.http import HttpResponse
+
+
+from django.template.loader import get_template
 
 
 def admin_login(request):
@@ -54,6 +60,7 @@ def admin_settings(request):
         user.last_name = request.POST.get('last_name')
         user.email = request.POST.get('email')
         user.city = request.POST.get('city')
+        user.phone_no = request.POST.get('phone_no')
         user.address = request.POST.get('address')
         user.save()
         messages.add_message(request, messages.SUCCESS, 'Record Updated Successfully')
@@ -76,6 +83,15 @@ def dashboard(request):
     orders = Order.objects.all().count()
     total_order = Order.objects.filter(status='DELIVERED')
     toal_sale = 0
+    # /// Wallet will be Zero  start /
+    current_date =datetime.datetime.now()
+    first_date_month = current_date.replace(day=1) 
+    if current_date.date() == first_date_month.date():
+         walt_obj =Wallet.objects.all()
+         for wlt in walt_obj:
+             wlt.amount =0
+             wlt.save()
+    # /// Wallet will be Zero End
     for t in total_order:
         toal_sale += t.total_amount
 
@@ -219,14 +235,7 @@ def dukandarList(request):
     walet_list = []
     spines_list = []
     winSpin_list=[]
-    current_date =datetime.datetime.now()
-    first_date_month = current_date.replace(day=1) 
-    if current_date.date() == first_date_month.date():
-         walt_obj =Wallet.objects.all()
-         for wlt in walt_obj:
-             wlt.amount =0
-             wlt.save()
-
+    
     for dukan in dukandars_list:
         order_li = Order.objects.filter(shopkeeper=dukan.id)
         for ord in order_li:
@@ -660,14 +669,51 @@ def ordersList(request):
 @login_required(login_url='shopkeeper:admin_login')
 def ordersDetails(request, pk):
     if request.POST:
-        orders_obj = Order.objects.get(id=pk)
-        orders_obj.status = request.POST['status']
-        orders_obj.save()
-        messages.success(request, 'Order Status Successfully')
-        return redirect('shopkeeper:orders_list')
+        pdf =request.POST.get('PDF_BTN', None)
+        print('PDF_BTN', pdf)
+        if pdf:
+            orders_obj = Order.objects.filter(id=pdf)
+            
+            orders_obj = Order.objects.get(id=pdf)
+            shopkeeper_obj= orders_obj.shopkeeper or None
+            customer_obj= orders_obj.customer or None
+            product_orders =ProductOrder.objects.filter(order_id=pk)
+            # win_gift=WinSpin.objects.filter(shopkeeper_id=shopkeeper_obj.id)
+
+            context = {
+                'order_id': orders_obj.id,
+                'products': product_orders,
+                'dukandar': orders_obj.shopkeeper,
+                'customer':orders_obj.customer,
+                'order_date': orders_obj.order_date,
+                'amount': orders_obj.total_amount,
+                'discount': orders_obj.discount,
+                'order_upto': orders_obj.order_upto,
+                'shopkeeper_obj':shopkeeper_obj,
+                'customer_obj':customer_obj,
+                # 'win_gift_list':win_gift,
+            
+                'status': orders_obj.status,
+                }
+
+            pdf = render_to_pdf('shopkeeper/pdf.html', context)
+            response = HttpResponse(pdf,content_type='application/pdf')
+            response['Content-Disposition'] = 'attachment; filename="dukandarOrder#'+str(orders_obj.id)+'".pdf"'
+            return response
+    
+        else:
+            orders_obj = Order.objects.get(id=pk)
+            orders_obj.status = request.POST['status']
+            orders_obj.save()
+            messages.success(request, 'Order Status Successfully')
+            return redirect('shopkeeper:orders_list')
     else:
+   
+        
         orders_obj = Order.objects.get(id=pk)
         product_orders =ProductOrder.objects.filter(order_id=pk)
+        shopkeeper_id= orders_obj.shopkeeper or None
+        customer_id= orders_obj.customer or None
         context = {
             'order_id': orders_obj.id,
             'products': product_orders,
@@ -677,6 +723,9 @@ def ordersDetails(request, pk):
             'amount': orders_obj.total_amount,
              'discount': orders_obj.discount,
             'order_upto': orders_obj.order_upto,
+            'shopkeeper_id':shopkeeper_id,
+            'customer_id':customer_id,
+            
            
             'status': orders_obj.status,
 

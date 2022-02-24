@@ -1,0 +1,269 @@
+<!doctype html>
+{% load static %}
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+    <style type="text/css">
+        body {
+            font-weight: 200;
+            font-size: 14px;
+          
+        }
+        .header {
+            font-size: 20px;
+            font-weight: 100;
+            text-align: center;
+            color: #007cae;
+        }
+        h1{
+           
+            font-family: "Times New Roman", Times, serif;
+            text-align: center;
+        }
+        table {
+            {% comment %} border: 1px solid black; {% endcomment %}
+          }
+          td{
+              text-align:center;
+          }
+          th {
+            height: 70px;
+          }
+          th, td {
+            border-top: 1px solid #ddd;
+            padding-top:10px;
+          }
+          body {
+            background-image: url("/static/Images/logo.png");
+            {% comment %} background-color: #cccccc; {% endcomment %}
+           }
+           body {
+            z-index: 50;
+        }
+        tr:nth-child(even) {
+            background-color: #F6F6F7;
+        }
+        td {
+            width: 150px;
+            z-index: 100;
+        }
+        
+        body {
+        }
+        .watermark {
+            position: absolute;
+            color: lightgray;
+            opacity: 0.25;
+            font-size: 3em;
+            width: 100%;
+            top: 8%;    
+            text-align: center;
+            z-index: 0;
+              }
+    </style>
+  </head>
+  <body>
+    {% comment %} <img src="{% static 'Images/logo.svg' %}" alt="Notebook" style="width:100%;"> {% endcomment %}
+    
+<div class="row">
+    <div class="col-sm-12">
+
+      <div class="col-sm-12 row justify-content-md-center " style="text-align:right;">
+        {% comment %} <h6 class="float-right"><small><b> UserID:</b>  {{unique_id}}</small></h6> {% endcomment %}
+      </div>
+
+        {% comment %} <div class="row  text-center mt-2">
+            <h1>Order Detail </h1>
+        </div> {% endcomment %}
+
+    </div>
+</div>
+<div class="row">
+  <div class="col-sm-4">
+      <div class="address_div">
+          <b>Name: </b>  {% if shopkeeper_obj %} 
+          {{shopkeeper_obj.user.first_name }}
+          {{shopkeeper_obj.user.last_name }}
+          {% endif %}
+          {% if customer_obj %}
+          {{customer_obj.user.first_name }}
+          {{customer_obj.user.last_name }}
+          {% endif %} <br>
+          <b>address: </b>  {% if shopkeeper_obj %} 
+          {{ shopkeeper_obj.user.address }}
+          {% endif %}
+          {% if customer_obj %}
+          {{ customer_obj.user.address }}
+
+          {% endif %}
+          </br>
+          <b>city:</b>{% if shopkeeper_obj %} 
+          {{shopkeeper_obj.user.city }}
+          {% endif %}
+          {% if customer_obj %}
+          {{customer_obj.user.city }}
+
+          {% endif %}<br>
+          <b>Contact#:</b>{% if shopkeeper_obj %} 
+          {{ shopkeeper_obj.user.phone_no }}
+          {% endif %}
+          {% if customer_obj %}
+          {{customer_obj.user.phone_no }}
+
+          {% endif %}<br>
+          <b>Order No: </b>{{order_id}}<br>
+          <br>
+          <b>
+            Order Status: {% if status == "DELIVERED"%} 
+          <h3 style="color: Green">{{status}}</h3>
+          {% endif %}
+          {% if status == "PROCESSING"%} 
+          <h3 style="color: Orange">{{status}}</h3>
+          {% endif %}
+          {% if status == "CANCELLED"%} 
+          <h3 style="color: Red">{{status}}</h3>
+          {% endif %}
+      </div>
+  
+
+
+</div>
+
+<div>
+  <div class="row  text-center mt-2">
+    <h1 style="text-align:center; font-size: 25px;">Order Detail </h1>
+</div>
+</div>
+
+</div>
+<div class="container-fluid justify-content-right">
+
+    <div class="col-sm-12 create__center " >
+      <table class="table table-striped">
+        <thead>
+         <tr>
+          <th scope="col" style="font-size: 20px;" >#</th>
+           
+          
+           
+            {% comment %} <th scope="col">Order#</th> {% endcomment %}
+            {% comment %} {% if shopkeeper_obj%}
+            <th scope="col" >shopkeeper</th>
+            {% endif %}
+            {% if customer_obj%}
+            <th scope="col" >Customer</th>
+            {% endif %} {% endcomment %}
+            <th scope="col" style="font-size: 20px;" >Product Name</th>
+           
+            <th scope="col" style="font-size: 20px;" >Quantity</th>
+            <th scope="col" style="font-size: 20px;" >Price</th>
+            <th scope="col" style="font-size: 20px;"  >Amount</th>
+            
+        </tr>
+        </thead>
+        <tbody>
+
+        {% for product in products %}
+
+            <tr>
+           
+              <th scope="row">{{ forloop.counter }}
+                  
+              </th>
+            
+              
+                {% comment %} <td >
+                   
+                    {{ product.order.id }}
+                </td> {% endcomment %}
+
+                {% comment %} <td >
+                  {% if shopkeeper_obj %} 
+                  {{ product.order.shopkeeper.user.first_name }}
+                  {{ product.order.shopkeeper.user.last_name }}
+                  {% endif %}
+                  {% if customer_obj %}
+                  {{ product.order.customer.user.first_name }}
+                  {{ product.order.customer.user.last_name }}
+                  {% endif %}
+              </td> {% endcomment %}
+              <td >
+                   
+                {{ product.product.name }}
+            </td>
+           
+            <td >
+                   
+              {{ product.quantity }}
+          </td>
+              <td>
+                {{ product.price }}
+              </td>
+              <td>
+                {{ product.sub_total }}
+
+              </td>
+                
+            </tr>
+        {% endfor %}
+        </tbody>
+        <tfoot>
+          <tr>
+           
+           
+           
+            <td></td>
+            <td></td>
+            <td></td>
+            <td><b> Discount</b></td>
+            <td>{{discount}}</td>
+          </tr>
+
+        <tr>
+
+         
+            
+            <td></td>
+            <td></td>
+            <td></td>
+            <td><b>
+              Total Amount:
+            </b></td>
+          
+
+            <td><b> {{amount }} <b>
+              
+            </td>
+                   
+        </tr>
+
+        </tfoot>
+
+    </table>
+    
+   
+  </div>
+
+    </div>
+</div>
+
+
+<footer>
+  <div class="watermark">Dukandar.com</div>
+
+  <p>Dukandar representative will contact you.<br>
+    <p>Thanks for shopping with Dukandar<br>
+  <a href="mailto:@example.com"></a></p>
+</footer>
+</body>
+</html>
+
+        
+
+

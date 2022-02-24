@@ -25,7 +25,7 @@
         <a type="submit" href="{% url 'shopkeeper:orders_list' %}" class="btn btn-primary float-right mb-1" name="product_list">Order Lists</a>
      
     </div>
-    <form id="subCateForm" method="post" class="" name="subCateForm" enctype="multipart/form-data"
+    <form id="order_Detail_Form" method="post" class="" name="order_Detail" enctype="multipart/form-data"
                   action="{% url 'shopkeeper:order_details' order_id %}">
     {% csrf_token %}
 
@@ -34,9 +34,10 @@
         <tr>
             <th scope="col">#</th>
             <th scope="col">Order#</th>
-            {% if product.order.shopkeeper.user.first_name %}
+            {% if shopkeeper_id%}
             <th scope="col" >shopkeeper</th>
-            {% else %}
+            {% endif %}
+            {% if customer_id%}
             <th scope="col" >Customer</th>
             {% endif %}
             <th scope="col" >Product Name</th>
@@ -58,10 +59,11 @@
                 </td>
 
                 <td >
-                  {% if product.order.shopkeeper.user.first_name %}
+                  {% if shopkeeper_id %} 
                   {{ product.order.shopkeeper.user.first_name }}
                   {{ product.order.shopkeeper.user.last_name }}
-                  {% else %}
+                  {% endif %}
+                  {% if customer_id %}
                   {{ product.order.customer.user.first_name }}
                   {{ product.order.customer.user.last_name }}
                   {% endif %}
@@ -121,20 +123,38 @@
       <div class="form-group col-6 justify-content-md-end">
       <label class="">Want to Change Order Status ?</label>
       </div>
-    <div class="form-group col-6">
+      <div class="form-group col-6">
      
-      <select class="form-select" aria-label="Default select example" name ="status">
-         
-          <option >Change Order Status</option>
-          <option value="CANCELLED" {% if status == "CANCELLED"%} selected{% endif %}>Cancelled</option>
-          <option value="DELIVERED" {% if status == "DELIVERED"%} selected{% endif %} >Delivered</option>
-          <option value="PROCESSING" {% if status == "PROCESSING"%} selected{% endif %}>Processing</option>
-        </select>
-    </div>
-  </div>
+        <select class="form-select" aria-label="Default select example" name ="status">
+          
+            <option >Change Order Status</option>
+            <option value="CANCELLED" {% if status == "CANCELLED"%} selected{% endif %}>Cancelled</option>
+            <option value="DELIVERED" {% if status == "DELIVERED"%} selected  {% endif %} >Delivered</option>
+            <option value="PROCESSING" {% if status == "PROCESSING"%} selected{% endif %}>Processing</option>
+          </select>
+     </div>
+   </div>
+   <div class="row">
+  
+    <div class="form-group col-12 justify-content-md-end">
+   
+      <input type="hidden" name="PDF_BTN", value="{{order_id}}" disabled>
+    <button type="button" class="btn btn-primary float-right mt-5 " id="pdf_generate_btn" style="margin-left:20px;">PDF</button>
+    <button type="button" class="btn btn-primary float-right mt-5" id="submit_BTN">Submit</button>
+   </div>
+ </div>
 
 
-    <button type="submit" class="btn btn-primary float-right mt-5">Submit</button>
+
+  <div class="form-group col-6">
+
+   
+
+  </div> 
+
+    
+
+
 </form>
   </div>
 
@@ -145,6 +165,18 @@
             setTimeout(function() {
               $('div.alert').fadeOut('slow');
           }, 5000);
+
+          $("#pdf_generate_btn").click(function() {
+             
+            $('input[name="PDF_BTN"]').prop("disabled", false); 
+            $( "#order_Detail_Form" ).submit();
+            });
+
+            $("#submit_BTN").click(function() {
+             
+              $('input[name="PDF_BTN"]').prop("disabled", true); 
+              $( "#order_Detail_Form" ).submit();
+              });
           
         });
         function preview() {
@@ -159,6 +191,8 @@
 
                 }
             });
+          
+      
     </script>
     {% include 'shopkeeper/product/ajax.html' %}
 {% endblock %}
