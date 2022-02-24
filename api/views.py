@@ -438,17 +438,19 @@ class CustomerViewSetApi(viewsets.ViewSet):
 
 
 class ProductViewSetApi(viewsets.ViewSet):
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
+    # authentication_classes = [JWTAuthentication]
+    # permission_classes = [IsAuthenticated]
 
     def list(self, request):
-        products = Product.objects.all()
+        tokenCheck(request)
+        products = Product.objects.filter(is_active=True)
         serializer = ProductSerializer(products, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def retrieve(self, request, pk=None):
 
         try:
+            tokenCheck(request)
             product = Product.objects.get(id=pk)
             serializer = ProductSerializer(product)
             return Response(serializer.data, status=status.HTTP_200_OK)
