@@ -538,7 +538,7 @@ class SubCategoryView(viewsets.ViewSet):
         tokenCheck(request)
         try:
             parent = SubCategory.objects.get(id=pk)
-            products_list = Product.objects.filter(parent=parent.id, is_active=True)
+            products_list = Product.objects.filter(parent=parent.id, is_active=True,quantity__gt =0)
             serializer = ProductSerializer(products_list, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except ParentCategory.DoesNotExist:
@@ -582,34 +582,48 @@ class OrderViewSetApi(viewsets.ViewSet):
             products =post_Data.get('products', None)
             customer_id = post_data.get('customer', None)
             shopkeeper_id = post_data.get('shopkeeper', None)
-
+           
             if customer_id:
                 try:
                     customer_obj = Customer.objects.get(user=customer_id)
-                    print('customer_obj',customer_obj)
+                  
                     if customer_obj:
                         post_Data['customer']=customer_obj.id
-                        serializer = OrderSerializer(data=post_data)
+                        serializer = OrderSerializer(data=post_Data)
+                       
 
                         if serializer.is_valid():
+                            print('order')
                             serializer.save()
                             order =serializer.save()
+                           
                             for index in range(len(products)):
                                 
                                 product_id=products[index]['id']
                                 qty=products[index]['quantity']
                                 price=products[index]['amount']
                                 sub_total=products[index]['subtotal']
-                              
+                                
                              
                                 order_prod= ProductOrder.objects.create(order_id=order.id, product_id=product_id, quantity=qty, sub_total=sub_total, price=price)
                                
                                 order_prod.save()
-                            print('serializer', serializer)
+                              
+                                product_objs=Product.objects.get(id=product_id)
+
+                                qty =product_objs.quantity - qty
+                               
+                                if qty < 0:
+                                 product_objs.quantity=0
+                                else:
+                                    product_objs.quantity=qty
+                                product_objs.save()
+
                             response = {
                                 'message': 'Order Created Successfully'
                             }
                             return Response(response, status=status.HTTP_201_CREATED)
+                        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
                 except  Customer.DoesNotExist:
                     response = {
                         'message': 'Customer with Id Does Not Exist For this Order'
@@ -619,8 +633,7 @@ class OrderViewSetApi(viewsets.ViewSet):
             else:
 
                 try:
-                    # user = User.objects.get(id=shopkeeper_id)
-                    # print('user',user)
+                   
                     shopkeeper_obj = Shopkeeper.objects.get(user=shopkeeper_id)
                     if shopkeeper_obj:
                     
@@ -640,6 +653,10 @@ class OrderViewSetApi(viewsets.ViewSet):
                                 order_prod= ProductOrder.objects.create(order_id=order.id, product_id=product_id, quantity=qty, sub_total=sub_total, price=price)
                                
                                 order_prod.save()
+                                product_objs=Product.objects.get(id=product_id)
+                                qty =product_objs.quantity - qty
+                                product_objs.quantity=qty
+                                product_objs.save()
                             total_amount=float(post_data['total_amount'])
                             if total_amount < float(100000):
                                 wallet =Wallet.objects.create(shopkeeper=shopkeeper_obj,order=order,amount=0)
