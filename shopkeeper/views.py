@@ -282,6 +282,7 @@ def dukandarList(request):
 @login_required(login_url='shopkeeper:admin_login')
 def dukandarSetup(request):
     if request.POST:
+        print('shopkeeper_type',request.POST.get('shopkeeper_type'))
         dukandar_id = request.POST.get('dukandar_id') or None
         dukandar_obj = Shopkeeper.objects.get(id=dukandar_id)
         print('dukandar_obj', dukandar_obj)
@@ -296,6 +297,7 @@ def dukandarSetup(request):
         user.save()
         dukandar_obj.user = user
         dukandar_obj.shop_name = request.POST.get('shop_name')
+        dukandar_obj.shopkeeper_type = request.POST.get('shopkeeper_type')
         dukandar_obj.description = request.POST.get('description')
         # dukandar_obj.latitude=request.POST.get('first_name')
         # dukandar_obj.longitude=request.POST.get('first_name')
@@ -315,6 +317,7 @@ def dukandarUpdate(request, pk):
         'emp_id': dukandar_obj.emp_id,
         'user': dukandar_obj.user,
         'shop_name': dukandar_obj.shop_name,
+        'shopkeeper_type':dukandar_obj.shopkeeper_type,
         'description': dukandar_obj.description,
         'is_active': dukandar_obj.is_active,
     }

@@ -212,7 +212,7 @@ class ShopkeeperViewSetApi(viewsets.ViewSet):
                     employee_obj.target_achieved += 1
                     employee_obj.save()
                 user = User.objects.create_user(email=post_data['email'],password=post_data['password'])
-                user.first_name=post_data['first_name'],
+                user.first_name='he',
                 user.last_name = post_data['last_name'],
                 user.address=post_data['address']
                 user.city = post_data['city'],
@@ -221,7 +221,9 @@ class ShopkeeperViewSetApi(viewsets.ViewSet):
                 user.save()
                 dukandar = Shopkeeper.objects.create(user=user, shop_name=post_data['shop_name'],
                                                     latitude=post_data['latitude'],
-                                                        longitude=post_data['longitude'], emp_id=employee_obj)
+                                                        longitude=post_data['longitude'],
+                                                     shopkeeper_type=post_data['shopkeeper_type'],
+                                                     emp_id=employee_obj)
 
 
                 dukandar.save()
