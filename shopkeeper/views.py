@@ -15,7 +15,7 @@ import datetime
 import reportlab  
 from django.http import JsonResponse
 import json
-from .utils import *
+# from .utils import *
 from django.http import HttpResponse
 
 
