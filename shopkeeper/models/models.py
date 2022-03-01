@@ -21,6 +21,12 @@ CATEGORY_FOR_CHOICES = (('BRAND', 'For Brand'), ('RETAIL', 'For Retail'),
                         ('WSALE', 'For Whole Sale'),
                         ('CULTURE', 'For Culture'), ('AUTO', 'For Auto'))
 
+SHOPKEEPER_CHOICES = (
+
+    ('RETAIL', 'Retail'),
+    ('WSALE', 'Wholesale'),
+  
+)
 
 class User(AbstractUser):
     city = models.CharField(max_length=250, null=True)
@@ -41,7 +47,7 @@ class User(AbstractUser):
 
     @property
     def token(self):
-        token = jwt.encode({'email': self.email, 'exp': datetime.utcnow() + timedelta(minutes=15)}, settings.SECRET_KEY,
+        token = jwt.encode({'email': self.email, 'exp': datetime.utcnow() + timedelta(hours=24)}, settings.SECRET_KEY,
                            algorithm='HS256')
         return token
 
@@ -68,6 +74,22 @@ class Employee(models.Model):
         return str(self.user.first_name + ' ' + self.user.last_name)
 
 
+class EmployeeHistry(models.Model):
+    target_assign = models.CharField(max_length=10, null=True)
+    target_achieved = models.CharField(max_length=10, null=True)
+    area_designated = models.CharField(max_length=250, null=True, blank=True)
+    daily=  models.DateField()
+    description = models.TextField(null=True)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['created_at']
+
+    def __str__(self):
+        return str(self.user.first_name + ' ' + self.user.last_name)
+
 class Customer(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=False)
 
@@ -80,6 +102,9 @@ class Customer(models.Model):
 class Shopkeeper(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=False)
     emp_id = models.ForeignKey(Employee, on_delete=models.CASCADE, null=True)
+    shopkeeper_type = models.CharField(choices=SHOPKEEPER_CHOICES,
+                                    max_length=7,
+                                default='RETAIL')
     shop_name = models.CharField(max_length=255, null=False)
     description = models.TextField(null=False)
     latitude = models.CharField(max_length=50, null=False)
@@ -145,7 +170,8 @@ class Product(models.Model):
     description = models.TextField()
     # sku = models.CharField(max_length=100, null=False,blank=True)
     quantity = models.IntegerField(default=0)
-    price = models.FloatField(default=0.0)
+    r_price = models.FloatField(default=0.0)
+    w_price = models.FloatField(default=0.0)
     discount = models.FloatField(default=0.0)
 
     # weight_unit = models.CharField(max_length=5, choices=WEIGHT_UNIT_SELECTION, default="KG")

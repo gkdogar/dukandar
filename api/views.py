@@ -204,8 +204,7 @@ class ShopkeeperViewSetApi(viewsets.ViewSet):
                 employ_id = post_data.get('emp_id', None)
                 emp_user =User.objects.get(email=employ_id)
                 employee_obj=Employee.objects.get(user=emp_user)
-
-
+          
 
                 if employee_obj:
                    
@@ -221,6 +220,10 @@ class ShopkeeperViewSetApi(viewsets.ViewSet):
                                                         latitude=post_data['latitude'],
                                                          longitude=post_data['longitude'], emp_id=employee_obj)
                     dukandar.save()
+                    target_achieved=employee_obj.target_achieved
+                    employee_obj.target_achieved =target_achieved + 1
+                    employee_obj.save()
+
             except Employee.DoesNotExist:
                 response = {
                     'message': 'Employee with this Email Does Not Exist'
@@ -437,12 +440,12 @@ class CustomerViewSetApi(viewsets.ViewSet):
     #     return Response(response, status=status.HTTP_200_OK)
 
 
+
 class ProductViewSetApi(viewsets.ViewSet):
     # authentication_classes = [JWTAuthentication]
     # permission_classes = [IsAuthenticated]
 
     def list(self, request):
-        tokenCheck(request)
         products = Product.objects.filter(is_active=True)
         serializer = ProductSerializer(products, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -799,7 +802,7 @@ class LoginView(APIView):
                 'iat': datetime.utcnow(),
                 # 'user_type':user.user_type,
             }
-            token = token = jwt.encode({'id': user.id, 'exp': datetime.utcnow() + timedelta(minutes=10)},
+            token = token = jwt.encode({'id': user.id, 'exp': datetime.utcnow() + timedelta(hours=24)},
                                        settings.SECRET_KEY, algorithm='HS256')
             response = Response()
             response.set_cookie(key='jwt', value=token, httponly=True)
