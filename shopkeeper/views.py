@@ -592,7 +592,8 @@ def productSetup(request):
             prod_obj.sub_cat = SubCategory.objects.get(id=request.POST.get('sub_cat'))
             prod_obj.name = request.POST.get('name')
             prod_obj.description = request.POST.get('description')
-            prod_obj.price = request.POST.get('price')
+            prod_obj.r_price = request.POST.get('r_price')
+            prod_obj.w_price = request.POST.get('w_price')
             prod_obj.quantity = request.POST.get('quantity')
             prod_obj.discount = request.POST.get('discount')
             prod_obj.image = request.FILES.get('image') or img
@@ -636,7 +637,8 @@ def productUpdate(request, pk):
         'image': prod_obj.image,
         'description': prod_obj.description,
         'quantity': prod_obj.quantity,
-        'price': prod_obj.price,
+        'r_price': prod_obj.r_price,
+        'w_price': prod_obj.w_price,
         'discount': prod_obj.discount,
         'is_active': prod_obj.is_active,
     }
