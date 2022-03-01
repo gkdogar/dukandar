@@ -202,27 +202,26 @@ class ShopkeeperViewSetApi(viewsets.ViewSet):
                 return Response(response, status=status.HTTP_400_BAD_REQUEST)
             try:
                 employ_id = post_data.get('emp_id', None)
-                emp_user =User.objects.get(email=employ_id)
-                employee_obj=Employee.objects.get(user=emp_user)
-          
-
-                if employee_obj:
-                   
-                    user = User.objects.create_user(email=post_data['email'],password=post_data['password'])
-                    user.first_name=post_data['first_name'],
-                    user.last_name = post_data['last_name'],
-                    user.address=post_data['address']
-                    user.city = post_data['city'],
-                    user.phone_no = post_data['phone_no']
-                    user.user_type = 'SHOPKEEPER'
-                    user.save()
-                    dukandar = Shopkeeper.objects.create(user=user, shop_name=post_data['shop_name'],
-                                                        latitude=post_data['latitude'],
-                                                         longitude=post_data['longitude'], emp_id=employee_obj)
-                    dukandar.save()
-                    target_achieved=employee_obj.target_achieved
-                    employee_obj.target_achieved =target_achieved + 1
-                    employee_obj.save()
+                employee_obj =None
+                if employ_id:
+                    print('employ_id',employ_id)
+                    emp_user =User.objects.get(email=employ_id)
+                    employee_obj=Employee.objects.get(user=emp_user)
+                user = User.objects.create_user(email=post_data['email'],password=post_data['password'])
+                user.first_name=post_data['first_name'],
+                user.last_name = post_data['last_name'],
+                user.address=post_data['address']
+                user.city = post_data['city'],
+                user.phone_no = post_data['phone_no']
+                user.user_type = 'SHOPKEEPER'
+                user.save()
+                dukandar = Shopkeeper.objects.create(user=user, shop_name=post_data['shop_name'],
+                                                    latitude=post_data['latitude'],
+                                                        longitude=post_data['longitude'], emp_id=employee_obj)
+                dukandar.save()
+                target_achieved=employee_obj.target_achieved
+                employee_obj.target_achieved =target_achieved + 1
+                employee_obj.save()
 
             except Employee.DoesNotExist:
                 response = {
@@ -438,14 +437,25 @@ class CustomerViewSetApi(viewsets.ViewSet):
     #         'message': 'Record Deleted Successfully'
     #     }
     #     return Response(response, status=status.HTTP_200_OK)
+    
 
+class AllProductApi(viewsets.ViewSet):
+    # authentication_classes = [JWTAuthentication]
+    # permission_classes = [IsAuthenticated]
+
+    def list(self, request):
+        products = Product.objects.filter(is_active=True)
+        serializer = ProductSerializer(products, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class ProductViewSetApi(viewsets.ViewSet):
     # authentication_classes = [JWTAuthentication]
     # permission_classes = [IsAuthenticated]
 
+   
     def list(self, request):
+        tokenCheck(request)
         products = Product.objects.filter(is_active=True)
         serializer = ProductSerializer(products, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)

@@ -101,7 +101,7 @@ class Customer(models.Model):
 
 class Shopkeeper(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=False)
-    emp_id = models.ForeignKey(Employee, on_delete=models.CASCADE, null=True)
+    emp_id = models.ForeignKey(Employee, on_delete=models.CASCADE, null=True, blank=True)
     shopkeeper_type = models.CharField(choices=SHOPKEEPER_CHOICES,
                                     max_length=7,
                                 default='RETAIL')
