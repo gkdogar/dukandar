@@ -607,17 +607,11 @@ class OrderViewSetApi(viewsets.ViewSet):
                     if customer_obj:
                         post_Data['customer']=customer_obj.id
                         serializer = OrderSerializer(data=post_Data)
-
-                        serializer_history = OrderHistorySerializer(data=post_Data)
-                        serializer_hist =None
-                        if serializer_history.is_valid():
-                            serializer_hist =serializer.save()
-                            print('serializer_hist')
-
                         if serializer.is_valid():
-                            print('order')
                             serializer.save()
                             order =serializer.save()
+                            ord_history =OrderHistory.objects.create(customer=customer_obj, total_amount= post_Data['total_amount'], discount =post_Data['discount'])
+                            ord_history.save()
                         
                             for index in range(len(products)):
                                 product_id=products[index]['id']
@@ -627,6 +621,8 @@ class OrderViewSetApi(viewsets.ViewSet):
                                 order_prod= ProductOrder.objects.create(order_id=order.id, product_id=product_id, quantity=qty, sub_total=sub_total, price=price)
                                
                                 order_prod.save()
+                                order_prod_hist= ProductOrderHistory.objects.create(order_id=ord_history.id, product_id=product_id, quantity=qty, sub_total=sub_total, price=price)
+                                order_prod_hist.save()
                                
                                 product_objs=Product.objects.get(id=product_id)
                                 qty =product_objs.quantity - qty
@@ -660,7 +656,6 @@ class OrderViewSetApi(viewsets.ViewSet):
                         if serializer.is_valid():
                             order =serializer.save()
                             ord_history =OrderHistory.objects.create(shopkeeper=shopkeeper_obj, total_amount= post_Data['total_amount'], discount =post_Data['discount'])
-                            print('hello')
                             ord_history.save()
                             for index in range(len(products)):
                                 
@@ -678,7 +673,7 @@ class OrderViewSetApi(viewsets.ViewSet):
                                 qty =product_objs.quantity - qty
                                 product_objs.quantity=qty
                                 product_objs.save()
-                                
+
                                 order_prod_hist= ProductOrderHistory.objects.create(order_id=ord_history.id, product_id=product_id, quantity=qty, sub_total=sub_total, price=price)
                                 order_prod_hist.save()
 
