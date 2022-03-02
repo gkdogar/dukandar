@@ -13,6 +13,7 @@ import pandas as pd
 import re
 import datetime
 import reportlab  
+from .utils import *
 from django.http import JsonResponse
 import json
 # from .utils import *
@@ -904,3 +905,86 @@ def giftDelete(request, pk):
     gift_obj.delete()
     messages.error(request, 'Record Deleted')
     return redirect('shopkeeper:gift_List')
+
+@login_required(login_url='shopkeeper:admin_login')
+def ordersHistoryList(request):
+    
+    orders_list = OrderHistory.objects.all()
+    shopkeeper=None
+    customer =None
+    for order in orders_list:
+        shopkeeper =order.shopkeeper
+        customer =order.customer
+    print('shopkeeper',customer)
+    context = {
+        'orders_list': orders_list,
+        'shopkeeper':shopkeeper,
+        'customer':customer
+    }
+    return render(request, 'shopkeeper/order/orderhistorylist.html', context)
+
+@login_required(login_url='shopkeeper:admin_login')
+def ordersHistoryDetails(request, pk):
+    if request.POST:
+        pdf =request.POST.get('PDF_BTN', None)
+        print('PDF_BTN', pdf)
+        if pdf:
+            orders_obj = OrderHistory.objects.filter(id=pdf)
+            
+            orders_obj = OrderHistory.objects.get(id=pdf)
+            shopkeeper_obj= orders_obj.shopkeeper or None
+            customer_obj= orders_obj.customer or None
+            product_orders =ProductOrderHistory.objects.filter(order_id=pk)
+            # win_gift=WinSpin.objects.filter(shopkeeper_id=shopkeeper_obj.id)
+
+            context = {
+                'order_id': orders_obj.id,
+                'products': product_orders,
+                'dukandar': orders_obj.shopkeeper,
+                'customer':orders_obj.customer,
+                'order_date': orders_obj.order_date,
+                'amount': orders_obj.total_amount,
+                'discount': orders_obj.discount,
+                'order_upto': orders_obj.order_upto,
+                'shopkeeper_obj':shopkeeper_obj,
+                'customer_obj':customer_obj,
+                # 'win_gift_list':win_gift,
+            
+                'status': orders_obj.status,
+                }
+
+            pdf = render_to_pdf('shopkeeper/pdf.html', context)
+            response = HttpResponse(pdf,content_type='application/pdf')
+            response['Content-Disposition'] = 'attachment; filename="dukandarOrder#'+str(orders_obj.id)+'".pdf"'
+            return response
+    
+        else:
+            orders_obj = OrderHistory.objects.get(id=pk)
+            orders_obj.status = request.POST['status']
+            orders_obj.save()
+            messages.success(request, 'Order Status Successfully')
+            return redirect('shopkeeper:orders_list')
+    else:
+   
+        
+        orders_obj = OrderHistory.objects.get(id=pk)
+        product_orders =ProductOrderHistory.objects.filter(order_id=pk)
+        shopkeeper_id= orders_obj.shopkeeper or None
+        customer_id= orders_obj.customer or None
+        context = {
+            'order_id': orders_obj.id,
+            'products': product_orders,
+            'dukandar': orders_obj.shopkeeper,
+            # 'customer':orders_obj.customer,
+            'order_date': orders_obj.order_date,
+            'amount': orders_obj.total_amount,
+             'discount': orders_obj.discount,
+            'order_upto': orders_obj.order_upto,
+            'shopkeeper_id':shopkeeper_id,
+            'customer_id':customer_id,
+            
+           
+            'status': orders_obj.status,
+
+        }
+        return render(request, 'shopkeeper/order/orderhistorydetail.html', context)

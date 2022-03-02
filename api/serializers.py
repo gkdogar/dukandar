@@ -156,6 +156,13 @@ class OrderSerializer(serializers.ModelSerializer):
 
         }
 
+class OrderHistorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OrderHistory
+        fields ='__all__'
+      
+
+
 
 
 

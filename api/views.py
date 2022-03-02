@@ -607,35 +607,35 @@ class OrderViewSetApi(viewsets.ViewSet):
                     if customer_obj:
                         post_Data['customer']=customer_obj.id
                         serializer = OrderSerializer(data=post_Data)
-                       
+
+                        serializer_history = OrderHistorySerializer(data=post_Data)
+                        serializer_hist =None
+                        if serializer_history.is_valid():
+                            serializer_hist =serializer.save()
+                            print('serializer_hist')
 
                         if serializer.is_valid():
                             print('order')
                             serializer.save()
                             order =serializer.save()
-                           
+                        
                             for index in range(len(products)):
-                                
                                 product_id=products[index]['id']
                                 qty=products[index]['quantity']
                                 price=products[index]['amount']
                                 sub_total=products[index]['subtotal']
-                                
-                             
                                 order_prod= ProductOrder.objects.create(order_id=order.id, product_id=product_id, quantity=qty, sub_total=sub_total, price=price)
                                
                                 order_prod.save()
-                              
-                                product_objs=Product.objects.get(id=product_id)
-
-                                qty =product_objs.quantity - qty
                                
+                                product_objs=Product.objects.get(id=product_id)
+                                qty =product_objs.quantity - qty
                                 if qty < 0:
                                  product_objs.quantity=0
                                 else:
                                     product_objs.quantity=qty
                                 product_objs.save()
-
+                            
                             response = {
                                 'message': 'Order Created Successfully'
                             }
@@ -659,6 +659,9 @@ class OrderViewSetApi(viewsets.ViewSet):
                         serializer = OrderSerializer(data=post_Data)
                         if serializer.is_valid():
                             order =serializer.save()
+                            ord_history =OrderHistory.objects.create(shopkeeper=shopkeeper_obj, total_amount= post_Data['total_amount'], discount =post_Data['discount'])
+                            print('hello')
+                            ord_history.save()
                             for index in range(len(products)):
                                 
                                 product_id=products[index]['id']
@@ -670,10 +673,15 @@ class OrderViewSetApi(viewsets.ViewSet):
                                 order_prod= ProductOrder.objects.create(order_id=order.id, product_id=product_id, quantity=qty, sub_total=sub_total, price=price)
                                
                                 order_prod.save()
+                                
                                 product_objs=Product.objects.get(id=product_id)
                                 qty =product_objs.quantity - qty
                                 product_objs.quantity=qty
                                 product_objs.save()
+                                
+                                order_prod_hist= ProductOrderHistory.objects.create(order_id=ord_history.id, product_id=product_id, quantity=qty, sub_total=sub_total, price=price)
+                                order_prod_hist.save()
+
                             total_amount=float(post_data['total_amount'])
                             if total_amount < float(100000):
                                 wallet =Wallet.objects.create(shopkeeper=shopkeeper_obj,order=order,amount=0)

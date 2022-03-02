@@ -1,0 +1,198 @@
+{% extends 'shopkeeper/base/base.html' %}
+{% load static %}
+{% block stylesheet %}
+    <style>
+
+    </style>
+
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+  <h1 class="text-center mt-3 mb-5 font-weight-bold">
+   Order History Detail</h1>
+    {% if messages %}
+    {% for message in messages %}
+        <div {% if message.tags %}class="alert alert-{{ message.tags }}" {% endif %} role="alert">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
+
+
+    <div class="row col-2 offset-10">
+        <a type="submit" href="{% url 'shopkeeper:orders_history_list' %}" class="btn btn-primary float-right mb-1" name="product_list">Order History Lists</a>
+     
+    </div>
+    <form id="order_Detail_Form" method="post" class="" name="order_Detail" enctype="multipart/form-data"
+                  action="#">
+    {% csrf_token %}
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Order#</th>
+            {% if shopkeeper_id%}
+            <th scope="col" >shopkeeper</th>
+            {% endif %}
+            {% if customer_id%}
+            <th scope="col" >Customer</th>
+            {% endif %}
+            <th scope="col" >Product Name</th>
+            <th scope="col" >Quantity</th>
+            <th scope="col" >Price</th>
+            <th scope="col" >Amount</th>
+        </tr>
+        </thead>
+        <tbody>
+
+        {% for product in products %}
+            <tr>
+                <td > {{ forloop.counter }}
+                  
+                </td>
+                <td >
+                   
+                    {{ product.order.id }}
+                </td>
+
+                <td >
+                  {% if shopkeeper_id %} 
+                  {{ product.order.shopkeeper.user.first_name }}
+                  {{ product.order.shopkeeper.user.last_name }}
+                  {% endif %}
+                  {% if customer_id %}
+                  {{ product.order.customer.user.first_name }}
+                  {{ product.order.customer.user.last_name }}
+                  {% endif %}
+              </td>
+              <td >
+                   
+                {{ product.product.name }}
+            </td>
+            <td >
+                   
+              {{ product.quantity }}
+          </td>
+              <td>
+                {{ product.price }}
+              </td>
+              <td>
+                {{ product.sub_total }}
+
+              </td>
+                
+            </tr>
+        {% endfor %}
+        </tbody>
+        <tfoot>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td><b> Discount</b></td>
+            <td>{{discount}}</td>
+          </tr>
+
+        <tr>
+
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td><b>
+              Total Amount:
+            </b></td>
+          
+
+            <td><b> {{amount }} <b>
+              
+            </td>
+                   
+        </tr>
+
+        </tfoot>
+
+    </table>
+    <div class="row">
+      <div class="form-group col-6 justify-content-md-end">
+      <label class="">Order Status </label>
+      </div>
+      <div class="form-group col-6">
+     
+        <select class="form-select" aria-label="Default select example" name ="status" disabled>
+          
+            <option >Change Order Status</option>
+            <option value="CANCELLED" {% if status == "CANCELLED"%} selected{% endif %}>Cancelled</option>
+            <option value="DELIVERED" {% if status == "DELIVERED"%} selected  {% endif %} >Delivered</option>
+            <option value="PROCESSING" {% if status == "PROCESSING"%} selected{% endif %}>Processing</option>
+          </select>
+     </div>
+   </div>
+   <div class="row">
+  
+    <div class="form-group col-12 justify-content-md-end">
+   
+      <input type="hidden" name="PDF_BTN", value="{{order_id}}" disabled>
+    <button type="button" class="btn btn-primary float-right mt-5 " id="pdf_generate_btn" style="margin-left:20px;">PDF</button>
+    {% comment %} <button type="button" class="btn btn-primary float-right mt-5" id="submit_BTN">Submit</button> {% endcomment %}
+   </div>
+ </div>
+
+
+
+  <div class="form-group col-6">
+
+   
+
+  </div> 
+
+    
+
+
+</form>
+  </div>
+
+
+        <script>
+        $(document).ready(function () {
+            $('ul').find("li#product_tabs").addClass("active");
+            setTimeout(function() {
+              $('div.alert').fadeOut('slow');
+          }, 5000);
+
+          $("#pdf_generate_btn").click(function() {
+             
+            $('input[name="PDF_BTN"]').prop("disabled", false); 
+            $( "#order_Detail_Form" ).submit();
+            });
+
+            $("#submit_BTN").click(function() {
+             
+              $('input[name="PDF_BTN"]').prop("disabled", true); 
+              $( "#order_Detail_Form" ).submit();
+              });
+          
+        });
+        function preview() {
+            frame.src = URL.createObjectURL(event.target.files[0]);
+        }
+         $(".checkbox").on('change', function () {
+                if ($(this).is(':checked')) {
+                    $(this).attr('value', 'True');
+
+                } else {
+                    $(this).attr('value', 'False');
+
+                }
+            });
+          
+      
+    </script>
+    {% include 'shopkeeper/product/ajax.html' %}
+{% endblock %}

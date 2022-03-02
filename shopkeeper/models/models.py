@@ -198,7 +198,7 @@ class Order(models.Model):
                                  blank=True,
                                  null=True)
     order_date = models.DateTimeField(auto_now=True)
-    total_amount = models.BigIntegerField()
+    total_amount = models.BigIntegerField(default=0)
     order_upto = models.DecimalField(default=0, max_digits=7, decimal_places=2)
     discount = models.IntegerField(default=0) 
     status = models.CharField(choices=ORDER_CHOICES,
@@ -224,25 +224,40 @@ class ProductOrder(models.Model):
 
 
 class OrderHistory(models.Model):
-    previouse_order = models.ForeignKey(Order,
-                                        on_delete=models.CASCADE,
-                                        )
-    product = models.ForeignKey(Product,
-                                on_delete=models.CASCADE,
-                                null=True)
     shopkeeper = models.ForeignKey(Shopkeeper,
                                    on_delete=models.CASCADE,
-                                   null=True)
-    cutomer = models.ForeignKey(Customer,
-                                on_delete=models.CASCADE,
-                                null=True)
+                                   null=True,
+                                   blank=True
+                                   )
+    customer = models.ForeignKey(Customer,
+                                 on_delete=models.CASCADE,
+                                 blank=True,
+                                 null=True)
     order_date = models.DateTimeField(auto_now=True)
-    amount = models.IntegerField(default=0)
-    order_upto = models.IntegerField(default=0)
-    quantity = models.IntegerField(default=0)
+    total_amount = models.BigIntegerField(default=0)
+    order_upto = models.DecimalField(default=0, max_digits=7, decimal_places=2)
+    discount = models.IntegerField(default=0) 
     status = models.CharField(choices=ORDER_CHOICES,
                               max_length=12,
                               default='PROCESSING')
+    def __str__(self):
+        return str(self.order_date)
+
+class ProductOrderHistory(models.Model):
+    order = models.ForeignKey(OrderHistory,
+                                on_delete=models.CASCADE,
+                                null=True)
+    product = models.ForeignKey(Product,
+                                on_delete=models.CASCADE,
+                                null=True)
+    quantity = models.IntegerField(default=0)   
+
+    price = models.IntegerField(default=0) 
+    
+    sub_total = models.IntegerField(default=0)   
+
+    def __str__(self):
+        return str(self.order_date)
 
 
 class Discount(models.Model):
@@ -274,9 +289,6 @@ class Wallet(models.Model):
     def __str__(self):
         return str(self.amount)
     
-    
-
-
 class Complaint(models.Model):
     shopkeeper = models.ForeignKey(Shopkeeper,
                                    on_delete=models.CASCADE,
