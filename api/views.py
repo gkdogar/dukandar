@@ -206,9 +206,13 @@ class ShopkeeperViewSetApi(viewsets.ViewSet):
                 if employ_id:
                     print('employ_id',employ_id)
                     emp_user =User.objects.get(email=employ_id)
-                    employee_obj=Employee.objects.get(user=emp_user)
+                    print('emp_user',emp_user)
+                    employee_obj=Employee.objects.get(user_id=emp_user.id)
+                    print('employee_obj..sds', employee_obj.id)
+                    employee_obj.target_achieved += 1
+                    employee_obj.save()
                 user = User.objects.create_user(email=post_data['email'],password=post_data['password'])
-                user.first_name=post_data['first_name'],
+                user.first_name='he',
                 user.last_name = post_data['last_name'],
                 user.address=post_data['address']
                 user.city = post_data['city'],
@@ -217,12 +221,12 @@ class ShopkeeperViewSetApi(viewsets.ViewSet):
                 user.save()
                 dukandar = Shopkeeper.objects.create(user=user, shop_name=post_data['shop_name'],
                                                     latitude=post_data['latitude'],
-                                                        longitude=post_data['longitude'], emp_id=employee_obj)
-                dukandar.save()
-                target_achieved=employee_obj.target_achieved
-                employee_obj.target_achieved =target_achieved + 1
-                employee_obj.save()
+                                                        longitude=post_data['longitude'],
+                                                     shopkeeper_type=post_data['shopkeeper_type'],
+                                                     emp_id=employee_obj)
 
+
+                dukandar.save()
             except Employee.DoesNotExist:
                 response = {
                     'message': 'Employee with this Email Does Not Exist'
@@ -230,10 +234,8 @@ class ShopkeeperViewSetApi(viewsets.ViewSet):
                 return Response(response, status=status.HTTP_400_BAD_REQUEST)
 
             serializer = ShopkeeperSerializer(data=post_data)
-           
-
             response = {
-                'message': 'Record ddCreated Successfully !'
+                'message': 'Record Created Successfully !'
             }
             return Response(response, status=status.HTTP_201_CREATED)
 
@@ -241,7 +243,7 @@ class ShopkeeperViewSetApi(viewsets.ViewSet):
             serializer = ShopkeeperSerializer(data=request.data)
             if serializer.is_valid():
                 response = {
-                    'message': 'Something Went Wrong'
+                    'message': 'Record Created Successfully !'
                 }
                 return Response(response, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

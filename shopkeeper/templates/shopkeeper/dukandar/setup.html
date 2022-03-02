@@ -64,12 +64,28 @@
          
       </div>
       <div class="col-6">
-      
+        <div class="form-group ">
+             <label for="employeeFname">ShopKeeper Type {{ shopkeeper_type }}</label>
+            <select class="form-select" aria-label="Default select example" name="shopkeeper_type">
+                {% if shopkeeper_type  %}
+              <option value="{{shopkeeper_type}}">{{ shopkeeper_type }}</option>
+                    {% else %}
+                      <option value="None">--------</option>
+                {% endif %}
+              <option value="RETAIL">Retail</option>
+              <option  value="WSALE">Wholesale</option>
+
+
+    </select>
+        </div>
+
         <div class="form-group">
             <label for="employeeFname">Shop Name</label>
             <input type="text" class="form-control" id="shop_name" aria-describedby="shop_name" name="shop_name"
                    value="{{shop_name}}">
         </div>
+
+
         <div class="form-group">
             <label for="employeeFname">Address</label>
             <input type="text" class="form-control" id="phone_no" aria-describedby="address" name="address"

@@ -59,8 +59,8 @@ class User(AbstractUser):
 
 class Employee(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, related_name='user', on_delete=models.CASCADE, null=False)
-    target_assign = models.CharField(max_length=10, null=True)
-    target_achieved = models.CharField(max_length=10, null=True)
+    target_assign = models.IntegerField(default=0, null=True, blank=True)
+    target_achieved = models.IntegerField(default=0, null=True, blank=True)
     area_designated = models.CharField(max_length=250, null=True, blank=True)
     description = models.TextField(null=True)
     is_active = models.BooleanField(default=True)
