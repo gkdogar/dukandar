@@ -98,8 +98,10 @@ class EmployeeViewSetApi(viewsets.ViewSet):
         serializer = EmployeeSerializer(employee, data=request.data)
         if serializer.is_valid():
             serializer.save()
-            employe_data=serializer.save()
-            emp_histroy =EmployeeHistry.objects.create(employee=employe_data,daily_target_assign=employe_data.target_assign ,daily_achieved =employe_data.target_achieved)
+            employe_data = serializer.save()
+            emp_histroy = EmployeeHistry.objects.create(employee=employe_data,
+                                                        daily_target_assign=employe_data.target_assign,
+                                                        daily_achieved=employe_data.target_achieved)
             emp_histroy.save()
             response = {
                 'message': 'Complete Record Update Successfully'
@@ -124,8 +126,10 @@ class EmployeeViewSetApi(viewsets.ViewSet):
         serializer = EmployeeSerializer(employee, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
-            employe_data=serializer.save()
-            emp_histroy =EmployeeHistry.objects.create(employee=employe_data,daily_target_assign=employe_data.target_assign ,daily_achieved =employe_data.target_achieved)
+            employe_data = serializer.save()
+            emp_histroy = EmployeeHistry.objects.create(employee=employe_data,
+                                                        daily_target_assign=employe_data.target_assign,
+                                                        daily_achieved=employe_data.target_achieved)
             emp_histroy.save()
             response = {
                 'message': 'Partial Record Update Successfully'
@@ -150,31 +154,30 @@ class ShopkeeperViewSetApi(viewsets.ViewSet):
     #     serializer = ShopkeeperSerializer(dukandar, many=True)
     #     return Response(serializer.data, status=status.HTTP_200_OK)
 
-
     def retrieve(self, request, pk=None):
         # authentication_classes = [JWTAuthentication]
         # permission_classes = [IsAuthenticated]
         tokenCheck(request)
         try:
             user = User.objects.get(id=pk)
-          
+
             dukandar = Shopkeeper.objects.get(user=user)
-           
-            total_orders=Order.objects.filter(shopkeeper=dukandar.id).count()
-            walt_obj=Wallet.objects.filter(shopkeeper=dukandar.id)
-            walt_amount=0
-            if walt_obj :
-                walt_amount=walt_obj[0].amount
-            spin_obj=Spines.objects.filter(shopkeeper=dukandar.id)
-            total_spin=0
-            if spin_obj :
-                total_spin=spin_obj[0].spine_no            
+
+            total_orders = Order.objects.filter(shopkeeper=dukandar.id).count()
+            walt_obj = Wallet.objects.filter(shopkeeper=dukandar.id)
+            walt_amount = 0
+            if walt_obj:
+                walt_amount = walt_obj[0].amount
+            spin_obj = Spines.objects.filter(shopkeeper=dukandar.id)
+            total_spin = 0
+            if spin_obj:
+                total_spin = spin_obj[0].spine_no
             serializer = ShopkeeperSerializer(dukandar)
-            context={
-                   'shopkeeper':serializer.data,
-                   'spin':total_spin,
-                   'wallet':walt_amount,
-                   'orders':total_orders
+            context = {
+                'shopkeeper': serializer.data,
+                'spin': total_spin,
+                'wallet': walt_amount,
+                'orders': total_orders
             }
             return Response(context, status=status.HTTP_200_OK)
         except Shopkeeper.DoesNotExist:
@@ -208,31 +211,31 @@ class ShopkeeperViewSetApi(viewsets.ViewSet):
                 return Response(response, status=status.HTTP_400_BAD_REQUEST)
             try:
                 employ_id = post_data.get('emp_id', None)
-                employee_obj =None
+                employee_obj = None
                 if employ_id:
-                   
-                    emp_user =User.objects.get(email=employ_id)
-                  
-                    employee_obj=Employee.objects.get(user_id=emp_user.id)
-                 
+                    emp_user = User.objects.get(email=employ_id)
+
+                    employee_obj = Employee.objects.get(user_id=emp_user.id)
+
                     employee_obj.target_achieved += 1
                     employee_obj.save()
-                    emp_histroy =EmployeeHistry.objects.create(employee=employee_obj,daily_target_assign=employee_obj.target_assign ,daily_achieved =employee_obj.target_achieved)
+                    emp_histroy = EmployeeHistry.objects.create(employee=employee_obj,
+                                                                daily_target_assign=employee_obj.target_assign,
+                                                                daily_achieved=employee_obj.target_achieved)
                     emp_histroy.save()
-                user = User.objects.create_user(email=post_data['email'],password=post_data['password'])
-                user.first_name=post_data['first_name'],
+                user = User.objects.create_user(email=post_data['email'], password=post_data['password'])
+                user.first_name = post_data['first_name'],
                 user.last_name = post_data['last_name'],
-                user.address=post_data['address']
+                user.address = post_data['address']
                 user.city = post_data['city'],
                 user.phone_no = post_data['phone_no']
                 user.user_type = 'SHOPKEEPER'
                 user.save()
                 dukandar = Shopkeeper.objects.create(user=user, shop_name=post_data['shop_name'],
-                                                    latitude=post_data['latitude'],
-                                                        longitude=post_data['longitude'],
+                                                     latitude=post_data['latitude'],
+                                                     longitude=post_data['longitude'],
                                                      shopkeeper_type=post_data['shopkeeper_type'],
                                                      emp_id=employee_obj)
-
 
                 dukandar.save()
             except Employee.DoesNotExist:
@@ -271,12 +274,11 @@ class ShopkeeperViewSetApi(viewsets.ViewSet):
         user.user_type = 'SHOPKEEPER'
         user.save()
 
-
-        user_obj =User.objects.get(email=post_data['emp_id'])
-        employee =Employee.objects.get(user=user_obj)
-        dukandar.emp_id=employee
+        user_obj = User.objects.get(email=post_data['emp_id'])
+        employee = Employee.objects.get(user=user_obj)
+        dukandar.emp_id = employee
         dukandar.save()
-        serializer = ShopkeeperSerializer(dukandar,data=post_data)
+        serializer = ShopkeeperSerializer(dukandar, data=post_data)
         if serializer.is_valid():
             serializer.save()
             response = {
@@ -376,16 +378,16 @@ class CustomerViewSetApi(viewsets.ViewSet):
     def retrieve(self, request, pk=None):
         tokenCheck(request)
         try:
-            user =User.objects.get(id=pk)
+            user = User.objects.get(id=pk)
             customer = Customer.objects.get(user=user)
             serializer = CustomerSerializer(customer)
-            context={
-                   'customer':serializer.data,
-              
-                   'orders':Order.objects.filter(customer=customer.id).count()
+            context = {
+                'customer': serializer.data,
+
+                'orders': Order.objects.filter(customer=customer.id).count()
             }
             return Response(context, status=status.HTTP_200_OK)
-         
+
         except Customer.DoesNotExist:
             response = {
                 'message': 'No Record Found'
@@ -447,7 +449,7 @@ class CustomerViewSetApi(viewsets.ViewSet):
     #         'message': 'Record Deleted Successfully'
     #     }
     #     return Response(response, status=status.HTTP_200_OK)
-    
+
 
 class AllProductApi(viewsets.ViewSet):
     # authentication_classes = [JWTAuthentication]
@@ -463,7 +465,6 @@ class ProductViewSetApi(viewsets.ViewSet):
     # authentication_classes = [JWTAuthentication]
     # permission_classes = [IsAuthenticated]
 
-   
     def list(self, request):
         tokenCheck(request)
         products = Product.objects.filter(is_active=True)
@@ -563,7 +564,7 @@ class SubCategoryView(viewsets.ViewSet):
         tokenCheck(request)
         try:
             parent = SubCategory.objects.get(id=pk)
-            products_list = Product.objects.filter(parent=parent.id, is_active=True,quantity__gt =0)
+            products_list = Product.objects.filter(parent=parent.id, is_active=True, quantity__gt=0)
             serializer = ProductSerializer(products_list, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except ParentCategory.DoesNotExist:
@@ -588,10 +589,10 @@ class OrderViewSetApi(viewsets.ViewSet):
 
         tokenCheck(request)
         try:
-            shopkeeper=Shopkeeper.objects.get(user_id=pk)
+            shopkeeper = Shopkeeper.objects.get(user_id=pk)
             order = Order.objects.filter(shopkeeper_id=shopkeeper.id)
 
-            serializer = OrderSerializer(order,many=True)
+            serializer = OrderSerializer(order, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Shopkeeper.DoesNotExist:
             response = {
@@ -600,46 +601,55 @@ class OrderViewSetApi(viewsets.ViewSet):
             return Response(response, status=status.HTTP_200_OK)
 
     def create(self, request):
-        tokenCheck(request)
+        # tokenCheck(request)
         try:
             post_data = request.data
-            post_Data=deepcopy(post_data)
-            products =post_Data.get('products', None)
+            print('post_data',post_data)
+            post_Data = deepcopy(post_data)
+            products = post_Data.get('products', None)
             customer_id = post_data.get('customer', None)
             shopkeeper_id = post_data.get('shopkeeper', None)
-           
+
             if customer_id:
                 try:
+
+                    user =User.objects.get(id=customer_id)
+                    print('user', user.id)
+
                     customer_obj = Customer.objects.get(user=customer_id)
-                  
+
+                    print('customer_obj',customer_obj)
                     if customer_obj:
-                        post_Data['customer']=customer_obj.id
+                        post_Data['customer'] = customer_obj.id
                         serializer = OrderSerializer(data=post_Data)
                         if serializer.is_valid():
                             serializer.save()
-                            order =serializer.save()
-                            ord_history =OrderHistory.objects.create(customer=customer_obj, total_amount= post_Data['total_amount'], discount =post_Data['discount'])
+                            order = serializer.save()
+                            ord_history = OrderHistory.objects.create(order=order)
                             ord_history.save()
-                        
+
                             for index in range(len(products)):
-                                product_id=products[index]['id']
-                                qty=products[index]['quantity']
-                                price=products[index]['amount']
-                                sub_total=products[index]['subtotal']
-                                order_prod= ProductOrder.objects.create(order_id=order.id, product_id=product_id, quantity=qty, sub_total=sub_total, price=price)
-                               
+                                product_id = products[index]['id']
+                                qty = products[index]['quantity']
+                                price = products[index]['amount']
+                                sub_total = products[index]['subtotal']
+                                order_prod = ProductOrder.objects.create(order_id=order.id, product_id=product_id,
+                                                                         quantity=qty, sub_total=sub_total, price=price)
+
                                 order_prod.save()
-                                order_prod_hist= ProductOrderHistory.objects.create(order_id=ord_history.id, product_id=product_id, quantity=qty, sub_total=sub_total, price=price)
+                                order_prod_hist = ProductOrderHistory.objects.create(order=ord_history,
+                                                                                     product_id=product_id,
+                                                                                     quantity=qty, sub_total=sub_total,
+                                                                                     price=price)
                                 order_prod_hist.save()
-                               
-                                product_objs=Product.objects.get(id=product_id)
-                                qty =product_objs.quantity - qty
+                                product_objs = Product.objects.get(id=product_id)
+                                qty = product_objs.quantity - qty
                                 if qty < 0:
-                                 product_objs.quantity=0
+                                    product_objs.quantity = 0
                                 else:
-                                    product_objs.quantity=qty
+                                    product_objs.quantity = qty
                                 product_objs.save()
-                            
+
                             response = {
                                 'message': 'Order Created Successfully'
                             }
@@ -654,40 +664,58 @@ class OrderViewSetApi(viewsets.ViewSet):
             else:
 
                 try:
-                   
+
+                    users=User.objects.get(id=shopkeeper_id)
+                    print('shopkeeper_obj', users.id)
                     shopkeeper_obj = Shopkeeper.objects.get(user=shopkeeper_id)
+
                     if shopkeeper_obj:
-                    
-                        post_Data['shopkeeper']=shopkeeper_obj.id
+                        print('dbss')
+                        post_Data['shopkeeper'] = shopkeeper_obj.id
 
                         serializer = OrderSerializer(data=post_Data)
                         if serializer.is_valid():
-                            order =serializer.save()
-                            ord_history =OrderHistory.objects.create(shopkeeper=shopkeeper_obj, total_amount= post_Data['total_amount'], discount =post_Data['discount'])
+                            order = serializer.save()
+                            ord_history = OrderHistory.objects.create(order=order)
+                            ord_history.save()
+                            # ord_history = OrderHistory.objects.create(shopkeeper=shopkeeper_obj,
+                            #                                           total_amount=post_Data['total_amount'],
+                            #                                           discount=post_Data['discount'])
                             ord_history.save()
                             for index in range(len(products)):
-                                
-                                product_id=products[index]['id']
-                                qty=products[index]['quantity']
-                                price=products[index]['amount']
-                                sub_total=products[index]['subtotal']
-                              
-                             
-                                order_prod= ProductOrder.objects.create(order_id=order.id, product_id=product_id, quantity=qty, sub_total=sub_total, price=price)
-                               
-                                order_prod.save()
-                                
-                                product_objs=Product.objects.get(id=product_id)
-                                qty =product_objs.quantity - qty
-                                product_objs.quantity=qty
-                                product_objs.save()
 
-                                order_prod_hist= ProductOrderHistory.objects.create(order_id=ord_history.id, product_id=product_id, quantity=qty, sub_total=sub_total, price=price)
+                                print('products', products[index]['id'])
+                                product_id = products[index]['id']
+                                qty = products[index]['quantity']
+                                price = products[index]['amount']
+                                sub_total = products[index]['subtotal']
+                                print('product_id',product_id)
+                                order_prod = ProductOrder.objects.create(order_id=order.id, product_id=product_id,
+                                                                         quantity=qty, sub_total=sub_total, price=price)
+
+                                order_prod.save()
+                                print('hello')
+                                order_prod_hist = ProductOrderHistory.objects.create(order_id=ord_history.id,
+                                                                                     product_id=product_id,
+                                                                                     quantity=qty, sub_total=sub_total,
+                                                                                     price=price)
+                                print('order_prod_hist',order_prod_hist)
                                 order_prod_hist.save()
 
-                            total_amount=float(post_data['total_amount'])
+                                product_objs = Product.objects.get(id=product_id)
+                                qty = product_objs.quantity - qty
+                                product_objs.quantity = qty
+                                product_objs.save()
+
+                                order_prod_hist = ProductOrderHistory.objects.create(order_id=ord_history.id,
+                                                                                     product_id=product_id,
+                                                                                     quantity=qty, sub_total=sub_total,
+                                                                                     price=price)
+                                order_prod_hist.save()
+
+                            total_amount = float(post_data['total_amount'])
                             if total_amount < float(100000):
-                                wallet =Wallet.objects.create(shopkeeper=shopkeeper_obj,order=order,amount=0)
+                                wallet = Wallet.objects.create(shopkeeper=shopkeeper_obj, order=order, amount=0)
                                 wallet.save()
 
                             if total_amount > float(100000) and total_amount < float(250000):
@@ -697,15 +725,15 @@ class OrderViewSetApi(viewsets.ViewSet):
                             if total_amount > float(250000) and total_amount < float(500000):
                                 wallet = Wallet.objects.create(shopkeeper=shopkeeper_obj, order=order, amount=2500)
                                 wallet.save()
-                                spine =Spines.objects.create(shopkeeper=shopkeeper_obj,order=order,spine_no=1)
+                                spine = Spines.objects.create(shopkeeper=shopkeeper_obj, order=order, spine_no=1)
                                 spine.save()
-        
+
                             if total_amount > float(500000):
                                 wallet = Wallet.objects.create(shopkeeper=shopkeeper_obj, order=order, amount=7500)
                                 wallet.save()
-                                spine =Spines.objects.create(shopkeeper=shopkeeper_obj,order=order,spine_no=2)
+                                spine = Spines.objects.create(shopkeeper=shopkeeper_obj, order=order, spine_no=2)
                                 spine.save()
-                           
+
                             response = {
                                 'message': 'Order Created Successfully',
                                 'order_id': order.id
@@ -714,7 +742,7 @@ class OrderViewSetApi(viewsets.ViewSet):
                             return Response(response, status=status.HTTP_201_CREATED)
                         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-                    
+
                 except  Shopkeeper.DoesNotExist:
 
                     response = {
@@ -729,9 +757,7 @@ class OrderViewSetApi(viewsets.ViewSet):
             return Response(response, status=status.HTTP_400_BAD_REQUEST)
 
 
-
 class SpinesViewSetApi(viewsets.ViewSet):
-    
 
     def list(self, request):
         tokenCheck(request)
@@ -741,46 +767,46 @@ class SpinesViewSetApi(viewsets.ViewSet):
 
 
 class WalletViewSetApi(viewsets.ViewSet):
-    
+
     def list(self, request):
         tokenCheck(request)
         wallet = Wallet.objects.all()
         serializer = OrderSerializer(wallet, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+
 class GiftSpineViewSetApi(viewsets.ViewSet):
-    
+
     def list(self, request):
         tokenCheck(request)
-        gifts = GiftSpin.objects.filter(quantity__gt =0)
+        gifts = GiftSpin.objects.filter(quantity__gt=0)
         serializer = GiftSpineSerializer(gifts, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def create(self, request):
         tokenCheck(request)
-        post_data=request.data
-        post_Data=deepcopy(post_data)
-        shop_id=request.data['shopkeeper']
-        giftSpin=request.data['giftSpin']
-        user=User.objects.get(id=shop_id)
-        shopkeeper_obj=Shopkeeper.objects.get(user_id=user.id)
-        post_Data['shopkeeper']=shopkeeper_obj.id
+        post_data = request.data
+        post_Data = deepcopy(post_data)
+        shop_id = request.data['shopkeeper']
+        giftSpin = request.data['giftSpin']
+        user = User.objects.get(id=shop_id)
+        shopkeeper_obj = Shopkeeper.objects.get(user_id=user.id)
+        post_Data['shopkeeper'] = shopkeeper_obj.id
         serializer = WinSpinSerializer(data=post_Data)
         if serializer.is_valid():
             serializer.save()
-            giftSpin=GiftSpin.objects.get(id=giftSpin)
-            qty =giftSpin.quantity
-            newQty =qty-1
-            giftSpin.quantity =newQty
+            giftSpin = GiftSpin.objects.get(id=giftSpin)
+            qty = giftSpin.quantity
+            newQty = qty - 1
+            giftSpin.quantity = newQty
             giftSpin.save()
 
-            spins_obj=Spines.objects.filter(shopkeeper=shopkeeper_obj.id)
+            spins_obj = Spines.objects.filter(shopkeeper=shopkeeper_obj.id)
             if spins_obj:
-                spin_count=spins_obj[0].spine_no
-                total_spin=spin_count-1
-                spins_obj[0].spine_no=total_spin
+                spin_count = spins_obj[0].spine_no
+                total_spin = spin_count - 1
+                spins_obj[0].spine_no = total_spin
                 spins_obj[0].save()
-            
 
             response = {
                 'message': 'You have successfully win the Spin'
@@ -789,18 +815,14 @@ class GiftSpineViewSetApi(viewsets.ViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-
-
-
 class LoginAPI(GenericAPIView):
     serializer_class = LoginSerializer
 
     def post(self, request):
-       
         email = request.data.get('email')
         password = request.data.get('password')
         user = authenticate(username=email, password=password)
-       
+
         if user:
             serializer = self.serializer_class(user)
 

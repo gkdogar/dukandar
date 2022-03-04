@@ -85,7 +85,7 @@ def dashboard(request):
     dukandars = dukandars_list.count()
     products = Product.objects.all().count()
     orders = Order.objects.all().count()
-    total_order = OrderHistory.objects.filter(status='DELIVERED')
+    # total_order = OrderHistory.objects.filter(status='DELIVERED')
     toal_sale = 0
     # /// Wallet will be Zero  start /
     current_date =datetime.now()
@@ -96,8 +96,8 @@ def dashboard(request):
              wlt.amount =0
              wlt.save()
     # /// Wallet will be Zero End
-    for t in total_order:
-        toal_sale += t.total_amount
+    # for t in total_order:
+    #     toal_sale += t.total_amount
 
     locationlist = []
     map = folium.Map(location=[31.5204, 74.3587], zoom_start=12)
@@ -707,10 +707,10 @@ def ordersList(request):
 def ordersDetails(request, pk):
     if request.POST:
         pdf =request.POST.get('PDF_BTN', None)
-       
+
         if pdf:
             orders_obj = Order.objects.filter(id=pdf)
-            
+
             orders_obj = Order.objects.get(id=pdf)
             shopkeeper_obj= orders_obj.shopkeeper or None
             customer_obj= orders_obj.customer or None
@@ -729,13 +729,13 @@ def ordersDetails(request, pk):
                 'shopkeeper_obj':shopkeeper_obj,
                 'customer_obj':customer_obj,
                 # 'win_gift_list':win_gift,
-            
+
                 'status': orders_obj.status,
                 }
 
-            pdf = render_to_pdf('shopkeeper/pdf.html', context)
-            response = HttpResponse(pdf,content_type='application/pdf')
-            response['Content-Disposition'] = 'attachment; filename="dukandarOrder#'+str(orders_obj.id)+'".pdf"'
+            # pdf = render_to_pdf('shopkeeper/pdf.html', context)
+            # response = HttpResponse(pdf,content_type='application/pdf')
+            # response['Content-Disposition'] = 'attachment; filename="dukandarOrder#'+str(orders_obj.id)+'".pdf"'
             return response
     
         else:
@@ -746,10 +746,11 @@ def ordersDetails(request, pk):
             messages.success(request, 'Order Status Successfully')
             return redirect('shopkeeper:orders_list')
     else:
-   
-        
+
         orders_obj = Order.objects.get(id=pk)
+        print('orders_obj',orders_obj)
         product_orders =ProductOrder.objects.filter(order_id=pk)
+
         shopkeeper_id= orders_obj.shopkeeper or None
         customer_id= orders_obj.customer or None
         context = {
@@ -757,7 +758,7 @@ def ordersDetails(request, pk):
             'products': product_orders,
             'dukandar': orders_obj.shopkeeper,
             # 'customer':orders_obj.customer,
-            'order_date': orders_obj.order_date,
+            'order_date': orders_obj.created_at,
             'amount': orders_obj.total_amount,
              'discount': orders_obj.discount,
             'order_upto': orders_obj.order_upto,
