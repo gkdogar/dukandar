@@ -214,13 +214,15 @@ class Order(models.Model):
                                  on_delete=models.CASCADE,
                                  blank=True,
                                  null=True)
-    order_date = models.DateTimeField(auto_now=True)
+   
     total_amount = models.BigIntegerField(default=0)
     order_upto = models.DecimalField(default=0, max_digits=7, decimal_places=2)
     discount = models.IntegerField(default=0) 
     status = models.CharField(choices=ORDER_CHOICES,
                               max_length=12,
                               default='PROCESSING')
+    created_at = models.DateTimeField(auto_now_add=True,null=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return str(self.order_date)
@@ -237,26 +239,22 @@ class ProductOrder(models.Model):
     price = models.IntegerField(default=0) 
     
     sub_total = models.IntegerField(default=0)     
+    created_at = models.DateTimeField(auto_now_add=True,null=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
 
 
 class OrderHistory(models.Model):
-    shopkeeper = models.ForeignKey(Shopkeeper,
+
+    order = models.ForeignKey(Order,
                                    on_delete=models.PROTECT,
                                    null=True,
                                    blank=True
                                    )
-    customer = models.ForeignKey(Customer,
-                                 on_delete=models.PROTECT,
-                                 blank=True,
-                                 null=True)
-    order_date = models.DateTimeField(auto_now=True)
-    total_amount = models.BigIntegerField(default=0)
-    order_upto = models.DecimalField(default=0, max_digits=7, decimal_places=2)
-    discount = models.IntegerField(default=0) 
-    status = models.CharField(choices=ORDER_CHOICES,
-                              max_length=12,
-                              default='PROCESSING')
+    created_at = models.DateTimeField(auto_now_add=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+  
     def __str__(self):
         return str(self.order_date)
 
@@ -271,7 +269,9 @@ class ProductOrderHistory(models.Model):
 
     price = models.IntegerField(default=0) 
     
-    sub_total = models.IntegerField(default=0)   
+    sub_total = models.IntegerField(default=0) 
+    created_at = models.DateTimeField(auto_now_add=True,null=True)
+    updated_at = models.DateTimeField(auto_now=True)  
 
     def __str__(self):
         return str(self.order_date)

@@ -85,7 +85,7 @@ def dashboard(request):
     dukandars = dukandars_list.count()
     products = Product.objects.all().count()
     orders = Order.objects.all().count()
-    total_order = Order.objects.filter(status='DELIVERED')
+    total_order = OrderHistory.objects.filter(status='DELIVERED')
     toal_sale = 0
     # /// Wallet will be Zero  start /
     current_date =datetime.now()
@@ -707,7 +707,7 @@ def ordersList(request):
 def ordersDetails(request, pk):
     if request.POST:
         pdf =request.POST.get('PDF_BTN', None)
-        print('PDF_BTN', pdf)
+       
         if pdf:
             orders_obj = Order.objects.filter(id=pdf)
             
@@ -741,6 +741,7 @@ def ordersDetails(request, pk):
         else:
             orders_obj = Order.objects.get(id=pk)
             orders_obj.status = request.POST['status']
+            ord_hist=OrderHistory.objects
             orders_obj.save()
             messages.success(request, 'Order Status Successfully')
             return redirect('shopkeeper:orders_list')

@@ -210,11 +210,11 @@ class ShopkeeperViewSetApi(viewsets.ViewSet):
                 employ_id = post_data.get('emp_id', None)
                 employee_obj =None
                 if employ_id:
-                    print('employ_id',employ_id)
+                   
                     emp_user =User.objects.get(email=employ_id)
-                    print('emp_user',emp_user)
+                  
                     employee_obj=Employee.objects.get(user_id=emp_user.id)
-                    print('employee_obj..sds', employee_obj.id)
+                 
                     employee_obj.target_achieved += 1
                     employee_obj.save()
                     emp_histroy =EmployeeHistry.objects.create(employee=employee_obj,daily_target_assign=employee_obj.target_assign ,daily_achieved =employee_obj.target_achieved)
