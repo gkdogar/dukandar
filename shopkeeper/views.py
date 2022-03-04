@@ -11,7 +11,10 @@ from django.contrib import messages
 import folium
 import pandas as pd
 import re
-import datetime
+
+from datetime import datetime, timedelta
+from time import gmtime
+from time import strftime
 import reportlab  
 from .utils import *
 from django.http import JsonResponse
@@ -85,7 +88,7 @@ def dashboard(request):
     total_order = Order.objects.filter(status='DELIVERED')
     toal_sale = 0
     # /// Wallet will be Zero  start /
-    current_date =datetime.datetime.now()
+    current_date =datetime.now()
     first_date_month = current_date.replace(day=1) 
     if current_date.date() == first_date_month.date():
          walt_obj =Wallet.objects.all()
@@ -111,7 +114,7 @@ def dashboard(request):
     # folium.Marker(location=[31.511996, 74.343018], popup='Default popup Marker1',
     #               tooltip='Click here to see Popup').add_to(map)
 
-    print('mmm', map)
+  
     map = map._repr_html_()
     context = {
         'employees': employees,
@@ -126,14 +129,36 @@ def dashboard(request):
     return render(request, 'shopkeeper/dashboard.html', context)
 
 
+
+def employee_target(employee_list):
+    for emp in employee_list:
+        target_add_date =emp.updated_at
+        current_date = datetime.today()
+        created_at__gt=datetime.today() + timedelta(days=1)
+        if target_add_date.date() < current_date.date():
+            emp_histroy =EmployeeHistry.objects.create(employee=emp,daily_target_assign=emp.target_assign ,daily_achieved =emp.target_achieved)
+            emp_histroy.save()
+            emp.target_achieved =0
+            emp.save()
+            print('hello')
+
 @login_required(login_url='shopkeeper:admin_login')
 def employeeList(request):
     employee_list = Employee.objects.all()
+    # for emp in employee_list:
+    #     emp.removeTarget()
     context = {
         'employee_list': employee_list
     }
     return render(request, 'shopkeeper/employee/list.html', context)
 
+@login_required(login_url='shopkeeper:admin_login')
+def employeeHistoryList(request):
+    employee_history_list = EmployeeHistry.objects.all()
+    context = {
+        'employee_history_list': employee_history_list
+    }
+    return render(request, 'shopkeeper/employee/history.html', context)
 
 @login_required(login_url='shopkeeper:admin_login')
 def employeeSetup(request):
@@ -158,11 +183,13 @@ def employeeSetup(request):
             employee_obj.area_designated = request.POST.get('area_designated')
             employee_obj.is_active = request.POST.get('is_active') or False
             employee_obj.save()
+            emp_histroy =EmployeeHistry.objects.create(employee=employee_obj,daily_target_assign=employee_obj.target_assign ,daily_achieved =employee_obj.target_achieved)
+            emp_histroy.save()
             messages.add_message(request, messages.SUCCESS, 'Record Updated Successfully')
             return redirect('shopkeeper:employee_list')
 
         else:
-            print('user Exist', request.POST)
+           
             email = request.POST.get('email')
             password = request.POST.get('password')
             password1 = request.POST.get('password1')
@@ -196,6 +223,8 @@ def employeeSetup(request):
                                                description=request.POST.get('description'),
                                                is_active=request.POST.get('is_active') or False)
             employee.save()
+            emp_histroy =EmployeeHistry.objects.create(employee=employee,daily_target_assign=employee.target_assign ,daily_achieved =employee.target_achieved)
+            emp_histroy.save()
             user.save()
             messages.success(request, 'Record Created Successfully')
             return redirect('shopkeeper:employee_list')
@@ -223,7 +252,9 @@ def employeeUpdate(request, pk):
 @login_required(login_url='shopkeeper:admin_login')
 def employeeDelete(request, pk):
     employee_obj = Employee.objects.get(id=pk)
+    user_obj=User.objects.get(id=employee_obj.user.id)
     employee_obj.delete()
+    user_obj.delete()
     messages.add_message(request, messages.SUCCESS, 'Record Deleted Successfully')
     return redirect('shopkeeper:employee_list')
 
@@ -269,7 +300,7 @@ def dukandarList(request):
                 'giftspins': spin.giftSpin,
                 
             })
-    print('order_list',order_list)
+  
     context = {
         'dukandars_list': dukandars_list,
         'order_list': order_list,

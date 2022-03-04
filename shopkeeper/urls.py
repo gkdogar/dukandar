@@ -14,6 +14,7 @@ urlpatterns = [
 
     # Employee+URLS
     path('employee/lists', employeeList, name='employee_list'),
+    path('employee/history/lists', employeeHistoryList, name='employee_history'),
     path('employee/setup', employeeSetup, name='employee_setup'),
     path('employee/setup/<int:pk>/', employeeUpdate, name='employee_update'),
     path('employee/delete/<int:pk>/', employeeDelete, name='employee_delete'),

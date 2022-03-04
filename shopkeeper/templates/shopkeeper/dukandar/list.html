@@ -47,7 +47,7 @@
                     
                   </tr>
                 </thead>
-                <tbody>
+                <tbody style="overflow-y: scroll; overflow-x: hidden; height: 100px;">
                     {% for dukandar in dukandars_list%}
                   <tr>
                     <th scope="row">{{forloop.counter}}</th>
@@ -116,7 +116,10 @@
             $('ul').find("li#dukandar_page").find("a").attr("aria-expanded","true");
             $('ul#dukandar_control').addClass('show')
             $('#du_list').addClass('active')
-            $('#dukandarTable').DataTable();
+            {% comment %} $('#dukandarTable').DataTable(); {% endcomment %}
+            $('#dukandarTable').DataTable( {
+              "scrollX": true
+          } );
         });
     </script>
 {% endblock %}

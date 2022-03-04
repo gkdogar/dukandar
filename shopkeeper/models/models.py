@@ -1,10 +1,14 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from pytz import timezone
 from shopkeeper.models.customManager import *
 from django.utils.translation import gettext_lazy as _
 import jwt
 from django.conf import settings
 from datetime import datetime, timedelta
+from time import gmtime
+from time import strftime
+
 
 USER_CHOICES = (
 
@@ -65,30 +69,43 @@ class Employee(models.Model):
     description = models.TextField(null=True)
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    updated_at = models.DateTimeField(auto_now= datetime.now())
 
     class Meta:
         ordering = ['created_at']
 
     def __str__(self):
         return str(self.user.first_name + ' ' + self.user.last_name)
+    
+    def __init__(self, name, email, house_id, password, *args, **kwargs):
+        super(models.Model, self).__init__(self, *args, **kwargs)
+        self.name = name
+        self.email = email
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        target_add_date = self.updated_at
+        current_date = datetime.today()
+        # created_at__gt=datetime.today() + timedelta(days=1)
+        if target_add_date.date() < current_date.date():
+            emp_histroy =EmployeeHistry.objects.create(employee=self,daily_target_assign=self.target_assign ,daily_achieved =self.target_achieved)
+            emp_histroy.save()
+            self.target_achieved =0
+            self.save()
+        # add your own logic
 
 
 class EmployeeHistry(models.Model):
-    target_assign = models.CharField(max_length=10, null=True)
-    target_achieved = models.CharField(max_length=10, null=True)
-    area_designated = models.CharField(max_length=250, null=True, blank=True)
-    daily=  models.DateField()
-    description = models.TextField(null=True)
-    is_active = models.BooleanField(default=True)
+    employee = models.ForeignKey(Employee, related_name='employee', on_delete=models.CASCADE)
+    daily_target_assign = models.CharField(max_length=10, null=True)
+    daily_achieved = models.CharField(max_length=10, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         ordering = ['created_at']
 
     def __str__(self):
-        return str(self.user.first_name + ' ' + self.user.last_name)
+        return str(self.employee.user.first_name + ' ' + self.employee.user.last_name)
 
 class Customer(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=False)
@@ -225,12 +242,12 @@ class ProductOrder(models.Model):
 
 class OrderHistory(models.Model):
     shopkeeper = models.ForeignKey(Shopkeeper,
-                                   on_delete=models.CASCADE,
+                                   on_delete=models.PROTECT,
                                    null=True,
                                    blank=True
                                    )
     customer = models.ForeignKey(Customer,
-                                 on_delete=models.CASCADE,
+                                 on_delete=models.PROTECT,
                                  blank=True,
                                  null=True)
     order_date = models.DateTimeField(auto_now=True)
@@ -245,10 +262,10 @@ class OrderHistory(models.Model):
 
 class ProductOrderHistory(models.Model):
     order = models.ForeignKey(OrderHistory,
-                                on_delete=models.CASCADE,
+                                on_delete=models.PROTECT,
                                 null=True)
     product = models.ForeignKey(Product,
-                                on_delete=models.CASCADE,
+                                on_delete=models.PROTECT,
                                 null=True)
     quantity = models.IntegerField(default=0)   
 

@@ -1,0 +1,95 @@
+{% extends 'shopkeeper/base/base.html' %}
+{% load static %}
+{% block stylesheet %}
+    <style>
+
+    </style>
+
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+        <h1 class="text-center mt-5 mb-5 font-weight-bold">Employee History</h1>
+     
+            {% if messages %}
+                {% for message in messages %}
+                    <div {% if message.tags %}class="alert alert-{{ message.tags }}" {% endif %} role="alert">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+      
+     
+        <div class="row">
+            
+          <div class="col-12">
+            <a type="submit" href="{% url 'shopkeeper:employee_setup' %}" class="btn btn-primary float-right mb-1" name="employee">Add
+              Employee</a>
+            <table class="table" id="employeeTable">
+                <thead class="thead-dark">
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">First Name</th>
+                    <th scope="col">Last Name</th>
+                    <th scope="col">Phone#</th>
+                    <th scope="col">Target Assign</th>
+                    <th scope="col">Date</th>
+                    <th scope="col">Target Achieved</th>
+                    <th scope="col">Area Designated</th>
+                    
+                    <th scope="col">Status</th>
+                    {% comment %} <th scope="col">Actions</th> {% endcomment %}
+                  </tr>
+                </thead>
+                <tbody>
+                    {% for hist in employee_history_list%}
+                  <tr>
+                    <th scope="row">{{forloop.counter}}</th>
+                     <td>{{hist.employee.user.email}}</td>
+                    <td>{{hist.employee.user.first_name}}</td>
+                    <td>{{hist.employee.user.last_name}}</td>
+                    <td>{{hist.employee.user.phone_no}}</td>
+                    <td>{{hist.daily_target_assign}}</td>
+                    <td>{{hist.daily_achieved}}</td>
+                    <td>{{hist.employee.area_designated}}</td>
+                    <td>{{hist.created_at}}</td>
+                    <td>{{hist.employee.is_active}}</td>
+                    
+                        {% comment %} <a href="{% url 'shopkeeper:employee_update' employee.id %}" class="mr-3" > <i class="fas fa-trash-alt" data-toggle="tooltip" title="Delete Record"  style="color:red;"></i></a>
+                        <a href="{% url 'shopkeeper:employee_update'  employee.id %}">  <i class="fas fa-edit" data-toggle="tooltip" title="Edit Record" style="color:blue;"></i></a> {% endcomment %}
+                    
+                  </tr>
+                  {% endfor %}
+                  
+                </tbody>
+              </table>
+              
+        
+          </div>
+      
+        </div>
+       
+      </div>
+    
+
+
+    <script>
+        $(document).ready(function () {
+
+
+            $('ul').find("li#employee_page").addClass("active");
+            $('ul').find("li#employee_page").find("a").addClass("collapsed");
+            $('ul').find("li#employee_page").find("a").attr("aria-expanded","true");
+            $('ul#employee_control').addClass('show')
+            $('#emp_history').addClass('active')
+
+            $('#employeeTable').DataTable( {
+              "scrollX": true
+          } );
+
+        });
+    </script>
+
+{% endblock %}

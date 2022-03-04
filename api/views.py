@@ -98,6 +98,9 @@ class EmployeeViewSetApi(viewsets.ViewSet):
         serializer = EmployeeSerializer(employee, data=request.data)
         if serializer.is_valid():
             serializer.save()
+            employe_data=serializer.save()
+            emp_histroy =EmployeeHistry.objects.create(employee=employe_data,daily_target_assign=employe_data.target_assign ,daily_achieved =employe_data.target_achieved)
+            emp_histroy.save()
             response = {
                 'message': 'Complete Record Update Successfully'
             }
@@ -121,6 +124,9 @@ class EmployeeViewSetApi(viewsets.ViewSet):
         serializer = EmployeeSerializer(employee, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
+            employe_data=serializer.save()
+            emp_histroy =EmployeeHistry.objects.create(employee=employe_data,daily_target_assign=employe_data.target_assign ,daily_achieved =employe_data.target_achieved)
+            emp_histroy.save()
             response = {
                 'message': 'Partial Record Update Successfully'
             }
@@ -211,8 +217,10 @@ class ShopkeeperViewSetApi(viewsets.ViewSet):
                     print('employee_obj..sds', employee_obj.id)
                     employee_obj.target_achieved += 1
                     employee_obj.save()
+                    emp_histroy =EmployeeHistry.objects.create(employee=employee_obj,daily_target_assign=employee_obj.target_assign ,daily_achieved =employee_obj.target_achieved)
+                    emp_histroy.save()
                 user = User.objects.create_user(email=post_data['email'],password=post_data['password'])
-                user.first_name='he',
+                user.first_name=post_data['first_name'],
                 user.last_name = post_data['last_name'],
                 user.address=post_data['address']
                 user.city = post_data['city'],
