@@ -48,36 +48,36 @@
         </thead>
         <tbody>
 
-        {% for product in products %}
+        {% for product in datalist %}
             <tr>
                 <td > {{ forloop.counter }}
                   
                 </td>
                 <td >
                    
-                    {{ product.order.id }}
+                    {{ product.order_id}}
                 </td>
 
                 <td >
-                  {% if shopkeeper_id %} 
-                  {{ product.order.shopkeeper.user.first_name }}
-                  {{ product.order.shopkeeper.user.last_name }}
-                  {% endif %}
-                  {% if customer_id %}
-                  {{ product.order.customer.user.first_name }}
-                  {{ product.order.customer.user.last_name }}
-                  {% endif %}
+{#                  {% if product.shopkeeper_id %}#}
+                  {{ product.dukandar.user.first_name }}
+                  {{ product.dukandar.user.last_name }}
+{#                  {% endif %}#}
+{#                  {% if product.customer_id %}#}
+{#                  {{ product.order.customer.user.first_name }}#}
+{#                  {{ product.order.customer.user.last_name }}#}
+{#                  {% endif %}#}
               </td>
               <td >
                    
-                {{ product.product.name }}
+                {{ product.p_name}}
             </td>
             <td >
                    
-              {{ product.quantity }}
+              {{ product.p_quantity }}
           </td>
               <td>
-                {{ product.price }}
+                {{ product.p_price }}
               </td>
               <td>
                 {{ product.sub_total }}
@@ -112,7 +112,7 @@
 
             <td><b> {{amount }} <b>
               
-            </td>
+
                    
         </tr>
 
