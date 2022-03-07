@@ -84,15 +84,16 @@ class Employee(models.Model):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        target_add_date = self.updated_at
-        current_date = datetime.today()
-        # created_at__gt=datetime.today() + timedelta(days=1)
-        if target_add_date.date() < current_date.date():
-            emp_histroy = EmployeeHistry.objects.create(employee=self, daily_target_assign=self.target_assign,
-                                                        daily_achieved=self.target_achieved)
-            emp_histroy.save()
-            self.target_achieved = 0
-            self.save()
+        if self.updated_at:
+            target_add_date = self.updated_at
+            current_date = datetime.today()
+            # created_at__gt=datetime.today() + timedelta(days=1)
+            if target_add_date.date() < current_date.date():
+                emp_histroy = EmployeeHistry.objects.create(employee=self, daily_target_assign=self.target_assign,
+                                                            daily_achieved=self.target_achieved)
+                emp_histroy.save()
+                self.target_achieved = 0
+                self.save()
         # add your own logic
 
 

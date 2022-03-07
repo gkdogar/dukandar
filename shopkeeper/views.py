@@ -995,7 +995,6 @@ def ordersHistoryDetails(request, pk):
         else:
             orders_obj = OrderHistory.objects.get(id=pk)
             orders_obj.status = request.POST['status']
-
             orders_obj.save()
             messages.success(request, 'Order Status Successfully')
             return redirect('shopkeeper:orders_list')
@@ -1003,8 +1002,9 @@ def ordersHistoryDetails(request, pk):
    
         
         orders_obj = OrderHistory.objects.get(id=pk)
-
-        product_orders =ProductOrderHistory.objects.filter(order_id=pk)
+        print('orders_obj',orders_obj)
+        product_orders =ProductOrder.objects.filter(order=orders_obj.order.id)
+        print('product_orders',product_orders)
         shopkeeper_id= orders_obj.order.shopkeeper or None
         customer_id= orders_obj.order.customer or None
         datalist=[]

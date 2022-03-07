@@ -28,6 +28,7 @@
               <table class="table" id="order_table">
                 <thead class="thead-dark">
                 <tr>
+                    <th scope="col">#</th>
                     <th scope="col">Order#</th>
                     
                     <th scope="col">Dukandar Name</th>
@@ -50,6 +51,7 @@
                 {% for order in orders_list %}
                   
                     <tr>
+                        <td>{{ forloop.counter }}</td>
                         <th scope="row">{{ order.order.id }}</th>
                         {% comment %} <td>{{ order.product.name }}</td> {% endcomment %}
                      
