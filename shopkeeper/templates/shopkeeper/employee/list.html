@@ -34,8 +34,8 @@
                     <th scope="col">First Name</th>
                     <th scope="col">Last Name</th>
                     <th scope="col">Phone#</th>
-                    <th scope="col">Target Assign</th>
-                    <th scope="col">Target Achieved</th>
+                    <th scope="col">Daily Target Assign</th>
+                    <th scope="col">Daily Target Achieved </th>
                     <th scope="col">Area Designated</th>
                     <th scope="col">Status</th>
                     <th scope="col">Actions</th>
@@ -55,7 +55,7 @@
                     <td>{{employee.is_active}}</td>
                     <td>
 
-                        <a href="{% url 'shopkeeper:employee_update' employee.id %}" class="mr-3" > <i class="fas fa-trash-alt" data-toggle="tooltip" title="Delete Record"  style="color:red;"></i></a>
+                        <a href="{% url 'shopkeeper:employee_delete' employee.id %}" class="mr-3" > <i class="fas fa-trash-alt" data-toggle="tooltip" title="Delete Record"  style="color:red;"></i></a>
                         <a href="{% url 'shopkeeper:employee_update'  employee.id %}">  <i class="fas fa-edit" data-toggle="tooltip" title="Edit Record" style="color:blue;"></i></a>
                     </td>
                   </tr>
@@ -83,7 +83,9 @@
             $('ul#employee_control').addClass('show')
             $('#emp_list').addClass('active')
 
-            $('#employeeTable').DataTable();
+            $('#employeeTable').DataTable( {
+              "scrollX": true
+          } );
 
         });
     </script>

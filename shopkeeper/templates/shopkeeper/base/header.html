@@ -42,6 +42,8 @@
                     </li>
                     <li class="sidebar-item" id="emp_setup"><a class="sidebar-link" href="{% url 'shopkeeper:employee_setup' %}">Employee
                         Setup</a></li>
+                        <li class="sidebar-item " id="emp_history"><a class="sidebar-link" href="{% url 'shopkeeper:employee_history' %}">Employees History</a>
+                    </li>
                     {#              <li class="sidebar-item"><a class="sidebar-link" href="/seller/admin/approved/">ApprovedSellers</a></li>#}
                     {#              <li class="sidebar-item"><a class="sidebar-link" href="/seller/admin/rejected/">RejectedSellers</a></li>#}
                     {#              <li class="sidebar-item"><a class="sidebar-link" href="/seller/admin/return/">Returned to sellerfor Reviews</a></li>#}
@@ -169,6 +171,11 @@
                 </a>
                 <ul id="order_list" class="sidebar-dropdown list-unstyled collapse " data-parent="#sidebar">
                     <li class="sidebar-item" id="order_view"><a class="sidebar-link" href="{% url 'shopkeeper:orders_list' %}">Order List</a>
+                    </li>
+
+                </ul>
+                <ul id="order_list" class="sidebar-dropdown list-unstyled collapse " data-parent="#sidebar">
+                    <li class="sidebar-item" id="order_history"><a class="sidebar-link" href="{% url 'shopkeeper:orders_history_list' %}">Orders History</a>
                     </li>
 
                 </ul>

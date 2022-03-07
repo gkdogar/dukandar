@@ -36,3 +36,12 @@ admin.site.register(Discount)
 admin.site.register(Spines)
 admin.site.register(Wallet)
 admin.site.register(Complaint)
+admin.site.register(ProductOrderHistory)
+
+
+@admin.register(EmployeeHistry)
+class EmployeeHistryAdmin(admin.ModelAdmin):
+  
+    list_display = ('daily_target_assign', 'daily_achieved', 'created_at')
+    search_fields = ( 'daily_target_assign', 'daily_achieved', 'created_at')
+   

@@ -37,6 +37,7 @@
                     <th scope="col">Shop Name</th>
                     <th scope="col">Address</th>
                     <th scope="col">City</th>
+                      <th scope="col">Dukandar Type</th>
                     <th scope="col">Added by Employee</th>
                     <th scope="col">Order's</th>
                     <th scope="col">Wallet</th>
@@ -46,7 +47,7 @@
                     
                   </tr>
                 </thead>
-                <tbody>
+                <tbody style="overflow-y: scroll; overflow-x: hidden; height: 100px;">
                     {% for dukandar in dukandars_list%}
                   <tr>
                     <th scope="row">{{forloop.counter}}</th>
@@ -59,6 +60,7 @@
                     <td>{{dukandar.shop_name}}</td>
                     <td>{{dukandar.user.address}}</td>
                     <td>{{dukandar.user.city}}</td>
+                   <td>{{dukandar.shopkeeper_type}}</td>
                     <td>{{dukandar.emp_id.user.first_name}} {{dukandar.emp_id.user.last_name}}</td>
 
                     <td> {% for ord in order_list %}
@@ -114,7 +116,10 @@
             $('ul').find("li#dukandar_page").find("a").attr("aria-expanded","true");
             $('ul#dukandar_control').addClass('show')
             $('#du_list').addClass('active')
-            $('#dukandarTable').DataTable();
+            {% comment %} $('#dukandarTable').DataTable(); {% endcomment %}
+            $('#dukandarTable').DataTable( {
+              "scrollX": true
+          } );
         });
     </script>
 {% endblock %}

@@ -35,6 +35,7 @@
                     <th scope="col">Customer Name</th>
                 
                     <th scope="col">Order Date</th>
+                    <th scope="col">Last Update</th>
                     <th scope="col">Discount</th>
                     <th scope="col">Amount</th>
 
@@ -58,7 +59,8 @@
                         <td>{{ order.customer.user.first_name }} {{ order.customer.user.last_name }}</td>
                   
                        
-                        <td>{{ order.order_date }}</td>
+                        <td>{{ order.created_at }}</td>
+                        <td>{{ order.updated_at }}</td>
                         <td>{{ order.discount }}</td>
                         <td>{{ order.total_amount }}</td>
                      

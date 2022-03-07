@@ -1,10 +1,13 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from pytz import timezone
 from shopkeeper.models.customManager import *
 from django.utils.translation import gettext_lazy as _
 import jwt
 from django.conf import settings
 from datetime import datetime, timedelta
+from time import gmtime
+from time import strftime
 
 USER_CHOICES = (
 
@@ -20,6 +23,13 @@ ORDER_CHOICES = (('CANCELLED', 'cancelled'), ('DELIVERED', 'delivered '),
 CATEGORY_FOR_CHOICES = (('BRAND', 'For Brand'), ('RETAIL', 'For Retail'),
                         ('WSALE', 'For Whole Sale'),
                         ('CULTURE', 'For Culture'), ('AUTO', 'For Auto'))
+
+SHOPKEEPER_CHOICES = (
+
+    ('RETAIL', 'Retail'),
+    ('WSALE', 'Wholesale'),
+
+)
 
 
 class User(AbstractUser):
@@ -41,7 +51,7 @@ class User(AbstractUser):
 
     @property
     def token(self):
-        token = jwt.encode({'email': self.email, 'exp': datetime.utcnow() + timedelta(minutes=15)}, settings.SECRET_KEY,
+        token = jwt.encode({'email': self.email, 'exp': datetime.utcnow() + timedelta(hours=24)}, settings.SECRET_KEY,
                            algorithm='HS256')
         return token
 
@@ -53,19 +63,50 @@ class User(AbstractUser):
 
 class Employee(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, related_name='user', on_delete=models.CASCADE, null=False)
-    target_assign = models.CharField(max_length=10, null=True)
-    target_achieved = models.CharField(max_length=10, null=True)
+    target_assign = models.IntegerField(default=0, null=True, blank=True)
+    target_achieved = models.IntegerField(default=0, null=True, blank=True)
     area_designated = models.CharField(max_length=250, null=True, blank=True)
     description = models.TextField(null=True)
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    updated_at = models.DateTimeField(auto_now=datetime.now())
 
     class Meta:
         ordering = ['created_at']
 
     def __str__(self):
         return str(self.user.first_name + ' ' + self.user.last_name)
+
+    def __init__(self, name, email, house_id, password, *args, **kwargs):
+        super(models.Model, self).__init__(self, *args, **kwargs)
+        self.name = name
+        self.email = email
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        target_add_date = self.updated_at
+        current_date = datetime.today()
+        # created_at__gt=datetime.today() + timedelta(days=1)
+        if target_add_date.date() < current_date.date():
+            emp_histroy = EmployeeHistry.objects.create(employee=self, daily_target_assign=self.target_assign,
+                                                        daily_achieved=self.target_achieved)
+            emp_histroy.save()
+            self.target_achieved = 0
+            self.save()
+        # add your own logic
+
+
+class EmployeeHistry(models.Model):
+    employee = models.ForeignKey(Employee, related_name='employee', on_delete=models.CASCADE)
+    daily_target_assign = models.CharField(max_length=10, null=True)
+    daily_achieved = models.CharField(max_length=10, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['created_at']
+
+    def __str__(self):
+        return str(self.employee.user.first_name + ' ' + self.employee.user.last_name)
 
 
 class Customer(models.Model):
@@ -79,7 +120,10 @@ class Customer(models.Model):
 
 class Shopkeeper(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=False)
-    emp_id = models.ForeignKey(Employee, on_delete=models.CASCADE, null=True)
+    emp_id = models.ForeignKey(Employee, on_delete=models.CASCADE, null=True, blank=True)
+    shopkeeper_type = models.CharField(choices=SHOPKEEPER_CHOICES,
+                                       max_length=7,
+                                       default='RETAIL')
     shop_name = models.CharField(max_length=255, null=False)
     description = models.TextField(null=False)
     latitude = models.CharField(max_length=50, null=False)
@@ -87,7 +131,6 @@ class Shopkeeper(models.Model):
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    
 
     class Meta:
         ordering = ['user']
@@ -145,7 +188,8 @@ class Product(models.Model):
     description = models.TextField()
     # sku = models.CharField(max_length=100, null=False,blank=True)
     quantity = models.IntegerField(default=0)
-    price = models.FloatField(default=0.0)
+    r_price = models.FloatField(default=0.0)
+    w_price = models.FloatField(default=0.0)
     discount = models.FloatField(default=0.0)
 
     # weight_unit = models.CharField(max_length=5, choices=WEIGHT_UNIT_SELECTION, default="KG")
@@ -171,52 +215,69 @@ class Order(models.Model):
                                  on_delete=models.CASCADE,
                                  blank=True,
                                  null=True)
-    order_date = models.DateTimeField(auto_now=True)
-    total_amount = models.BigIntegerField()
+
+    total_amount = models.BigIntegerField(default=0)
     order_upto = models.DecimalField(default=0, max_digits=7, decimal_places=2)
-    discount = models.IntegerField(default=0) 
+    discount = models.IntegerField(default=0)
     status = models.CharField(choices=ORDER_CHOICES,
                               max_length=12,
                               default='PROCESSING')
+    created_at = models.DateTimeField(auto_now_add=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return str(self.order_date)
+        return str(self.created_at)
+
 
 class ProductOrder(models.Model):
     order = models.ForeignKey(Order,
-                                on_delete=models.CASCADE,
-                                null=True)
+                              on_delete=models.CASCADE,
+                              null=True)
     product = models.ForeignKey(Product,
                                 on_delete=models.CASCADE,
                                 null=True)
-    quantity = models.IntegerField(default=0)   
+    quantity = models.IntegerField(default=0)
 
-    price = models.IntegerField(default=0) 
-    
-    sub_total = models.IntegerField(default=0)     
+    price = models.IntegerField(default=0)
 
+    sub_total = models.IntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
 
 class OrderHistory(models.Model):
-    previouse_order = models.ForeignKey(Order,
-                                        on_delete=models.CASCADE,
-                                        )
+    order = models.ForeignKey(Order,
+                              on_delete=models.CASCADE,
+                              null=True,
+                              blank=True
+                              )
+    status = models.CharField(choices=ORDER_CHOICES,
+                            max_length=12,
+                            default='PROCESSING')
+    created_at = models.DateTimeField(auto_now_add=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return str(self.order)
+
+
+class ProductOrderHistory(models.Model):
+    order = models.ForeignKey(OrderHistory,
+                              on_delete=models.CASCADE,
+                              null=True)
     product = models.ForeignKey(Product,
                                 on_delete=models.CASCADE,
                                 null=True)
-    shopkeeper = models.ForeignKey(Shopkeeper,
-                                   on_delete=models.CASCADE,
-                                   null=True)
-    cutomer = models.ForeignKey(Customer,
-                                on_delete=models.CASCADE,
-                                null=True)
-    order_date = models.DateTimeField(auto_now=True)
-    amount = models.IntegerField(default=0)
-    order_upto = models.IntegerField(default=0)
     quantity = models.IntegerField(default=0)
-    status = models.CharField(choices=ORDER_CHOICES,
-                              max_length=12,
-                              default='PROCESSING')
+
+    price = models.IntegerField(default=0)
+
+    sub_total = models.IntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return str(self.created_at)
 
 
 class Discount(models.Model):
@@ -247,8 +308,6 @@ class Wallet(models.Model):
 
     def __str__(self):
         return str(self.amount)
-    
-    
 
 
 class Complaint(models.Model):
@@ -285,16 +344,16 @@ class Spines(models.Model):
 class GiftSpin(models.Model):
     name = models.CharField(max_length=250, null=True)
     quantity = models.IntegerField(default=0)
-    amount= models.IntegerField(default=0)
+    amount = models.IntegerField(default=0)
 
     def __str__(self):
-     return self.name
+        return self.name
+
 
 class WinSpin(models.Model):
     shopkeeper = models.ForeignKey(Shopkeeper,
                                    on_delete=models.CASCADE,
                                    null=True)
     giftSpin = models.ForeignKey(GiftSpin,
-                              on_delete=models.CASCADE,
-                              null=True)
-
+                                 on_delete=models.CASCADE,
+                                 null=True)

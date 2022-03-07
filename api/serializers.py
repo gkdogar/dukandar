@@ -5,6 +5,7 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 
+
 class UserRegistrationSerializer(serializers.ModelSerializer):
     password2 = serializers.CharField(style={'input_type': 'password'}, write_only=True)
 
@@ -32,14 +33,12 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         user.save()
         return user
 
-
 class EmployeeSerializer(serializers.ModelSerializer):
     user = UserRegistrationSerializer(many=False, read_only=True)
 
     class Meta:
         model = Employee
         fields = ['user','target_assign','target_achieved','area_designated','description']
-
 
 class CustomerSerializer(serializers.ModelSerializer):
     user = UserRegistrationSerializer(many=False, read_only=True)
@@ -68,8 +67,6 @@ class CustomerSerializer(serializers.ModelSerializer):
 
         }
 
-
-
 class ShopkeeperSerializer(serializers.ModelSerializer):
     user = UserRegistrationSerializer(many=False, read_only=True)
     email = serializers.CharField(style={'input_type': 'email'}, write_only=True)
@@ -78,6 +75,7 @@ class ShopkeeperSerializer(serializers.ModelSerializer):
     address = serializers.CharField(style={'input_type': 'text'}, write_only=True)
     city = serializers.CharField(style={'input_type': 'text'}, write_only=True)
     phone_no = serializers.CharField(style={'input_type': 'text'}, write_only=True)
+    shopkeeper_type =serializers.CharField(style={'input_type': 'text'}, write_only=True)
     # emp_id = EmployeeSerializer(many=False, read_only=True)
     password = serializers.CharField(style={'input_type': 'password'}, write_only=True)
     password2 = serializers.CharField(style={'input_type': 'password'}, write_only=True)
@@ -85,7 +83,7 @@ class ShopkeeperSerializer(serializers.ModelSerializer):
     class Meta:
         model = Shopkeeper
         fields = ['id','user','email', 'first_name', 'last_name','address','city','phone_no', 'emp_id', 'shop_name','description', 'latitude', 'longitude',
-                  'password', 'password2']
+                  'password', 'password2','shopkeeper_type']
         # fields = '__all__'
         # depth = 1
 
@@ -98,9 +96,9 @@ class ShopkeeperSerializer(serializers.ModelSerializer):
         'description': {'required': True},
         'latitude': {'required': True},
         'longitude': {'required': True},
+        'shopkeeper_type': {'required': True},
         'emp_id':{"required":True}
     }
-
 
 class ParentCategorySerializer(serializers.ModelSerializer):
     class Meta:
@@ -114,8 +112,6 @@ class SubCategorySerializer(serializers.ModelSerializer):
         # fields = '__all__'
         fields = ['id','parent', 'name', 'description', 'meta_keywords', 'meta_description', 'image']
         # depth = 1
-
-
 
 class ProductSerializer(serializers.ModelSerializer):
     parent = serializers.StringRelatedField(many=False)
@@ -152,6 +148,13 @@ class OrderSerializer(serializers.ModelSerializer):
            
 
         }
+
+class OrderHistorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OrderHistory
+        fields ='__all__'
+      
+
 
 
 

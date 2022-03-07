@@ -49,6 +49,7 @@
         <tbody>
 
         {% for product in products %}
+            {{ product }}
             <tr>
                 <td > {{ forloop.counter }}
                   
@@ -125,8 +126,8 @@
       </div>
       <div class="form-group col-6">
      
-        <select class="form-select" aria-label="Default select example" name ="status">
-          
+        <select class="form-select" aria-label="Default select example" name ="status"  {% if status == "DELIVERED"%} disabled  {% endif %} >
+         
             <option >Change Order Status</option>
             <option value="CANCELLED" {% if status == "CANCELLED"%} selected{% endif %}>Cancelled</option>
             <option value="DELIVERED" {% if status == "DELIVERED"%} selected  {% endif %} >Delivered</option>
@@ -140,7 +141,9 @@
    
       <input type="hidden" name="PDF_BTN", value="{{order_id}}" disabled>
     <button type="button" class="btn btn-primary float-right mt-5 " id="pdf_generate_btn" style="margin-left:20px;">PDF</button>
+    {% if status != "DELIVERED"%}  
     <button type="button" class="btn btn-primary float-right mt-5" id="submit_BTN">Submit</button>
+    {% endif %}
    </div>
  </div>
 

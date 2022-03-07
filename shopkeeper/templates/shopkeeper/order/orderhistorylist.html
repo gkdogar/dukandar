@@ -1,0 +1,113 @@
+{% extends 'shopkeeper/base/base.html' %}
+{% load static %}
+{% block stylesheet %}
+    <style>
+
+    </style>
+
+{% endblock %}
+
+{% block content %}
+<div class="container">
+        <h1 class="text-center mt-5 mb-5 font-weight-bold">Order's History List</h1>
+     
+            {% if messages %}
+                {% for message in messages %}
+                    <div {% if message.tags %}class="alert alert-{{ message.tags }}" {% endif %} role="alert">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+      
+     
+        <div class="row">
+            
+          <div class="col-12">
+            {% comment %} <a type="submit" href="{% url 'product_setup' %}" class="btn btn-primary float-right mb-1" name="employee">Add
+                Product</a> {% endcomment %}
+              <table class="table" id="order_table">
+                <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Order#</th>
+                    
+                    <th scope="col">Dukandar Name</th>
+                  
+                    <th scope="col">Customer Name</th>
+                
+                    <th scope="col">Order Update  </th>
+                    {% comment %} <th scope="col">Update Order</th> {% endcomment %}
+                    <th scope="col">Discount</th>
+                    <th scope="col">Amount</th>
+
+                    
+                    {% comment %} <th scope="col">Quantity</th> {% endcomment %}
+                     <th scope="col">Status</th>
+                     <th scope="col">Detail</th>
+                </tr>
+                </thead>
+                <tbody>
+              
+                {% for order in orders_list %}
+                  
+                    <tr>
+                        <th scope="row">{{ order.order.id }}</th>
+                        {% comment %} <td>{{ order.product.name }}</td> {% endcomment %}
+                     
+                        <td>{{ order.order.shopkeeper.user.first_name }} {{ order.order.shopkeeper.user.last_name }}</td>
+                      
+                      
+                        <td>{{ order.order.customer.user.first_name }} {{ order.order.customer.user.last_name }}</td>
+                  
+                       
+                        <td>{{ order.created_at }}</td>
+                         {% comment %} <td>{{ order.order.updated_at }}</td> {% endcomment %}
+                        <td>{{ order.order.discount }}</td>
+                        <td>{{ order.order.total_amount }}</td>
+                     
+                        {% comment %} <td>{{ order.quantity }}</td> {% endcomment %}
+                       
+                        <td>{% if order.status == "CANCELLED" %}
+                           <span class="text-danger"> <b>{{ order.status }}</b></span>
+                           {% endif %}
+                           {% if order.status == "PROCESSING" %}
+                           <span class="text-warning" ><b> {{ order.status }}<b></span>
+                            {% endif %}
+                            {% if order.status == "DELIVERED" %}
+                            <span class="text-success"> <b>{{ order.status }}</b></span>
+                             {% endif %}
+                        </td>
+                            
+                        
+                     <td>
+                        {% comment %} <a href="{% url 'shopkeeper:order_delete'  order.id %}" class="mr-3" data-toggle="tooltip" title="Hooray!"> <i class="fas fa-trash-alt"  style="color:red;"></i></a> {% endcomment %}
+                        <a href="{% url 'shopkeeper:order_history_details'  order.id %}">  <i class="fas fa-info" style="color:blue;"></i></a>
+                    </td> 
+                    </tr>
+                {% endfor %}
+    
+    
+                </tbody>
+            </table>
+              
+        
+          </div>
+      
+        </div>
+       
+      </div>
+    
+
+  
+
+
+    <script>
+        $(document).ready(function () {
+            $('ul').find("li#order_page").addClass("active");
+            $('ul').find("li#order_page").find("a").addClass("collapsed");
+            $('ul').find("li#order_page").find("a").attr("aria-expanded", "true");
+            $('ul#order_list').addClass('show')
+            $('#order_history').addClass('active')
+            $('#order_table').DataTable();
+        });
+    </script>
+{% endblock %}
