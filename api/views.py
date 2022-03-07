@@ -449,7 +449,11 @@ class CustomerViewSetApi(viewsets.ViewSet):
     #         'message': 'Record Deleted Successfully'
     #     }
     #     return Response(response, status=status.HTTP_200_OK)
-
+class AllProductApi(viewsets.ViewSet):
+      def list(self, request):
+          products =Product.objects.filter(is_active=True)
+          serializer=ProductSerializer(products, many=True)
+          return Response(serializer.data, status=status.HTTP_200_OK)       
 
 class AllProductApi(viewsets.ViewSet):
     # authentication_classes = [JWTAuthentication]
