@@ -33,14 +33,12 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         user.save()
         return user
 
-
 class EmployeeSerializer(serializers.ModelSerializer):
     user = UserRegistrationSerializer(many=False, read_only=True)
 
     class Meta:
         model = Employee
         fields = ['user','target_assign','target_achieved','area_designated','description']
-
 
 class CustomerSerializer(serializers.ModelSerializer):
     user = UserRegistrationSerializer(many=False, read_only=True)
@@ -68,8 +66,6 @@ class CustomerSerializer(serializers.ModelSerializer):
             'phone_no': {'required': True},
 
         }
-
-
 
 class ShopkeeperSerializer(serializers.ModelSerializer):
     user = UserRegistrationSerializer(many=False, read_only=True)
@@ -104,7 +100,6 @@ class ShopkeeperSerializer(serializers.ModelSerializer):
         'emp_id':{"required":True}
     }
 
-
 class ParentCategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = ParentCategory
@@ -117,8 +112,6 @@ class SubCategorySerializer(serializers.ModelSerializer):
         # fields = '__all__'
         fields = ['id','parent', 'name', 'description', 'meta_keywords', 'meta_description', 'image']
         # depth = 1
-
-
 
 class ProductSerializer(serializers.ModelSerializer):
     parent = serializers.StringRelatedField(many=False)

@@ -85,7 +85,7 @@ def dashboard(request):
     dukandars = dukandars_list.count()
     products = Product.objects.all().count()
     orders = Order.objects.all().count()
-    total_order = OrderHistory.objects.filter(status='DELIVERED')
+    # total_order = OrderHistory.objects.filter(status='DELIVERED')
     toal_sale = 0
     # /// Wallet will be Zero  start /
     current_date =datetime.now()
@@ -96,8 +96,8 @@ def dashboard(request):
              wlt.amount =0
              wlt.save()
     # /// Wallet will be Zero End
-    for t in total_order:
-        toal_sale += t.total_amount
+    # for t in total_order:
+    #     toal_sale += t.total_amount
 
     locationlist = []
     map = folium.Map(location=[31.5204, 74.3587], zoom_start=12)
@@ -707,10 +707,10 @@ def ordersList(request):
 def ordersDetails(request, pk):
     if request.POST:
         pdf =request.POST.get('PDF_BTN', None)
-       
+
         if pdf:
             orders_obj = Order.objects.filter(id=pdf)
-            
+
             orders_obj = Order.objects.get(id=pdf)
             shopkeeper_obj= orders_obj.shopkeeper or None
             customer_obj= orders_obj.customer or None
@@ -722,20 +722,20 @@ def ordersDetails(request, pk):
                 'products': product_orders,
                 'dukandar': orders_obj.shopkeeper,
                 'customer':orders_obj.customer,
-                'order_date': orders_obj.order_date,
+                'order_date': orders_obj.created_at,
                 'amount': orders_obj.total_amount,
                 'discount': orders_obj.discount,
                 'order_upto': orders_obj.order_upto,
                 'shopkeeper_obj':shopkeeper_obj,
                 'customer_obj':customer_obj,
                 # 'win_gift_list':win_gift,
-            
+
                 'status': orders_obj.status,
                 }
 
-            pdf = render_to_pdf('shopkeeper/pdf.html', context)
-            response = HttpResponse(pdf,content_type='application/pdf')
-            response['Content-Disposition'] = 'attachment; filename="dukandarOrder#'+str(orders_obj.id)+'".pdf"'
+            # pdf = render_to_pdf('shopkeeper/pdf.html', context)
+            # response = HttpResponse(pdf,content_type='application/pdf')
+            # response['Content-Disposition'] = 'attachment; filename="dukandarOrder#'+str(orders_obj.id)+'".pdf"'
             return response
     
         else:
@@ -746,10 +746,11 @@ def ordersDetails(request, pk):
             messages.success(request, 'Order Status Successfully')
             return redirect('shopkeeper:orders_list')
     else:
-   
-        
+
         orders_obj = Order.objects.get(id=pk)
+        print('orders_obj',orders_obj)
         product_orders =ProductOrder.objects.filter(order_id=pk)
+
         shopkeeper_id= orders_obj.shopkeeper or None
         customer_id= orders_obj.customer or None
         context = {
@@ -757,7 +758,7 @@ def ordersDetails(request, pk):
             'products': product_orders,
             'dukandar': orders_obj.shopkeeper,
             # 'customer':orders_obj.customer,
-            'order_date': orders_obj.order_date,
+            'order_date': orders_obj.created_at,
             'amount': orders_obj.total_amount,
              'discount': orders_obj.discount,
             'order_upto': orders_obj.order_upto,
@@ -945,8 +946,8 @@ def ordersHistoryList(request):
     shopkeeper=None
     customer =None
     for order in orders_list:
-        shopkeeper =order.shopkeeper
-        customer =order.customer
+        shopkeeper =order.order.shopkeeper
+        customer =order.order.customer
     print('shopkeeper',customer)
     context = {
         'orders_list': orders_list,
@@ -964,25 +965,24 @@ def ordersHistoryDetails(request, pk):
             orders_obj = OrderHistory.objects.filter(id=pdf)
             
             orders_obj = OrderHistory.objects.get(id=pdf)
-            shopkeeper_obj= orders_obj.shopkeeper or None
-            customer_obj= orders_obj.customer or None
+            shopkeeper_obj= orders_obj.order.shopkeeper or None
+            customer_obj= orders_obj.order.customer or None
             product_orders =ProductOrderHistory.objects.filter(order_id=pk)
             # win_gift=WinSpin.objects.filter(shopkeeper_id=shopkeeper_obj.id)
 
             context = {
                 'order_id': orders_obj.id,
                 'products': product_orders,
-                'dukandar': orders_obj.shopkeeper,
-                'customer':orders_obj.customer,
-                'order_date': orders_obj.order_date,
-                'amount': orders_obj.total_amount,
-                'discount': orders_obj.discount,
-                'order_upto': orders_obj.order_upto,
+                'dukandar': orders_obj.order.shopkeeper,
+                'customer':orders_obj.order.customer,
+                'order_date': orders_obj.created_at,
+                'amount': orders_obj.order.total_amount,
+                'discount': orders_obj.order.discount,
                 'shopkeeper_obj':shopkeeper_obj,
                 'customer_obj':customer_obj,
                 # 'win_gift_list':win_gift,
             
-                'status': orders_obj.status,
+                'status': orders_obj.order.status,
                 }
 
             pdf = render_to_pdf('shopkeeper/pdf.html', context)
@@ -1000,23 +1000,43 @@ def ordersHistoryDetails(request, pk):
    
         
         orders_obj = OrderHistory.objects.get(id=pk)
+
         product_orders =ProductOrderHistory.objects.filter(order_id=pk)
-        shopkeeper_id= orders_obj.shopkeeper or None
-        customer_id= orders_obj.customer or None
+        shopkeeper_id= orders_obj.order.shopkeeper or None
+        customer_id= orders_obj.order.customer or None
+        datalist=[]
+        for prod in product_orders:
+            print('prod')
+            datalist.append({
+                'order_id': orders_obj.id,
+                'p_quantity': prod.quantity,
+                'p_name': prod.product.name,
+                'p_price': prod.price,
+                'sub_total': prod.sub_total,
+                'dukandar': orders_obj.order.shopkeeper,
+                # 'customer':orders_obj.customer,
+                'order_date': orders_obj.created_at,
+
+                'shopkeeper_id': shopkeeper_id,
+                'customer_id': customer_id,
+
+
+            })
+        print('datalist',datalist)
         context = {
+            'datalist':datalist,
             'order_id': orders_obj.id,
-            'products': product_orders,
-            'dukandar': orders_obj.shopkeeper,
-            # 'customer':orders_obj.customer,
-            'order_date': orders_obj.order_date,
-            'amount': orders_obj.total_amount,
-             'discount': orders_obj.discount,
-            'order_upto': orders_obj.order_upto,
+            # 'products': product_orders,
+            # 'dukandar': orders_obj.order.shopkeeper,
+            # # 'customer':orders_obj.customer,
+            # 'order_date': orders_obj.created_at,
+             'amount': orders_obj.order.total_amount,
+                'discount': orders_obj.order.discount,
             'shopkeeper_id':shopkeeper_id,
             'customer_id':customer_id,
-            
-           
-            'status': orders_obj.status,
+            #
+            #
+            'status': orders_obj.order.status,
 
         }
         return render(request, 'shopkeeper/order/orderhistorydetail.html', context)
