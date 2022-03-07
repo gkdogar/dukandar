@@ -435,7 +435,11 @@ class CustomerViewSetApi(viewsets.ViewSet):
     #         'message': 'Record Deleted Successfully'
     #     }
     #     return Response(response, status=status.HTTP_200_OK)
-
+class AllProductApi(viewsets.ViewSet):
+      def list(self, request):
+          products =Product.objects.filter(is_active=True)
+          serializer=ProductSerializer(products, many=True)
+          return Response(serializer.data, status=status.HTTP_200_OK)       
 
 class ProductViewSetApi(viewsets.ViewSet):
     # authentication_classes = [JWTAuthentication]
@@ -799,7 +803,7 @@ class LoginView(APIView):
                 'iat': datetime.utcnow(),
                 # 'user_type':user.user_type,
             }
-            token = token = jwt.encode({'id': user.id, 'exp': datetime.utcnow() + timedelta(minutes=10)},
+            token = token = jwt.encode({'id': user.id, 'exp': datetime.utcnow() + timedelta(hours=24)},
                                        settings.SECRET_KEY, algorithm='HS256')
             response = Response()
             response.set_cookie(key='jwt', value=token, httponly=True)
