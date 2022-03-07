@@ -601,10 +601,10 @@ class OrderViewSetApi(viewsets.ViewSet):
             return Response(response, status=status.HTTP_200_OK)
 
     def create(self, request):
-        # tokenCheck(request)
+        tokenCheck(request)
         try:
             post_data = request.data
-            print('post_data',post_data)
+         
             post_Data = deepcopy(post_data)
             products = post_Data.get('products', None)
             customer_id = post_data.get('customer', None)
@@ -614,11 +614,11 @@ class OrderViewSetApi(viewsets.ViewSet):
                 try:
 
                     user =User.objects.get(id=customer_id)
-                    print('user', user.id)
+                  
 
                     customer_obj = Customer.objects.get(user=customer_id)
 
-                    print('customer_obj',customer_obj)
+                   
                     if customer_obj:
                         post_Data['customer'] = customer_obj.id
                         serializer = OrderSerializer(data=post_Data)
