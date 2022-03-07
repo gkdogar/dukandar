@@ -34,6 +34,7 @@
         <tr>
             <th scope="col">#</th>
             <th scope="col">Order#</th>
+            <th scope="col" >Updated</th>
             {% if shopkeeper_id%}
             <th scope="col" >shopkeeper</th>
             {% endif %}
@@ -44,6 +45,7 @@
             <th scope="col" >Quantity</th>
             <th scope="col" >Price</th>
             <th scope="col" >Amount</th>
+            
         </tr>
         </thead>
         <tbody>
@@ -57,7 +59,7 @@
                    
                     {{ product.order_id}}
                 </td>
-
+                  <td>{{ product.order_update}}</td>
                 <td >
 {#                  {% if product.shopkeeper_id %}#}
                   {{ product.dukandar.user.first_name }}

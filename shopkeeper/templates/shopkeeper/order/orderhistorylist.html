@@ -28,14 +28,14 @@
               <table class="table" id="order_table">
                 <thead class="thead-dark">
                 <tr>
-                    <th scope="col">#</th>
-                 
+                    <th scope="col">Order#</th>
+                    
                     <th scope="col">Dukandar Name</th>
                   
                     <th scope="col">Customer Name</th>
                 
-                    <th scope="col">Order Date</th>
-                    <th scope="col">Update Order</th>
+                    <th scope="col">Order Update  </th>
+                    {% comment %} <th scope="col">Update Order</th> {% endcomment %}
                     <th scope="col">Discount</th>
                     <th scope="col">Amount</th>
 
@@ -50,7 +50,7 @@
                 {% for order in orders_list %}
                   
                     <tr>
-                        <th scope="row">{{ forloop.counter }}</th>
+                        <th scope="row">{{ order.order.id }}</th>
                         {% comment %} <td>{{ order.product.name }}</td> {% endcomment %}
                      
                         <td>{{ order.order.shopkeeper.user.first_name }} {{ order.order.shopkeeper.user.last_name }}</td>
@@ -60,20 +60,20 @@
                   
                        
                         <td>{{ order.created_at }}</td>
-                         <td>{{ order.order.updated_at }}</td>
+                         {% comment %} <td>{{ order.order.updated_at }}</td> {% endcomment %}
                         <td>{{ order.order.discount }}</td>
                         <td>{{ order.order.total_amount }}</td>
                      
                         {% comment %} <td>{{ order.quantity }}</td> {% endcomment %}
                        
-                        <td>{% if order.order.status == "CANCELLED" %}
-                           <span class="text-danger"> <b>{{ order.order.status }}</b></span>
+                        <td>{% if order.status == "CANCELLED" %}
+                           <span class="text-danger"> <b>{{ order.status }}</b></span>
                            {% endif %}
-                           {% if order.order.status == "PROCESSING" %}
-                           <span class="text-warning" ><b> {{ order.order.status }}<b></span>
+                           {% if order.status == "PROCESSING" %}
+                           <span class="text-warning" ><b> {{ order.status }}<b></span>
                             {% endif %}
-                            {% if order.order.status == "DELIVERED" %}
-                            <span class="text-success"> <b>{{ order.order.status }}</b></span>
+                            {% if order.status == "DELIVERED" %}
+                            <span class="text-success"> <b>{{ order.status }}</b></span>
                              {% endif %}
                         </td>
                             

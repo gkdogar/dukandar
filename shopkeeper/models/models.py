@@ -247,10 +247,13 @@ class ProductOrder(models.Model):
 
 class OrderHistory(models.Model):
     order = models.ForeignKey(Order,
-                              on_delete=models.PROTECT,
+                              on_delete=models.CASCADE,
                               null=True,
                               blank=True
                               )
+    status = models.CharField(choices=ORDER_CHOICES,
+                            max_length=12,
+                            default='PROCESSING')
     created_at = models.DateTimeField(auto_now_add=True, null=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -260,10 +263,10 @@ class OrderHistory(models.Model):
 
 class ProductOrderHistory(models.Model):
     order = models.ForeignKey(OrderHistory,
-                              on_delete=models.PROTECT,
+                              on_delete=models.CASCADE,
                               null=True)
     product = models.ForeignKey(Product,
-                                on_delete=models.PROTECT,
+                                on_delete=models.CASCADE,
                                 null=True)
     quantity = models.IntegerField(default=0)
 
