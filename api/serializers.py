@@ -166,9 +166,17 @@ class DiscountSerializer(serializers.ModelSerializer):
 
 
 class WalletSerializer(serializers.ModelSerializer):
+    amount = serializers.CharField(style={'input_type': 'text'}, write_only=True)
+    shopkeeperId = serializers.CharField(style={'input_type': 'text'}, write_only=True)
+    
     class Meta:
         model = Wallet
-        fields = '__all__'
+        fields = ['amount','shopkeeperId']
+        extra_kwargs = {
+        'amount': {'required': True},
+        'shopkeeperId': {'write_only': True},
+      
+        }
 
 
 class ComplaintSerializer(serializers.ModelSerializer):

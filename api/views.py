@@ -177,7 +177,8 @@ class ShopkeeperViewSetApi(viewsets.ViewSet):
                 'shopkeeper': serializer.data,
                 'spin': total_spin,
                 'wallet': walt_amount,
-                'orders': total_orders
+                'orders': total_orders,
+                'shopkeeper_type':dukandar.shopkeeper_type
             }
             return Response(context, status=status.HTTP_200_OK)
         except Shopkeeper.DoesNotExist:
@@ -605,7 +606,7 @@ class OrderViewSetApi(viewsets.ViewSet):
             return Response(response, status=status.HTTP_200_OK)
 
     def create(self, request):
-        tokenCheck(request)
+        # tokenCheck(request)
         try:
             post_data = request.data
          
@@ -696,7 +697,7 @@ class OrderViewSetApi(viewsets.ViewSet):
                                                                          quantity=qty, sub_total=sub_total, price=price)
 
                                 order_prod.save()
-                                print('hello')
+                               
                                 order_prod_hist = ProductOrderHistory.objects.create(order_id=ord_history.id,
                                                                                      product_id=product_id,
                                                                                      quantity=qty, sub_total=sub_total,
@@ -718,22 +719,50 @@ class OrderViewSetApi(viewsets.ViewSet):
 
                             total_amount = float(post_data['total_amount'])
                             if total_amount < float(100000):
-                                wallet = Wallet.objects.create(shopkeeper=shopkeeper_obj, order=order, amount=0)
-                                wallet.save()
+                                try:
+                                    wallet_obj =Wallet.objects.get(shopkeeper_id=shopkeeper_obj.id)
+                                    wallet_obj.order =order
+                                    wallet_obj.amount =0
+                                    wallet_obj.save()
+
+                                except:
+                                    wallet = Wallet.objects.create(shopkeeper=shopkeeper_obj, order=order, amount=0)
+                                    wallet.save()
 
                             if total_amount > float(100000) and total_amount < float(250000):
-                                wallet = Wallet.objects.create(shopkeeper=shopkeeper_obj, order=order, amount=1000)
-                                wallet.save()
+                                try:
+                                    wallet_obj =Wallet.objects.get(shopkeeper_id=shopkeeper_obj.id)
+                                    wallet_obj.order =order
+                                    wallet_obj.amount =1000
+                                    wallet_obj.save()
+
+                                except:
+                                    wallet = Wallet.objects.create(shopkeeper=shopkeeper_obj, order=order, amount=1000)
+                                    wallet.save()
 
                             if total_amount > float(250000) and total_amount < float(500000):
-                                wallet = Wallet.objects.create(shopkeeper=shopkeeper_obj, order=order, amount=2500)
-                                wallet.save()
+                                try:
+                                    wallet_obj =Wallet.objects.get(shopkeeper_id=shopkeeper_obj.id)
+                                    wallet_obj.order =order
+                                    wallet_obj.amount =2500
+                                    wallet_obj.save()
+
+                                except:
+                                    wallet = Wallet.objects.create(shopkeeper=shopkeeper_obj, order=order, amount=2500)
+                                    wallet.save()
                                 spine = Spines.objects.create(shopkeeper=shopkeeper_obj, order=order, spine_no=1)
                                 spine.save()
 
                             if total_amount > float(500000):
-                                wallet = Wallet.objects.create(shopkeeper=shopkeeper_obj, order=order, amount=7500)
-                                wallet.save()
+                                try:
+                                    wallet_obj =Wallet.objects.get(shopkeeper_id=shopkeeper_obj.id)
+                                    wallet_obj.order =order
+                                    wallet_obj.amount =7500
+                                    wallet_obj.save()
+
+                                except:
+                                    wallet = Wallet.objects.create(shopkeeper=shopkeeper_obj, order=order, amount=7500)
+                                    wallet.save()
                                 spine = Spines.objects.create(shopkeeper=shopkeeper_obj, order=order, spine_no=2)
                                 spine.save()
 
@@ -776,6 +805,29 @@ class WalletViewSetApi(viewsets.ViewSet):
         wallet = Wallet.objects.all()
         serializer = OrderSerializer(wallet, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def create(self, request):
+        try:
+            post_data =request.data
+            print('post_data',post_data)
+            shopkeeperId=post_data.get('shopkeeperId', None)
+            users=User.objects.get(id=shopkeeperId)
+            shopkeeper_obj = Shopkeeper.objects.get(user=shopkeeperId)
+            wallet_obj =Wallet.objects.get(shopkeeper_id=shopkeeper_obj.id)
+            wallet_obj.amount =post_data.get('amount',  wallet_obj.amount)
+            wallet_obj.save()
+            print('hello',shopkeeper_obj)
+           
+            response = {
+                'message': 'Gift Amount Added Successfully'
+            }
+            return Response(response, status=status.HTTP_201_CREATED)
+        except:
+            response = {
+                    'message': 'Gift Amount not added '
+                }
+            return Response(response, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 class GiftSpineViewSetApi(viewsets.ViewSet):
