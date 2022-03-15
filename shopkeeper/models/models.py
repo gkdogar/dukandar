@@ -84,15 +84,16 @@ class Employee(models.Model):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        target_add_date = self.updated_at
-        current_date = datetime.today()
-        # created_at__gt=datetime.today() + timedelta(days=1)
-        if target_add_date.date() < current_date.date():
-            emp_histroy = EmployeeHistry.objects.create(employee=self, daily_target_assign=self.target_assign,
-                                                        daily_achieved=self.target_achieved)
-            emp_histroy.save()
-            self.target_achieved = 0
-            self.save()
+        if self.updated_at:
+            target_add_date = self.updated_at
+            current_date = datetime.today()
+            # created_at__gt=datetime.today() + timedelta(days=1)
+            if target_add_date.date() < current_date.date():
+                emp_histroy = EmployeeHistry.objects.create(employee=self, daily_target_assign=self.target_assign,
+                                                            daily_achieved=self.target_achieved)
+                emp_histroy.save()
+                self.target_achieved = 0
+                self.save()
         # add your own logic
 
 
@@ -247,10 +248,13 @@ class ProductOrder(models.Model):
 
 class OrderHistory(models.Model):
     order = models.ForeignKey(Order,
-                              on_delete=models.PROTECT,
+                              on_delete=models.CASCADE,
                               null=True,
                               blank=True
                               )
+    status = models.CharField(choices=ORDER_CHOICES,
+                            max_length=12,
+                            default='PROCESSING')
     created_at = models.DateTimeField(auto_now_add=True, null=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -260,10 +264,10 @@ class OrderHistory(models.Model):
 
 class ProductOrderHistory(models.Model):
     order = models.ForeignKey(OrderHistory,
-                              on_delete=models.PROTECT,
+                              on_delete=models.CASCADE,
                               null=True)
     product = models.ForeignKey(Product,
-                                on_delete=models.PROTECT,
+                                on_delete=models.CASCADE,
                                 null=True)
     quantity = models.IntegerField(default=0)
 
