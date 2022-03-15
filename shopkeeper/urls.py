@@ -76,5 +76,11 @@ urlpatterns = [
     path('complants/detail/<int:pk>/', complaintsDetail, name='complaints_details'),
 
     path('complants/delete/<int:pk>/', complaintsDelete, name='complaints_delete'),
+
+    # //Notification
+    path('notification/lists', notificationList, name='notification_List'),
+    path('notification/setup', notificationSetup, name='notification_Setup'),
+    path('notification/detail/<int:pk>/', notificationDetail, name='notification_detail'),
+    path('notification/delete/<int:pk>/', notificationDelete, name='notification_delete'),
 ]
 

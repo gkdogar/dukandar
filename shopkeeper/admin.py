@@ -37,6 +37,7 @@ admin.site.register(Spines)
 admin.site.register(Wallet)
 admin.site.register(Complaints)
 admin.site.register(ProductOrderHistory)
+admin.site.register(Notification)
 
 
 @admin.register(EmployeeHistry)

@@ -235,3 +235,19 @@ class WinSpinSerializer(serializers.ModelSerializer):
 #
 #         print('hwllo', token['user_type'])
 #         return data
+
+class ChangePasswordSerializer(serializers.Serializer):
+    model = User
+
+    """
+    Serializer for password change endpoint.
+    """
+    old_password = serializers.CharField(required=True)
+    new_password = serializers.CharField(required=True)
+
+
+
+class NotificationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Notification
+        fields = '__all__'

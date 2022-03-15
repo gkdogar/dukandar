@@ -38,11 +38,16 @@
                         class="align-middle">Employee Action</span>
                 </a>
                 <ul id="employee_control" class="sidebar-dropdown list-unstyled collapse " data-parent="#sidebar">
-                    <li class="sidebar-item " id="emp_list"><a class="sidebar-link" href="{% url 'shopkeeper:employee_list' %}">Employee List</a>
+                    <li class="sidebar-item " id="emp_list"><a class="sidebar-link"
+                                                               href="{% url 'shopkeeper:employee_list' %}">Employee
+                        List</a>
                     </li>
-                    <li class="sidebar-item" id="emp_setup"><a class="sidebar-link" href="{% url 'shopkeeper:employee_setup' %}">Employee
+                    <li class="sidebar-item" id="emp_setup"><a class="sidebar-link"
+                                                               href="{% url 'shopkeeper:employee_setup' %}">Employee
                         Setup</a></li>
-                        <li class="sidebar-item " id="emp_history"><a class="sidebar-link" href="{% url 'shopkeeper:employee_history' %}">Employees History</a>
+                    <li class="sidebar-item " id="emp_history"><a class="sidebar-link"
+                                                                  href="{% url 'shopkeeper:employee_history' %}">Employees
+                        History</a>
                     </li>
                     {#              <li class="sidebar-item"><a class="sidebar-link" href="/seller/admin/approved/">ApprovedSellers</a></li>#}
                     {#              <li class="sidebar-item"><a class="sidebar-link" href="/seller/admin/rejected/">RejectedSellers</a></li>#}
@@ -51,33 +56,43 @@
                 </ul>
             </li>
 
-             <li class="sidebar-item" id="dukandar_page">
+            <li class="sidebar-item" id="dukandar_page">
                 <a data-target="#dukandar_control" data-toggle="collapse" class="sidebar-link collapsed">
                     <i class="align-middle" data-feather="users"></i> <span
                         class="align-middle">Dhukandar Action</span>
                 </a>
                 <ul id="dukandar_control" class="sidebar-dropdown list-unstyled collapse " data-parent="#sidebar">
-                    <li class="sidebar-item" id="du_list"><a class="sidebar-link" href="{% url 'shopkeeper:dukandar_list' %}">Dukandar List</a>
+                    <li class="sidebar-item" id="du_list"><a class="sidebar-link"
+                                                             href="{% url 'shopkeeper:dukandar_list' %}">Dukandar
+                        List</a>
                     </li>
-                    <li class="sidebar-item" id="du_setup" ><a class="sidebar-link" href="{% url 'shopkeeper:dukandar_setup' %}">Dukandar
+                    <li class="sidebar-item" id="du_setup"><a class="sidebar-link"
+                                                              href="{% url 'shopkeeper:dukandar_setup' %}">Dukandar
                         Setup</a></li>
-                      <li class="sidebar-item" id="du_spine"><a class="sidebar-link"  href="{% url 'shopkeeper:spines_list' %}">Dukandar Spines</a></li>
-                      <li class="sidebar-item" id="du_wallet"><a class="sidebar-link"  href="{% url 'shopkeeper:wallet_list' %}">Dukandar Wallet</a></li>
-                      {% comment %} <li class="sidebar-item" id="google_map"><a class="sidebar-link" href="{% url 'shopkeeper:google_map_pin' %}">Google map</a> {% endcomment %}
-                      </li>
+                    <li class="sidebar-item" id="du_spine"><a class="sidebar-link"
+                                                              href="{% url 'shopkeeper:spines_list' %}">Dukandar
+                        Spines</a></li>
+                    <li class="sidebar-item" id="du_wallet"><a class="sidebar-link"
+                                                               href="{% url 'shopkeeper:wallet_list' %}">Dukandar
+                        Wallet</a></li>
+                    {% comment %} <li class="sidebar-item" id="google_map"><a class="sidebar-link" href="{% url 'shopkeeper:google_map_pin' %}">Google map</a> {% endcomment %}
+                    </li>
                     {#              <li class="sidebar-item"><a class="sidebar-link" href="/seller/admin/return/">Returned to sellerfor Reviews</a></li>#}
                     {#              <li class="sidebar-item"><a class="sidebar-link" href="/seller/admin/defaulters/">Defaulters</a></li>#}
                 </ul>
             </li>
-             <li class="sidebar-item" id="customer_page">
+            <li class="sidebar-item" id="customer_page">
                 <a data-target="#customer_control" data-toggle="collapse" class="sidebar-link collapsed">
                     <i class="align-middle" data-feather="users"></i> <span
                         class="align-middle">Customer Action</span>
                 </a>
                 <ul id="customer_control" class="sidebar-dropdown list-unstyled collapse " data-parent="#sidebar">
-                    <li class="sidebar-item" id="cust_list"><a class="sidebar-link" href="{% url 'shopkeeper:customer_list' %}">Customer List</a>
+                    <li class="sidebar-item" id="cust_list"><a class="sidebar-link"
+                                                               href="{% url 'shopkeeper:customer_list' %}">Customer
+                        List</a>
                     </li>
-                    <li class="sidebar-item" id="cust_setup"><a class="sidebar-link" href="{% url 'shopkeeper:customer_setup' %}">Customer
+                    <li class="sidebar-item" id="cust_setup"><a class="sidebar-link"
+                                                                href="{% url 'shopkeeper:customer_setup' %}">Customer
                         Setup</a></li>
                     {#              <li class="sidebar-item"><a class="sidebar-link" href="/seller/admin/approved/">ApprovedSellers</a></li>#}
                     {#              <li class="sidebar-item"><a class="sidebar-link" href="/seller/admin/rejected/">RejectedSellers</a></li>#}
@@ -87,17 +102,22 @@
             </li>
 
 
-            <li class="sidebar-header active" id ="product_tabs">
+            <li class="sidebar-header active" id="product_tabs">
                 Product's Control
             </li>
             <li class="sidebar-item" id="parent_cat">
                 <a data-target="#ui_parent" data-toggle="collapse" class="sidebar-link collapsed">
-                    <i class="align-middle" data-feather="briefcase"></i> <span class="align-middle">Parent Categories</span>
+                    <i class="align-middle" data-feather="briefcase"></i> <span
+                        class="align-middle">Parent Categories</span>
                 </a>
                 <ul id="ui_parent" class="sidebar-dropdown list-unstyled collapse " data-parent="#sidebar">
-                    <li class="sidebar-item" id="parent_list"><a class="sidebar-link" href="{% url 'shopkeeper:parent_category_list' %} ">List of
+                    <li class="sidebar-item" id="parent_list"><a class="sidebar-link"
+                                                                 href="{% url 'shopkeeper:parent_category_list' %} ">List
+                        of
                         Parent Categories</a></li>
-                    <li class="sidebar-item" id="parent_setup"><a class="sidebar-link" href="{% url 'shopkeeper:parent_category_setup' %}">Add Parent
+                    <li class="sidebar-item" id="parent_setup"><a class="sidebar-link"
+                                                                  href="{% url 'shopkeeper:parent_category_setup' %}">Add
+                        Parent
                         Category</a></li>
                     {#              <li class="sidebar-item"><a class="sidebar-link" href="/product/admin/approved/">ApprovedProducts</a></li>#}
                     {#              <li class="sidebar-item"><a class="sidebar-link" href="/product/admin/rejected/">RejectedProducts</a></li>#}
@@ -108,8 +128,12 @@
                     <i class="align-middle active" data-feather="briefcase"></i> <span class="align-middle">Parent Sub Categories</span>
                 </a>
                 <ul id="ui_parent_sub" class="sidebar-dropdown list-unstyled collapse " data-parent="#sidebar">
-                    <li class="sidebar-item" id="sub_list"><a class="sidebar-link" href="{% url 'shopkeeper:parent_sub_category_list' %} ">List </a></li>
-                    <li class="sidebar-item" id="sub_setup"><a class="sidebar-link" href="{% url 'shopkeeper:parent_sub_category_setup' %}">Add Sub
+                    <li class="sidebar-item" id="sub_list"><a class="sidebar-link"
+                                                              href="{% url 'shopkeeper:parent_sub_category_list' %} ">List </a>
+                    </li>
+                    <li class="sidebar-item" id="sub_setup"><a class="sidebar-link"
+                                                               href="{% url 'shopkeeper:parent_sub_category_setup' %}">Add
+                        Sub
                         Category</a></li>
                     {#              <li class="sidebar-item"><a class="sidebar-link" href="/product/admin/approved/">ApprovedProducts</a></li>#}
                     {#              <li class="sidebar-item"><a class="sidebar-link" href="/product/admin/rejected/">RejectedProducts</a></li>#}
@@ -121,11 +145,14 @@
                     <i class="align-middle" data-feather="briefcase"></i> <span class="align-middle">Product</span>
                 </a>
                 <ul id="ui_prd" class="sidebar-dropdown list-unstyled collapse " data-parent="#sidebar">
-                  
-                    <li class="sidebar-item" id="product_setup"><a class="sidebar-link" href="{% url 'shopkeeper:product_setup' %}">Add Product</a>
+
+                    <li class="sidebar-item" id="product_setup"><a class="sidebar-link"
+                                                                   href="{% url 'shopkeeper:product_setup' %}">Add
+                        Product</a>
                     </li>
                     <li class="sidebar-item" id="product_list"><a class="sidebar-link"
-                                               href="{% url 'shopkeeper:product_list' %}">Product List</a></li>
+                                                                  href="{% url 'shopkeeper:product_list' %}">Product
+                        List</a></li>
 
                 </ul>
             </li>
@@ -161,56 +188,86 @@
                     <li class="sidebar-item"><a class="sidebar-link" href="">Seller Picks</a></li>
                 </ul>
             </li> {% endcomment %}
-              <li class="sidebar-header">
-               Orders
+            <li class="sidebar-header">
+                Orders
             </li>
             <li class="sidebar-item " id="order_page">
                 <a data-target="#order_list" data-toggle="collapse" class="sidebar-link collapsed">
-                   <span class="iconify" data-icon="fe:list-order"></span> <span
+                    <span class="iconify" data-icon="fe:list-order"></span> <span
                         class="align-middle">Orders Detail</span>
                 </a>
                 <ul id="order_list" class="sidebar-dropdown list-unstyled collapse " data-parent="#sidebar">
-                    <li class="sidebar-item" id="order_view"><a class="sidebar-link" href="{% url 'shopkeeper:orders_list' %}">Order List</a>
+                    <li class="sidebar-item" id="order_view"><a class="sidebar-link"
+                                                                href="{% url 'shopkeeper:orders_list' %}">Order List</a>
                     </li>
 
                 </ul>
                 <ul id="order_list" class="sidebar-dropdown list-unstyled collapse " data-parent="#sidebar">
-                    <li class="sidebar-item" id="order_history"><a class="sidebar-link" href="{% url 'shopkeeper:orders_history_list' %}">Orders History</a>
+                    <li class="sidebar-item" id="order_history"><a class="sidebar-link"
+                                                                   href="{% url 'shopkeeper:orders_history_list' %}">Orders
+                        History</a>
                     </li>
 
                 </ul>
             </li>
 
-        </li>
-        <li class="sidebar-header">
-        Gifts
-      </li>
-      <li class="sidebar-item  mb-5" id="gift_page">
-          <a data-target="#gift_control" data-toggle="collapse" class="sidebar-link collapsed">
-             <span class="iconify" data-icon="fe:list-order"></span> <span
-                  class="align-middle">Gifts</span>
-          </a>
-          <ul id="gift_control" class="sidebar-dropdown list-unstyled collapse " data-parent="#sidebar">
-              <li class="sidebar-item" id="gift_list"><a class="sidebar-link" href="{% url 'shopkeeper:gift_List' %}">Gift List</a>
-              </li>
-            <li class="sidebar-item" id="gift_setup"><a class="sidebar-link" href="{% url 'shopkeeper:gift_Setup' %}">Gift Setup</a>
+            </li>
+            <li class="sidebar-header">
+                Gifts
             </li>
 
-        </ul>
-      </li>
-              <li class="sidebar-item  mb-5" id="complaints_page">
-          <a data-target="#complaints_control" data-toggle="collapse" class="sidebar-link collapsed">
-             <span class="iconify" data-icon="fe:list-order"></span> <span
-                  class="align-middle">Complaints</span>
-          </a>
-          <ul id="complaints_control" class="sidebar-dropdown list-unstyled collapse " data-parent="#sidebar">
-              <li class="sidebar-item" id="complaint_list"><a class="sidebar-link" href="{% url 'shopkeeper:complaints_list' %}">List</a>
-              </li>
-{#            <li class="sidebar-item" id="gift_setup"><a class="sidebar-link" href="{% url 'shopkeeper:complaints_details' %}">Gift Setup</a>#}
-{#            </li>#}
+            <li class="sidebar-item  mb-5" id="gift_page">
+                <a data-target="#gift_control" data-toggle="collapse" class="sidebar-link collapsed">
+                    <span class="iconify" data-icon="fe:list-order"></span> <span
+                        class="align-middle">Gifts</span>
+                </a>
+                <ul id="gift_control" class="sidebar-dropdown list-unstyled collapse " data-parent="#sidebar">
+                    <li class="sidebar-item" id="gift_list"><a class="sidebar-link"
+                                                               href="{% url 'shopkeeper:gift_List' %}">Gift List</a>
+                    </li>
+                    <li class="sidebar-item" id="gift_setup"><a class="sidebar-link"
+                                                                href="{% url 'shopkeeper:gift_Setup' %}">Gift Setup</a>
+                    </li>
 
-        </ul>
-      </li>
+                </ul>
+            </li>
+
+            <li class="sidebar-item  mb-5" id="notification_page">
+
+                <a data-target="#notification_control" data-toggle="collapse" class="sidebar-link collapsed">
+                    <span class="iconify" data-icon="fe:list-order"></span> <span
+                        class="align-middle">Notifications</span>
+                </a>
+                <ul id="notification_control" class="sidebar-dropdown list-unstyled collapse " data-parent="#sidebar">
+                    <li class="sidebar-item" id="notification_list"><a class="sidebar-link"
+                                                                       href="{% url 'shopkeeper:notification_List' %}">List</a>
+                    </li>
+                    <li class="sidebar-item" id="notification_setup"><a class="sidebar-link"
+                                                                        href="{% url 'shopkeeper:notification_Setup' %}">Gift
+                        Setup</a>
+                    </li>
+
+                </ul>
+            </li>
+
+
+            <li class="sidebar-item  mb-5" id="complaints_page">
+
+                <a data-target="#complaints_control" data-toggle="collapse" class="sidebar-link collapsed">
+                    <span class="iconify" data-icon="fe:list-order"></span> <span
+                        class="align-middle">Complaints</span>
+                </a>
+                <ul id="complaints_control" class="sidebar-dropdown list-unstyled collapse " data-parent="#sidebar">
+                    <li class="sidebar-item" id="complaint_list"><a class="sidebar-link"
+                                                                    href="{% url 'shopkeeper:complaints_list' %}">List</a>
+                    </li>
+                    {#            <li class="sidebar-item" id="gift_setup"><a class="sidebar-link" href="{% url 'shopkeeper:complaints_details' %}">Gift Setup</a>#}
+                    {#            </li>#}
+
+                </ul>
+            </li>
+
+
         </ul>
     </div>
 </nav>

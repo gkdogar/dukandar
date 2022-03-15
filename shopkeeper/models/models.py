@@ -361,3 +361,7 @@ class WinSpin(models.Model):
     giftSpin = models.ForeignKey(GiftSpin,
                                  on_delete=models.CASCADE,
                                  null=True)
+
+
+class Notification(models.Model):
+    name = models.CharField(max_length=250, null=True)
