@@ -311,16 +311,19 @@ class Wallet(models.Model):
         return str(self.amount)
 
 
-class Complaint(models.Model):
+class Complaints(models.Model):
     shopkeeper = models.ForeignKey(Shopkeeper,
                                    on_delete=models.CASCADE,
-                                   null=True)
+                                   null=True, blank=True)
     employee = models.ForeignKey(Employee,
                                  on_delete=models.CASCADE,
-                                 null=True)
-    order = models.ForeignKey(Order,
-                              on_delete=models.CASCADE,
-                              null=True)
+                                 null=True, blank=True)
+    customer = models.ForeignKey(Customer,
+                                 on_delete=models.CASCADE,
+                                 null=True, blank=True)
+    # order = models.ForeignKey(Order,
+    #                           on_delete=models.CASCADE,
+    #                           null=True, blank=True)
     message = models.CharField(max_length=255, null=False)
 
     def __str__(self):

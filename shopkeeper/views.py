@@ -1044,3 +1044,32 @@ def ordersHistoryDetails(request, pk):
         }
 
         return render(request, 'shopkeeper/order/orderhistorydetail.html', context)
+
+
+@login_required(login_url='shopkeeper:admin_login')
+def complaintsList(request):
+    complaint_list =Complaints.objects.all()
+
+    context = {
+        'complaint_list': complaint_list,
+
+    }
+    return render(request, 'shopkeeper/complaints/list.html', context)
+
+@login_required(login_url='shopkeeper:admin_login')
+def complaintsDetail(request, pk):
+
+    comp_obj = Complaints.objects.get(id=pk)
+
+    context = {
+        'comp_obj': comp_obj,
+
+    }
+    return render(request, 'shopkeeper/complaints/detail.html', context)
+
+@login_required(login_url='shopkeeper:admin_login')
+def complaintsDelete(request, pk):
+    comp_obj = Complaints.objects.get(id=pk)
+    comp_obj.delete()
+    messages.error(request, 'Record Deleted')
+    return redirect('shopkeeper:complaints_list')

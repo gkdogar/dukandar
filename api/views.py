@@ -178,7 +178,7 @@ class ShopkeeperViewSetApi(viewsets.ViewSet):
                 'spin': total_spin,
                 'wallet': walt_amount,
                 'orders': total_orders,
-                'shopkeeper_type':dukandar.shopkeeper_type
+                'shopkeeper_type': dukandar.shopkeeper_type
             }
             return Response(context, status=status.HTTP_200_OK)
         except Shopkeeper.DoesNotExist:
@@ -450,11 +450,14 @@ class CustomerViewSetApi(viewsets.ViewSet):
     #         'message': 'Record Deleted Successfully'
     #     }
     #     return Response(response, status=status.HTTP_200_OK)
+
+
 class AllProductApi(viewsets.ViewSet):
-      def list(self, request):
-          products =Product.objects.filter(is_active=True)
-          serializer=ProductSerializer(products, many=True)
-          return Response(serializer.data, status=status.HTTP_200_OK)       
+    def list(self, request):
+        products = Product.objects.filter(is_active=True)
+        serializer = ProductSerializer(products, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 class AllProductApi(viewsets.ViewSet):
     # authentication_classes = [JWTAuthentication]
@@ -609,7 +612,7 @@ class OrderViewSetApi(viewsets.ViewSet):
         # tokenCheck(request)
         try:
             post_data = request.data
-         
+
             post_Data = deepcopy(post_data)
             products = post_Data.get('products', None)
             customer_id = post_data.get('customer', None)
@@ -618,12 +621,10 @@ class OrderViewSetApi(viewsets.ViewSet):
             if customer_id:
                 try:
 
-                    user =User.objects.get(id=customer_id)
-                  
+                    user = User.objects.get(id=customer_id)
 
                     customer_obj = Customer.objects.get(user=customer_id)
 
-                   
                     if customer_obj:
                         post_Data['customer'] = customer_obj.id
                         serializer = OrderSerializer(data=post_Data)
@@ -670,10 +671,10 @@ class OrderViewSetApi(viewsets.ViewSet):
 
                 try:
 
-                    users=User.objects.get(id=shopkeeper_id)
+                    users = User.objects.get(id=shopkeeper_id)
                     shopkeeper_obj = Shopkeeper.objects.get(user=shopkeeper_id)
                     if shopkeeper_obj:
-                       
+
                         post_Data['shopkeeper'] = shopkeeper_obj.id
 
                         serializer = OrderSerializer(data=post_Data)
@@ -686,43 +687,43 @@ class OrderViewSetApi(viewsets.ViewSet):
                             #                                           discount=post_Data['discount'])
                             ord_history.save()
                             for index in range(len(products)):
-
                                 print('products', products[index]['id'])
                                 product_id = products[index]['id']
                                 qty = products[index]['quantity']
                                 price = products[index]['amount']
                                 sub_total = products[index]['subtotal']
-                                print('product_id',product_id)
+                                print('product_id', product_id)
                                 order_prod = ProductOrder.objects.create(order_id=order.id, product_id=product_id,
                                                                          quantity=qty, sub_total=sub_total, price=price)
 
                                 order_prod.save()
-                               
+
                                 order_prod_hist = ProductOrderHistory.objects.create(order_id=ord_history.id,
                                                                                      product_id=product_id,
                                                                                      quantity=qty, sub_total=sub_total,
                                                                                      price=price)
-                                print('order_prod_hist',order_prod_hist)
+                                print('order_prod_hist', order_prod_hist)
                                 order_prod_hist.save()
 
                                 product_objs = Product.objects.get(id=product_id)
                                 qty = product_objs.quantity - qty
                                 product_objs.quantity = qty
-                                quantiy_hist=product_objs.quantity
+                                quantiy_hist = product_objs.quantity
                                 product_objs.save()
 
                                 order_prod_hist = ProductOrderHistory.objects.create(order_id=ord_history.id,
                                                                                      product_id=product_id,
-                                                                                     quantity=quantiy_hist, sub_total=sub_total,
+                                                                                     quantity=quantiy_hist,
+                                                                                     sub_total=sub_total,
                                                                                      price=price)
                                 order_prod_hist.save()
 
                             total_amount = float(post_data['total_amount'])
                             if total_amount < float(100000):
                                 try:
-                                    wallet_obj =Wallet.objects.get(shopkeeper_id=shopkeeper_obj.id)
-                                    wallet_obj.order =order
-                                    wallet_obj.amount =0
+                                    wallet_obj = Wallet.objects.get(shopkeeper_id=shopkeeper_obj.id)
+                                    wallet_obj.order = order
+                                    wallet_obj.amount = 0
                                     wallet_obj.save()
 
                                 except:
@@ -731,9 +732,9 @@ class OrderViewSetApi(viewsets.ViewSet):
 
                             if total_amount > float(100000) and total_amount < float(250000):
                                 try:
-                                    wallet_obj =Wallet.objects.get(shopkeeper_id=shopkeeper_obj.id)
-                                    wallet_obj.order =order
-                                    wallet_obj.amount =1000
+                                    wallet_obj = Wallet.objects.get(shopkeeper_id=shopkeeper_obj.id)
+                                    wallet_obj.order = order
+                                    wallet_obj.amount = 1000
                                     wallet_obj.save()
 
                                 except:
@@ -742,9 +743,9 @@ class OrderViewSetApi(viewsets.ViewSet):
 
                             if total_amount > float(250000) and total_amount < float(500000):
                                 try:
-                                    wallet_obj =Wallet.objects.get(shopkeeper_id=shopkeeper_obj.id)
-                                    wallet_obj.order =order
-                                    wallet_obj.amount =2500
+                                    wallet_obj = Wallet.objects.get(shopkeeper_id=shopkeeper_obj.id)
+                                    wallet_obj.order = order
+                                    wallet_obj.amount = 2500
                                     wallet_obj.save()
 
                                 except:
@@ -755,9 +756,9 @@ class OrderViewSetApi(viewsets.ViewSet):
 
                             if total_amount > float(500000):
                                 try:
-                                    wallet_obj =Wallet.objects.get(shopkeeper_id=shopkeeper_obj.id)
-                                    wallet_obj.order =order
-                                    wallet_obj.amount =7500
+                                    wallet_obj = Wallet.objects.get(shopkeeper_id=shopkeeper_obj.id)
+                                    wallet_obj.order = order
+                                    wallet_obj.amount = 7500
                                     wallet_obj.save()
 
                                 except:
@@ -808,26 +809,25 @@ class WalletViewSetApi(viewsets.ViewSet):
 
     def create(self, request):
         try:
-            post_data =request.data
-            print('post_data',post_data)
-            shopkeeperId=post_data.get('shopkeeperId', None)
-            users=User.objects.get(id=shopkeeperId)
+            post_data = request.data
+            print('post_data', post_data)
+            shopkeeperId = post_data.get('shopkeeperId', None)
+            users = User.objects.get(id=shopkeeperId)
             shopkeeper_obj = Shopkeeper.objects.get(user=shopkeeperId)
-            wallet_obj =Wallet.objects.get(shopkeeper_id=shopkeeper_obj.id)
-            wallet_obj.amount =post_data.get('amount',  wallet_obj.amount)
+            wallet_obj = Wallet.objects.get(shopkeeper_id=shopkeeper_obj.id)
+            wallet_obj.amount = post_data.get('amount', wallet_obj.amount)
             wallet_obj.save()
-            print('hello',shopkeeper_obj)
-           
+            print('hello', shopkeeper_obj)
+
             response = {
                 'message': 'Gift Amount Added Successfully'
             }
             return Response(response, status=status.HTTP_201_CREATED)
         except:
             response = {
-                    'message': 'Gift Amount not added '
-                }
+                'message': 'Gift Amount not added '
+            }
             return Response(response, status=status.HTTP_400_BAD_REQUEST)
-
 
 
 class GiftSpineViewSetApi(viewsets.ViewSet):
@@ -938,3 +938,82 @@ class LogoutView(APIView):
             'message': 'successfully logout'
         }
         return response
+
+
+class ComplaintsViewSetApi(viewsets.ViewSet):
+
+    # def list(self, request):
+    #     tokenCheck(request)
+    #     gifts = GiftSpin.objects.filter(quantity__gt=0)
+    #     serializer = GiftSpineSerializer(gifts, many=True)
+    #     return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def create(self, request):
+        tokenCheck(request)
+
+        post_data = request.data
+        post_data=deepcopy(request.data)
+        user_id = request.data['userId']
+        try:
+            shopkeeper_obj = Shopkeeper.objects.get(user=user_id)
+            comp =Complaints.objects.create(shopkeeper=shopkeeper_obj, message=post_data['message'])
+            comp.save()
+            response = {
+                'message': 'Your Complaints has been register '
+            }
+            return Response(response, status=status.HTTP_201_CREATED)
+        except Shopkeeper.DoesNotExist:
+            try:
+                employee_obj = Employee.objects.get(user=user_id)
+
+                comp = Complaints.objects.create(employee=employee_obj, message=post_data['message'])
+                comp.save()
+                response = {
+                    'message': 'Your Complaints has been register '
+                }
+                return Response(response, status=status.HTTP_201_CREATED)
+            except Employee.DoesNotExist:
+                customer_obj = Customer.objects.get(user=user_id)
+                comp = Complaints.objects.create(customer=customer_obj, message=post_data['message'])
+                comp.save()
+                response = {
+                    'message': 'Your Complaints has been register '
+                }
+                return Response(response, status=status.HTTP_201_CREATED)
+
+
+        serializer = ComplaintSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            response = {
+                'message': 'Your Complaints has been register '
+            }
+            return Response(response, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def retrieve(self, request, pk=None):
+        tokenCheck(request)
+        try:
+            shopkeeper_obj = Shopkeeper.objects.get(user=pk)
+            print('shopkeeper_obj',shopkeeper_obj)
+            complaints_list = Complaints.objects.filter(shopkeeper_id=shopkeeper_obj.id)
+            print('complaints_list', complaints_list)
+            serializer = ComplaintSerializer(complaints_list, many=True)
+            print('serializer',serializer)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        except Shopkeeper.DoesNotExist:
+            try:
+                Employee_obj = Employee.objects.get(user=pk)
+                complaints_list = Complaints.objects.filter(employee_id=Employee_obj.id)
+                print('complaints_list', complaints_list)
+                serializer = ComplaintSerializer(complaints_list, many=True)
+                print('serializer', serializer)
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            except Employee.DoesNotExist:
+                customer_obj = Customer.objects.get(user=pk)
+                complaints_list = Complaints.objects.filter(customer_id=customer_obj.id)
+                print('complaints_list', complaints_list)
+                serializer = ComplaintSerializer(complaints_list, many=True)
+                print('serializer', serializer)
+                return Response(serializer.data, status=status.HTTP_200_OK)

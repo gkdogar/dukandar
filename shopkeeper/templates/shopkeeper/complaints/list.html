@@ -1,0 +1,83 @@
+{% extends 'shopkeeper/base/base.html' %}
+{% load static %}
+{% block stylesheet %}
+    <style>
+
+    </style>
+
+{% endblock %}
+
+{% block content %}
+<div class="container">
+        <h1 class="text-center mt-5 mb-5 font-weight-bold">Complaint's List</h1>
+
+            {% if messages %}
+                {% for message in messages %}
+                    <div {% if message.tags %}class="alert alert-{{ message.tags }}" {% endif %} role="alert">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+
+        <div class="row">
+
+          <div class="col-12">
+
+            <table class="table" id="complaintTable">
+                <thead class="thead-dark">
+                  <tr>
+                    <th scope="col">#</th>
+                     <th scope="col">Employee</th>
+                    <th scope="col">Shopkeeper</th>
+                    <th scope="col">Customer</th>
+
+                    <th scope="col">Complaints</th>
+                    <th scope="col">Actions</th>
+
+                  </tr>
+                </thead>
+                <tbody>
+                    {% for comp in complaint_list%}
+                  <tr>
+                    <th scope="row">{{forloop.counter}}</th>
+                    <td>{{comp.employee.user.first_name}} {{comp.employee.user.last_name}}</td>
+                       <td>{{comp.shopkeeper.user.first_name}} {{comp.shopkeeper.user.last_name}}</td>
+                      <td>{{comp.customer.user.first_name}} {{comp.customer.user.last_name}}</td>
+                    <td>{{comp.message}}</td>
+
+
+                    <td>
+
+                        <a href="{% url 'shopkeeper:complaints_delete' comp.id %}" class="mr-3" > <i class="fas fa-trash-alt"  style="color:red;" data-toggle="tooltip" title="Delete Record"></i></a>
+                        <a href="{% url 'shopkeeper:complaints_details'  comp.id %}">  <i class="fas fa-edit" data-toggle="tooltip" title="Edit Record"  style="color:blue;"></i></a>
+                    </td>
+                  </tr>
+                  {% endfor %}
+
+                </tbody>
+              </table>
+
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <script>
+        $(document).ready(function () {
+           $('ul').find("li#complaints_page").addClass("active");
+            $('ul').find("li#complaints_page").addClass("active");
+            $('ul').find("li#complaints_page").addClass("active");
+            $('ul').find("li#complaints_page").find("a").addClass("collapsed");
+            $('ul').find("li#complaints_page").find("a").attr("aria-expanded", "true");
+            $('ul#complaints_control').addClass('show')
+            $('#complaint_list').addClass('active')
+            $('#complaintTable').DataTable();
+        });
+    </script>
+{% endblock %}
+
+

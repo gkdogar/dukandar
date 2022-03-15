@@ -71,4 +71,10 @@ urlpatterns = [
    # OrderHistory+URLS
     path('Order/history/lists', ordersHistoryList, name='orders_history_list'),
     path('Order/history/detail/<int:pk>/', ordersHistoryDetails, name='order_history_details'),
+
+    path('complants/lists', complaintsList, name='complaints_list'),
+    path('complants/detail/<int:pk>/', complaintsDetail, name='complaints_details'),
+
+    path('complants/delete/<int:pk>/', complaintsDelete, name='complaints_delete'),
 ]
+
