@@ -23,7 +23,7 @@ import json
 # from .utils import *
 from django.http import HttpResponse
 from django.contrib.auth.forms import PasswordResetForm
-from django.contrib.auth.models import User
+
 from django.template.loader import render_to_string
 from django.db.models.query_utils import Q
 from django.utils.http import urlsafe_base64_encode
@@ -41,6 +41,7 @@ def admin_login(request):
         email = request.POST['email']
         password = request.POST['password']
         email_user = authenticate(email=email, password=password)
+      
         if email_user:
             check_user = User.objects.filter(email=email_user)
             if (email is None) or (password is None):
@@ -89,15 +90,6 @@ def admin_settings(request):
 
 @login_required(login_url='shopkeeper:admin_login')
 def dashboard(request):
-
-
-    send_mail(
-    'Subject here',
-    'Here is the message.',
-    EMAIL_HOST_USER,
-    ['gk.dogar@gmail.com'],
-    fail_silently=False,
-    )
     employees = Employee.objects.all().count()
     customers = Customer.objects.all().count()
     dukandars_list = Shopkeeper.objects.all()
@@ -1151,30 +1143,30 @@ def notificationDelete(request, pk):
     return redirect('shopkeeper:notification_List')
 
 
-def password_reset_request(request):
-	if request.method == "POST":
-		password_reset_form = PasswordResetForm(request.POST)
-		if password_reset_form.is_valid():
-			data = password_reset_form.cleaned_data['email']
-			associated_users = User.objects.filter(Q(email=data))
-			if associated_users.exists():
-				for user in associated_users:
-					subject = "Password Reset Requested"
-					email_template_name = "main/password/password_reset_email.txt"
-					c = {
-					"email":user.email,
-					'domain':'127.0.0.1:8000',
-					'site_name': 'Website',
-					"uid": urlsafe_base64_encode(force_bytes(user.pk)),
-					"user": user,
-					'token': default_token_generator.make_token(user),
-					'protocol': 'http',
-					}
-					email = render_to_string(email_template_name, c)
-					try:
-						send_mail(subject, email, 'admin@example.com' , [user.email], fail_silently=False)
-					except BadHeaderError:
-						return HttpResponse('Invalid header found.')
-					return redirect ("/password_reset/done/")
-	password_reset_form = PasswordResetForm()
-	return render(request=request, template_name="main/password/password_reset.html", context={"password_reset_form":password_reset_form})
+# def password_reset_request(request):
+# 	if request.method == "POST":
+# 		password_reset_form = PasswordResetForm(request.POST)
+# 		if password_reset_form.is_valid():
+# 			data = password_reset_form.cleaned_data['email']
+# 			associated_users = User.objects.filter(Q(email=data))
+# 			if associated_users.exists():
+# 				for user in associated_users:
+# 					subject = "Password Reset Requested"
+# 					email_template_name = "main/password/password_reset_email.txt"
+# 					c = {
+# 					"email":user.email,
+# 					'domain':'127.0.0.1:8000',
+# 					'site_name': 'Website',
+# 					"uid": urlsafe_base64_encode(force_bytes(user.pk)),
+# 					"user": user,
+# 					'token': default_token_generator.make_token(user),
+# 					'protocol': 'http',
+# 					}
+# 					email = render_to_string(email_template_name, c)
+# 					try:
+# 						send_mail(subject, email, 'admin@example.com' , [user.email], fail_silently=False)
+# 					except BadHeaderError:
+# 						return HttpResponse('Invalid header found.')
+# 					return redirect ("/password_reset/done/")
+# 	password_reset_form = PasswordResetForm()
+# 	return render(request=request, template_name="main/password/password_reset.html", context={"password_reset_form":password_reset_form})

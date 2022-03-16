@@ -618,14 +618,14 @@ class OrderViewSetApi(viewsets.ViewSet):
             products = post_Data.get('products', None)
             customer_id = post_data.get('customer', None)
             shopkeeper_id = post_data.get('shopkeeper', None)
-
+            print('customer_id',customer_id)
             if customer_id:
                 try:
 
                     user = User.objects.get(id=customer_id)
-
+                    print('user',user)
                     customer_obj = Customer.objects.get(user=customer_id)
-
+                    print('customer_obj',user)
                     if customer_obj:
                         post_Data['customer'] = customer_obj.id
                         serializer = OrderSerializer(data=post_Data)
@@ -688,7 +688,7 @@ class OrderViewSetApi(viewsets.ViewSet):
                             #                                           discount=post_Data['discount'])
                             ord_history.save()
                             for index in range(len(products)):
-                             
+
                                 product_id = products[index]['id']
                                 qty = products[index]['quantity']
                                 price = products[index]['amount']
@@ -749,7 +749,7 @@ class OrderViewSetApi(viewsets.ViewSet):
                                     wallet_obj.amount = 2500
                                     wallet_obj.save()
                                     spine = Spines.objects.get(shopkeeper_id=shopkeeper_obj.id)
-                                    spine.spine_no=1
+                                    spine.spine_no +=1
                                     spine.save()
 
                                 except:
@@ -765,7 +765,7 @@ class OrderViewSetApi(viewsets.ViewSet):
                                     wallet_obj.amount = 7500
                                     wallet_obj.save()
                                     spine = Spines.objects.get(shopkeeper_id=shopkeeper_obj.id)
-                                    spine.spine_no=2
+                                    spine.spine_no +=2
                                     spine.save()
 
                                 except:
@@ -1027,41 +1027,41 @@ class ComplaintsViewSetApi(viewsets.ViewSet):
                 return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class ChangePasswordView(generics.UpdateAPIView):
+# class ChangePasswordView(generics.UpdateAPIView):
 
-    print('req', request)
-    """
-    An endpoint for changing password.
-    """
-    print('request', request)
-    serializer_class = ChangePasswordSerializer
+#     print('req', request)
+#     """
+#     An endpoint for changing password.
+#     """
+#     print('request', request)
+#     serializer_class = ChangePasswordSerializer
 
-    # model = User
-    # permission_classes = (IsAuthenticated,)
+#     # model = User
+#     # permission_classes = (IsAuthenticated,)
 
-    def get_object(self, queryset=None):
-        obj = self.request.user
-        return obj
+#     def get_object(self, queryset=None):
+#         obj = self.request.user
+#         return obj
 
-    def update(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        serializer = self.get_serializer(data=request.data)
+#     def update(self, request, *args, **kwargs):
+#         self.object = self.get_object()
+#         serializer = self.get_serializer(data=request.data)
 
-        if serializer.is_valid():
-            # Check old password
-            if not self.object.check_password(serializer.data.get("old_password")):
-                return Response({"old_password": ["Wrong password."]}, status=status.HTTP_400_BAD_REQUEST)
-            # set_password also hashes the password that the user will get
-            self.object.set_password(serializer.data.get("new_password"))
-            self.object.save()
-            response = {
-                'status': 'success',
-                'code': status.HTTP_200_OK,
-                'message': 'Password updated successfully',
-                'data': []
-            }
+#         if serializer.is_valid():
+#             # Check old password
+#             if not self.object.check_password(serializer.data.get("old_password")):
+#                 return Response({"old_password": ["Wrong password."]}, status=status.HTTP_400_BAD_REQUEST)
+#             # set_password also hashes the password that the user will get
+#             self.object.set_password(serializer.data.get("new_password"))
+#             self.object.save()
+#             response = {
+#                 'status': 'success',
+#                 'code': status.HTTP_200_OK,
+#                 'message': 'Password updated successfully',
+#                 'data': []
+#             }
 
-            return Response(response)
+#             return Response(response)
 
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
