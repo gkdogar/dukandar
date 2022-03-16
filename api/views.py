@@ -807,6 +807,7 @@ class WalletViewSetApi(viewsets.ViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def create(self, request):
+        tokenCheck(request)
         try:
             post_data =request.data
             print('post_data',post_data)
