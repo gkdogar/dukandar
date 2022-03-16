@@ -24,6 +24,8 @@ router.register('wallet', views.WalletViewSetApi, basename='wallet')
 router.register('spines', views.SpinesViewSetApi, basename='spines')
 router.register('employee', views.EmployeeViewSetApi, basename='employee')
 router.register('gift/spin', views.GiftSpineViewSetApi, basename='giftspin')
+router.register('notification/user', views.NotificationViewSetApi, basename='notifications')
+router.register('complaints/user', views.ComplaintsViewSetApi, basename='complaints')
 
 # router.register('login', views.LoginAPI.as_view(),basename='Login_User')
 app_name = 'api'
@@ -40,5 +42,6 @@ urlpatterns = [
     path('loginapi/user', views.LoginView.as_view(), name='login_view'),
     path('user', views.UserView.as_view(), name='UserView_view'),
     path('user/logout', views.LogoutView.as_view(), name='logoutView'),
+    path('api/change-password/', views.ChangePasswordView.as_view(), name='change-password'),
 
 ]

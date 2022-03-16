@@ -1044,3 +1044,89 @@ def ordersHistoryDetails(request, pk):
         }
 
         return render(request, 'shopkeeper/order/orderhistorydetail.html', context)
+
+
+@login_required(login_url='shopkeeper:admin_login')
+def complaintsList(request):
+    complaint_list =Complaints.objects.all()
+
+    context = {
+        'complaint_list': complaint_list,
+
+    }
+    return render(request, 'shopkeeper/complaints/list.html', context)
+
+@login_required(login_url='shopkeeper:admin_login')
+def complaintsDetail(request, pk):
+
+    comp_obj = Complaints.objects.get(id=pk)
+
+    context = {
+        'comp_obj': comp_obj,
+
+    }
+    return render(request, 'shopkeeper/complaints/detail.html', context)
+
+@login_required(login_url='shopkeeper:admin_login')
+def complaintsDelete(request, pk):
+    comp_obj = Complaints.objects.get(id=pk)
+    comp_obj.delete()
+    messages.error(request, 'Record Deleted')
+    return redirect('shopkeeper:complaints_list')
+
+
+@login_required(login_url='shopkeeper:admin_login')
+def notificationList(request):
+    notification_list = Notification.objects.all()
+    context = {
+        'notification_list': notification_list,
+    }
+    return render(request, 'shopkeeper/notification/list.html', context)
+
+
+@login_required(login_url='shopkeeper:admin_login')
+def notificationSetup(request):
+    if request.POST:
+        noti_ID = request.POST.get('id', None)
+        if noti_ID:
+            noti_obj = Notification.objects.get(id=noti_ID)
+            noti_obj.name = request.POST.get('name', noti_obj.name)
+            noti_obj.save()
+            messages.success(request, 'Notification Updated  Successfully ')
+            return redirect('shopkeeper:notification_List')
+
+        else:
+            print('request.POST',request.POST)
+            form = NotificationForm(request.POST)
+            if form.is_valid():
+                form.save()
+                messages.success(request, 'Notification Added  Successfully ')
+                return redirect('shopkeeper:notification_List')
+
+            else:
+                messages.error(request, 'Invalid Data')
+                return redirect('shopkeeper:notification_Setup')
+
+    else:
+        return render(request, 'shopkeeper/notification/setup.html')
+
+
+def notificationDetail(request, pk):
+    try:
+        noti_obj = Notification.objects.get(id=pk)
+
+        context = {
+            'noti_obj': noti_obj,
+            'id': pk
+        }
+        return render(request, 'shopkeeper/notification/setup.html', context)
+    except GiftSpin.DoesNotExist:
+        messages.error(request, 'Record Not Found')
+        return redirect('shopkeeper:notification_Setup')
+
+
+def notificationDelete(request, pk):
+    noti_obj = Notification.objects.get(id=pk)
+    noti_obj.delete()
+    messages.error(request, 'Record Deleted')
+    return redirect('shopkeeper:notification_List')

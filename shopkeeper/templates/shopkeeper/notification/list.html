@@ -1,0 +1,76 @@
+{% extends 'shopkeeper/base/base.html' %}
+{% load static %}
+{% block stylesheet %}
+    <style>
+
+    </style>
+
+{% endblock %}
+
+{% block content %}
+<div class="container">
+        <h1 class="text-center mt-5 mb-5 font-weight-bold">Notifications's List</h1>
+     
+            {% if messages %}
+                {% for message in messages %}
+                    <div {% if message.tags %}class="alert alert-{{ message.tags }}" {% endif %} role="alert">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+      
+     
+        <div class="row">
+            
+          <div class="col-12">
+            <a type="submit" href="{% url 'shopkeeper:notification_Setup' %}" class="btn btn-primary float-right" name="employee">Add
+             Gift</a>
+            <table class="table" id="customerTable">
+                <thead class="thead-dark">
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Title</th>
+
+                    <th scope="col">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                    {% for noti in notification_list%}
+                  <tr>
+                    <th scope="row">{{forloop.counter}}</th>
+                    <td>{{noti.name}}</td>
+
+                    <td>
+
+                        <a href="{% url 'shopkeeper:notification_delete' noti.id %}" class="mr-3" > <i class="fas fa-trash-alt"  style="color:red;" data-toggle="tooltip" title="Delete Record"></i></a>
+                        <a href="{% url 'shopkeeper:notification_detail'  noti.id %}">  <i class="fas fa-edit" data-toggle="tooltip" title="Edit Record"  style="color:blue;"></i></a>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                  
+                </tbody>
+              </table>
+              
+        
+          </div>
+      
+        </div>
+       
+      </div>
+    
+
+      <script>
+        $(document).ready(function () {
+            $('ul').find("li#notification_page").addClass("active");
+            $('ul').find("li#notification_page").addClass("active");
+            $('ul').find("li#notification_page").addClass("active");
+            $('ul').find("li#notification_page").find("a").addClass("collapsed");
+            $('ul').find("li#notification_page").find("a").attr("aria-expanded", "true");
+            $('ul#notification_control').addClass('show')
+            $('#notification_list').addClass('active')
+            $('#customerTable').DataTable();
+        });
+    </script>
+{% endblock %}
+
+

@@ -180,9 +180,20 @@ class WalletSerializer(serializers.ModelSerializer):
 
 
 class ComplaintSerializer(serializers.ModelSerializer):
+    # message = serializers.CharField(style={'input_type': 'text'}, write_only=True)
+    # userId = serializers.CharField(style={'input_type': 'text'}, write_only=False)
+    # shopkeeper= serializers.CharField(style={'input_type': 'text'}, write_only=True)
+    # employee = serializers.CharField(style={'input_type': 'text'}, write_only=True)
     class Meta:
-        model = Complaint
+        model = Complaints
         fields = '__all__'
+        # fields = ['message']
+        # extra_kwargs = {
+        #     'amount': {'required': True},
+        #     'shopkeeperId': {'write_only': True},
+        #
+        # }
+
 
 class LoginSerializer(serializers.ModelSerializer):
     password=serializers.CharField(max_length=128, min_length=6, write_only=True)
@@ -224,3 +235,19 @@ class WinSpinSerializer(serializers.ModelSerializer):
 #
 #         print('hwllo', token['user_type'])
 #         return data
+
+class ChangePasswordSerializer(serializers.Serializer):
+    model = User
+
+    """
+    Serializer for password change endpoint.
+    """
+    old_password = serializers.CharField(required=True)
+    new_password = serializers.CharField(required=True)
+
+
+
+class NotificationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Notification
+        fields = '__all__'
