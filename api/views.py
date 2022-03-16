@@ -1,6 +1,7 @@
 import re
 from copy import deepcopy
 import json
+from urllib import request
 from numpy import product
 from django.conf import settings
 from datetime import datetime, timedelta
@@ -687,12 +688,12 @@ class OrderViewSetApi(viewsets.ViewSet):
                             #                                           discount=post_Data['discount'])
                             ord_history.save()
                             for index in range(len(products)):
-                                print('products', products[index]['id'])
+                             
                                 product_id = products[index]['id']
                                 qty = products[index]['quantity']
                                 price = products[index]['amount']
                                 sub_total = products[index]['subtotal']
-                                print('product_id', product_id)
+                              
                                 order_prod = ProductOrder.objects.create(order_id=order.id, product_id=product_id,
                                                                          quantity=qty, sub_total=sub_total, price=price)
 
@@ -702,7 +703,7 @@ class OrderViewSetApi(viewsets.ViewSet):
                                                                                      product_id=product_id,
                                                                                      quantity=qty, sub_total=sub_total,
                                                                                      price=price)
-                                print('order_prod_hist', order_prod_hist)
+                               
                                 order_prod_hist.save()
 
                                 product_objs = Product.objects.get(id=product_id)
@@ -747,12 +748,15 @@ class OrderViewSetApi(viewsets.ViewSet):
                                     wallet_obj.order = order
                                     wallet_obj.amount = 2500
                                     wallet_obj.save()
+                                    spine = Spines.objects.get(shopkeeper_id=shopkeeper_obj.id)
+                                    spine.spine_no=1
+                                    spine.save()
 
                                 except:
                                     wallet = Wallet.objects.create(shopkeeper=shopkeeper_obj, order=order, amount=2500)
                                     wallet.save()
-                                spine = Spines.objects.create(shopkeeper=shopkeeper_obj, order=order, spine_no=1)
-                                spine.save()
+                                    spine = Spines.objects.create(shopkeeper=shopkeeper_obj, order=order, spine_no=1)
+                                    spine.save()
 
                             if total_amount > float(500000):
                                 try:
@@ -760,12 +764,15 @@ class OrderViewSetApi(viewsets.ViewSet):
                                     wallet_obj.order = order
                                     wallet_obj.amount = 7500
                                     wallet_obj.save()
+                                    spine = Spines.objects.get(shopkeeper_id=shopkeeper_obj.id)
+                                    spine.spine_no=2
+                                    spine.save()
 
                                 except:
                                     wallet = Wallet.objects.create(shopkeeper=shopkeeper_obj, order=order, amount=7500)
                                     wallet.save()
-                                spine = Spines.objects.create(shopkeeper=shopkeeper_obj, order=order, spine_no=2)
-                                spine.save()
+                                    spine = Spines.objects.create(shopkeeper=shopkeeper_obj, order=order, spine_no=2)
+                                    spine.save()
 
                             response = {
                                 'message': 'Order Created Successfully',
@@ -811,15 +818,13 @@ class WalletViewSetApi(viewsets.ViewSet):
         tokenCheck(request)
         try:
             post_data = request.data
-            print('post_data', post_data)
             shopkeeperId = post_data.get('shopkeeperId', None)
             users = User.objects.get(id=shopkeeperId)
             shopkeeper_obj = Shopkeeper.objects.get(user=shopkeeperId)
             wallet_obj = Wallet.objects.get(shopkeeper_id=shopkeeper_obj.id)
             wallet_obj.amount = post_data.get('amount', wallet_obj.amount)
             wallet_obj.save()
-            print('hello', shopkeeper_obj)
-
+    
             response = {
                 'message': 'Gift Amount Added Successfully'
             }
@@ -994,50 +999,45 @@ class ComplaintsViewSetApi(viewsets.ViewSet):
                 return Response(response, status=status.HTTP_201_CREATED)
 
 
-        serializer = ComplaintSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            response = {
-                'message': 'Your Complaints has been register '
-            }
-            return Response(response, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
     def retrieve(self, request, pk=None):
         tokenCheck(request)
         try:
             shopkeeper_obj = Shopkeeper.objects.get(user=pk)
-            print('shopkeeper_obj',shopkeeper_obj)
+            
             complaints_list = Complaints.objects.filter(shopkeeper_id=shopkeeper_obj.id)
-            print('complaints_list', complaints_list)
+            
             serializer = ComplaintSerializer(complaints_list, many=True)
-            print('serializer',serializer)
+         
             return Response(serializer.data, status=status.HTTP_200_OK)
 
         except Shopkeeper.DoesNotExist:
             try:
                 Employee_obj = Employee.objects.get(user=pk)
                 complaints_list = Complaints.objects.filter(employee_id=Employee_obj.id)
-                print('complaints_list', complaints_list)
+               
                 serializer = ComplaintSerializer(complaints_list, many=True)
-                print('serializer', serializer)
+                
                 return Response(serializer.data, status=status.HTTP_200_OK)
             except Employee.DoesNotExist:
                 customer_obj = Customer.objects.get(user=pk)
                 complaints_list = Complaints.objects.filter(customer_id=customer_obj.id)
-                print('complaints_list', complaints_list)
+                
                 serializer = ComplaintSerializer(complaints_list, many=True)
-                print('serializer', serializer)
+               
                 return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class ChangePasswordView(generics.UpdateAPIView):
+
+    print('req', request)
     """
     An endpoint for changing password.
     """
+    print('request', request)
     serializer_class = ChangePasswordSerializer
-    model = User
-    permission_classes = (IsAuthenticated,)
+
+    # model = User
+    # permission_classes = (IsAuthenticated,)
 
     def get_object(self, queryset=None):
         obj = self.request.user

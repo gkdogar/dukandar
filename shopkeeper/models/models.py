@@ -8,6 +8,17 @@ from django.conf import settings
 from datetime import datetime, timedelta
 from time import gmtime
 from time import strftime
+from django.core.mail import EmailMessage
+from django.template.loader import get_template
+from decouple import config
+from django.dispatch import receiver
+from django.urls import reverse
+from django_rest_passwordreset.signals import reset_password_token_created
+from django.core.mail import send_mail  
+from django.template.loader import render_to_string
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+
+
 
 USER_CHOICES = (
 
@@ -365,3 +376,50 @@ class WinSpin(models.Model):
 
 class Notification(models.Model):
     name = models.CharField(max_length=250, null=True)
+
+
+
+@receiver(reset_password_token_created)
+def password_reset_token_created(sender, instance, reset_password_token, *args, **kwargs):
+
+    # email_plaintext_message = "{}?token={}".format(reverse("{% url 'password_reset'%}"), reset_password_token.key)
+    print('sendsssssser',sender)
+    # email_plaintext_message = "{}?token={}".format(reverse('password_reset'), reset_password_token.key)
+    # msg_html = render_to_string('shopkeeper/email/password_reset.html')
+    # send_mail(
+    #     # title:
+    #     "Password Reset for {title}".format(title="Some website title"),
+    #     # message:
+    #     msg_html,
+      
+    #     # from:
+    #    '101620014umt@gmail.com',
+    #     # to:
+    #     [reset_password_token.user.email]
+    # )
+    message = get_template("shopkeeper/email/password_reset.html").render({'token':reset_password_token.key})
+    mail = EmailMessage(
+        subject="Password Reset Email",
+        body=message,
+        from_email= '101620014umt@gmail.com',
+        to= [reset_password_token.user.email],
+    )
+    mail.content_subtype = "html"
+    mail.send(fail_silently=False)
+
+    # subject = "Password Reset Requested"
+	# 				email_template_name = "main/password/password_reset_email.txt"
+	# 				c = {
+	# 				"email":user.email,
+	# 				'domain':'127.0.0.1:8000',
+	# 				'site_name': 'Website',
+	# 				"uid": urlsafe_base64_encode(force_bytes(user.pk)),
+	# 				"user": user,
+	# 				'token': default_token_generator.make_token(user),
+	# 				'protocol': 'http',
+	# 				}
+	# 				email = render_to_string(email_template_name, c)
+	# 				try:
+	# 					send_mail(subject, email, 'admin@example.com' , [user.email], fail_silently=False)
+	# 				except BadHeaderError:
+	# 					return HttpResponse('Invalid header found.')
