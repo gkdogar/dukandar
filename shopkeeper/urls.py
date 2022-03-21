@@ -82,5 +82,6 @@ urlpatterns = [
     path('notification/setup', notificationSetup, name='notification_Setup'),
     path('notification/detail/<int:pk>/', notificationDetail, name='notification_detail'),
     path('notification/delete/<int:pk>/', notificationDelete, name='notification_delete'),
+    path('dukandar/privacy/policy', privacy_policy, name='privacy_policy'),
 ]
 
