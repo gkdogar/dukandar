@@ -598,11 +598,43 @@ class OrderViewSetApi(viewsets.ViewSet):
 
         tokenCheck(request)
         try:
+            orderItm_LIST =[]
             shopkeeper = Shopkeeper.objects.get(user_id=pk)
-            order = Order.objects.filter(shopkeeper_id=shopkeeper.id)
+            order_obj = Order.objects.filter(shopkeeper_id=shopkeeper.id)
+            orderItm_List =[]
+            for ord in order_obj:
+                order_item =ProductOrder.objects.filter(order=ord)
+                test_dict =[]
+                for item in order_item:
+                    test_dict.append({
+                            'product':item.product.name,
+                            'quantity':item.quantity,
+                            'price':item.price,
+                            'sub_total':item.sub_total
+                    })
+                   
+                 
+                orderItm_LIST.append({
+                    
+                    'order#':ord.id,
+                    'status':ord.status,
+                    'orderItem':test_dict
+                    })
+            orderItm_List.append({
+                    'user':pk,
+                    'orders':orderItm_LIST
+            })
+            # order_itm =ProductOrder.objects.all()
+            # serializer = OrderSerializer(order_obj, many=True)
 
-            serializer = OrderSerializer(order, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            # serializer1 = ProductOrderSerializer(order_obj, many=True)
+            # data_dict ={
+            #     'order':serializer.data,
+            #      'orderItem':serializer1.data
+            # }
+
+            # print('serializer1',serializer1.data)
+            return Response(orderItm_List, status=status.HTTP_200_OK)
         except Shopkeeper.DoesNotExist:
             response = {
                 'message': 'No Order Found'
@@ -610,7 +642,7 @@ class OrderViewSetApi(viewsets.ViewSet):
             return Response(response, status=status.HTTP_200_OK)
 
     def create(self, request):
-        # tokenCheck(request)
+        tokenCheck(request)
         try:
             post_data = request.data
 
@@ -795,8 +827,36 @@ class OrderViewSetApi(viewsets.ViewSet):
                 'message': 'Please Provide Orders Parmeter'
             }
             return Response(response, status=status.HTTP_400_BAD_REQUEST)
-
-
+   
+    def partial_update(self, request, pk):
+        # tokenCheck(request)
+        post_data = request.data
+        print('request.data', request.data, 'PK', pk)
+        try:
+            order = Order.objects.get(id=pk)
+            # user = User.objects.get(id=customer.user.id)
+      
+            if post_data.get('status') =='CANCELLED':
+                order.status = post_data.get('status', order.status)    
+                order.save()
+                serializer = OrderSerializer(order, data=request.data, partial=True)
+                if serializer.is_valid():
+                    serializer.save()
+                    response = {
+                        'message': 'Partial Record Update Successfully'
+                    }
+                    return Response(response, status=status.HTTP_200_OK)
+                return Response(serializer.data, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                response = {
+                    'message': 'You can only Cancelled your Order'
+                }
+                return Response(response, status=status.HTTP_400_BAD_REQUEST)
+        except Order.DoesNotExist:  
+             response = {
+                    'message': 'Order Does Not Updated'
+                }
+             return Response(response, status=status.HTTP_400_BAD_REQUEST)
 class SpinesViewSetApi(viewsets.ViewSet):
 
     def list(self, request):

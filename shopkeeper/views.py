@@ -1013,14 +1013,14 @@ def ordersHistoryDetails(request, pk):
    
         
         orders_obj = OrderHistory.objects.get(id=pk)
-        print('orders_obj',orders_obj)
+     
         product_orders =ProductOrder.objects.filter(order=orders_obj.order.id)
-        print('product_orders',product_orders)
+     
         shopkeeper_id= orders_obj.order.shopkeeper or None
         customer_id= orders_obj.order.customer or None
         datalist=[]
         for prod in product_orders:
-            print('prod')
+           
             datalist.append({
                 'order_id': orders_obj.id,
                 'p_quantity': prod.quantity,
