@@ -11,7 +11,8 @@ from django.contrib import messages
 import folium
 import pandas as pd
 import re
-
+from django.core.mail import send_mail, BadHeaderError
+from decouple import config
 from datetime import datetime, timedelta
 from time import gmtime
 from time import strftime
@@ -21,6 +22,18 @@ from django.http import JsonResponse
 import json
 # from .utils import *
 from django.http import HttpResponse
+from django.contrib.auth.forms import PasswordResetForm
+
+from django.template.loader import render_to_string
+from django.db.models.query_utils import Q
+from django.utils.http import urlsafe_base64_encode
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.encoding import force_bytes
+from django.http import HttpResponse
+
+
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+
 
 from django.template.loader import get_template
 
@@ -30,6 +43,7 @@ def admin_login(request):
         email = request.POST['email']
         password = request.POST['password']
         email_user = authenticate(email=email, password=password)
+      
         if email_user:
             check_user = User.objects.filter(email=email_user)
             if (email is None) or (password is None):
@@ -1002,14 +1016,15 @@ def ordersHistoryDetails(request, pk):
     else:
 
         orders_obj = OrderHistory.objects.get(id=pk)
-        print('orders_obj', orders_obj)
-        product_orders = ProductOrder.objects.filter(order=orders_obj.order.id)
-        print('product_orders', product_orders)
-        shopkeeper_id = orders_obj.order.shopkeeper or None
-        customer_id = orders_obj.order.customer or None
-        datalist = []
+
+        product_orders =ProductOrder.objects.filter(order=orders_obj.order.id)
+     
+        shopkeeper_id= orders_obj.order.shopkeeper or None
+        customer_id= orders_obj.order.customer or None
+        datalist=[]
+
         for prod in product_orders:
-            print('prod')
+           
             datalist.append({
                 'order_id': orders_obj.id,
                 'p_quantity': prod.quantity,
@@ -1130,3 +1145,35 @@ def notificationDelete(request, pk):
     noti_obj.delete()
     messages.error(request, 'Record Deleted')
     return redirect('shopkeeper:notification_List')
+
+
+# def password_reset_request(request):
+# 	if request.method == "POST":
+# 		password_reset_form = PasswordResetForm(request.POST)
+# 		if password_reset_form.is_valid():
+# 			data = password_reset_form.cleaned_data['email']
+# 			associated_users = User.objects.filter(Q(email=data))
+# 			if associated_users.exists():
+# 				for user in associated_users:
+# 					subject = "Password Reset Requested"
+# 					email_template_name = "main/password/password_reset_email.txt"
+# 					c = {
+# 					"email":user.email,
+# 					'domain':'127.0.0.1:8000',
+# 					'site_name': 'Website',
+# 					"uid": urlsafe_base64_encode(force_bytes(user.pk)),
+# 					"user": user,
+# 					'token': default_token_generator.make_token(user),
+# 					'protocol': 'http',
+# 					}
+# 					email = render_to_string(email_template_name, c)
+# 					try:
+# 						send_mail(subject, email, 'admin@example.com' , [user.email], fail_silently=False)
+# 					except BadHeaderError:
+# 						return HttpResponse('Invalid header found.')
+# 					return redirect ("/password_reset/done/")
+# 	password_reset_form = PasswordResetForm()
+# 	return render(request=request, template_name="main/password/password_reset.html", context={"password_reset_form":password_reset_form})
+
+def privacy_policy(request):
+    return render(request, 'shopkeeper/privacy.html')

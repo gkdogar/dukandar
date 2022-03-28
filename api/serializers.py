@@ -149,6 +149,12 @@ class OrderSerializer(serializers.ModelSerializer):
 
         }
 
+class ProductOrderSerializer(serializers.ModelSerializer):
+      class Meta:
+        model = ProductOrder
+        fields ='__all__'
+
+
 class OrderHistorySerializer(serializers.ModelSerializer):
     class Meta:
         model = OrderHistory

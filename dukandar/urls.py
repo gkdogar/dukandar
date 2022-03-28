@@ -17,12 +17,15 @@ from django.contrib import admin
 from dukandar import settings
 from django.conf.urls.static import static
 from django.urls import path, include
+from django.contrib.auth import views as auth_views
 from rest_framework.routers import DefaultRouter
+from shopkeeper import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('shopkeeper.urls')),
     path('api/', include('api.urls')),
+   
 ]
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

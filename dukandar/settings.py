@@ -44,7 +44,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'bootstrap4',
     'bootstrap_modal_forms',
-    'corsheaders'
+    'corsheaders',
+    'django_rest_passwordreset',
 ]
 
 MIDDLEWARE = [
@@ -79,6 +80,33 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'dukandar.wsgi.application'
 
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+
+
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = config('EMAIL_HOST')
+# EMAIL_PORT = config('EMAIL_PORT')
+# EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+# EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
+# EMAIL_USE_TLS = True
+# EMAIL_USE_SSL = False
+# APPLICATION_EMAIL = EMAIL_HOST_USER
+
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'yousafbhatti922@gmail.com'
+EMAIL_HOST_PASSWORD='Aksausaf143'
+
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
+
+APPLICATION_EMAIL = EMAIL_HOST_USER
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# TEMPLATED_EMAIL_AUTO_PLAIN = False
+
+
+
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
@@ -95,7 +123,7 @@ DATABASES = {
 }
 
 
-
+#
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.sqlite3',
