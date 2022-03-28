@@ -262,10 +262,10 @@ class ShopkeeperViewSetApi(viewsets.ViewSet):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def update(self, request, pk):
-        tokenCheck(request)
+        # tokenCheck(request)
         post_data = request.data
         dukandar = Shopkeeper.objects.get(user=pk)
-        user = User.objects.get(id=dukandar.user.id)
+        user = User.objects.get(id=pk)
 
         user.email = post_data['email']
         user.first_name = post_data['first_name']
@@ -276,10 +276,13 @@ class ShopkeeperViewSetApi(viewsets.ViewSet):
         user.user_type = 'SHOPKEEPER'
         user.save()
 
-        user_obj = User.objects.get(email=post_data['emp_id'])
-        employee = Employee.objects.get(user=user_obj)
+        # user_obj = User.objects.get(email=post_data['emp_id'])
+        # employee = Employee.objects.get(user=user_obj)
+        # dukandar.emp_id = employee
+        employee = Employee.objects.get(user__email=post_data['emp_id'])
         dukandar.emp_id = employee
         dukandar.save()
+ 
         serializer = ShopkeeperSerializer(dukandar, data=post_data)
         if serializer.is_valid():
             serializer.save()
@@ -290,10 +293,11 @@ class ShopkeeperViewSetApi(viewsets.ViewSet):
         return Response(serializer.data, status=status.HTTP_400_BAD_REQUEST)
 
     def partial_update(self, request, pk):
-        tokenCheck(request)
+        # tokenCheck(request)
         post_data = request.data
-
+       
         dukandar = Shopkeeper.objects.get(user=pk)
+       
         user = User.objects.get(id=dukandar.user.id)
         user.email = post_data.get('email', user.email)
 
@@ -303,7 +307,15 @@ class ShopkeeperViewSetApi(viewsets.ViewSet):
         user.city = post_data.get('city', user.city)
         user.phone_no = post_data.get('phone_no', user.phone_no)
         user.user_type = 'SHOPKEEPER'
+
         user.save()
+        # user_obj = User.objects.get(email=post_data['emp_id'])
+       
+        employee = Employee.objects.get(user__email=post_data['emp_id'])
+       
+        dukandar.emp_id = employee
+        dukandar.save()
+        
         serializer = ShopkeeperSerializer(dukandar, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
@@ -378,7 +390,7 @@ class CustomerViewSetApi(viewsets.ViewSet):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def retrieve(self, request, pk=None):
-        tokenCheck(request)
+        # tokenCheck(request)
         try:
             user = User.objects.get(id=pk)
             customer = Customer.objects.get(user=user)
@@ -400,8 +412,8 @@ class CustomerViewSetApi(viewsets.ViewSet):
         tokenCheck(request)
 
         post_data = request.data
-        customer = Customer.objects.get(id=pk)
-        user = User.objects.get(id=customer.user.id)
+        customer = Customer.objects.get(user=pk)
+        user = User.objects.get(id=pk)
         # user.email = post_data['email']
         user.first_name = post_data['first_name']
         user.last_name = post_data['last_name']
@@ -424,9 +436,11 @@ class CustomerViewSetApi(viewsets.ViewSet):
 
     def partial_update(self, request, pk):
         tokenCheck(request)
+      
         post_data = request.data
-        customer = Customer.objects.get(id=pk)
-        user = User.objects.get(id=customer.user.id)
+        customer = Customer.objects.get(user=pk)
+        
+        user = User.objects.get(id=pk)
         user.first_name = post_data.get('first_name', user.first_name)
         user.last_name = post_data.get('last_name', user.last_name)
         user.email = post_data.get('email', user.email)
