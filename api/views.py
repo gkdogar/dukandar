@@ -595,12 +595,13 @@ class OrderViewSetApi(viewsets.ViewSet):
 
     def retrieve(self, request, pk=None):
 
-        tokenCheck(request)
+        # tokenCheck(request)
         try:
             shopkeeper = Shopkeeper.objects.get(user_id=pk)
             order = Order.objects.filter(shopkeeper_id=shopkeeper.id)
 
             serializer = OrderSerializer(order, many=True)
+
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Shopkeeper.DoesNotExist:
             response = {

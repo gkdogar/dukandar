@@ -15,13 +15,12 @@ import re
 from datetime import datetime, timedelta
 from time import gmtime
 from time import strftime
-import reportlab  
+import reportlab
 from .utils import *
 from django.http import JsonResponse
 import json
 # from .utils import *
 from django.http import HttpResponse
-
 
 from django.template.loader import get_template
 
@@ -42,7 +41,7 @@ def admin_login(request):
             else:
                 if email_user.user_type == 'SUPER_ADMIN':
                     login(request, email_user)
-                    
+
                     return redirect('shopkeeper:dashboard')
 
                 messages.error(request, "You are Not Admin ! Sorry You Can't Login ")
@@ -59,7 +58,7 @@ def admin_login(request):
 def admin_settings(request):
     if request.POST:
         user = User.objects.get(id=request.user.id)
-       
+
         user.first_name = request.POST.get('first_name')
         user.last_name = request.POST.get('last_name')
         user.email = request.POST.get('email')
@@ -88,13 +87,13 @@ def dashboard(request):
     total_order = Order.objects.filter(status='DELIVERED')
     toal_sale = 0
     # /// Wallet will be Zero  start /
-    current_date =datetime.now()
-    first_date_month = current_date.replace(day=1) 
+    current_date = datetime.now()
+    first_date_month = current_date.replace(day=1)
     if current_date.date() == first_date_month.date():
-         walt_obj =Wallet.objects.all()
-         for wlt in walt_obj:
-             wlt.amount =0
-             wlt.save()
+        walt_obj = Wallet.objects.all()
+        for wlt in walt_obj:
+            wlt.amount = 0
+            wlt.save()
     # /// Wallet will be Zero End
     for t in total_order:
         toal_sale += t.total_amount
@@ -114,7 +113,6 @@ def dashboard(request):
     # folium.Marker(location=[31.511996, 74.343018], popup='Default popup Marker1',
     #               tooltip='Click here to see Popup').add_to(map)
 
-  
     map = map._repr_html_()
     context = {
         'employees': employees,
@@ -129,18 +127,19 @@ def dashboard(request):
     return render(request, 'shopkeeper/dashboard.html', context)
 
 
-
 def employee_target(employee_list):
     for emp in employee_list:
-        target_add_date =emp.updated_at
+        target_add_date = emp.updated_at
         current_date = datetime.today()
-        created_at__gt=datetime.today() + timedelta(days=1)
+        created_at__gt = datetime.today() + timedelta(days=1)
         if target_add_date.date() < current_date.date():
-            emp_histroy =EmployeeHistry.objects.create(employee=emp,daily_target_assign=emp.target_assign ,daily_achieved =emp.target_achieved)
+            emp_histroy = EmployeeHistry.objects.create(employee=emp, daily_target_assign=emp.target_assign,
+                                                        daily_achieved=emp.target_achieved)
             emp_histroy.save()
-            emp.target_achieved =0
+            emp.target_achieved = 0
             emp.save()
             print('hello')
+
 
 @login_required(login_url='shopkeeper:admin_login')
 def employeeList(request):
@@ -152,6 +151,7 @@ def employeeList(request):
     }
     return render(request, 'shopkeeper/employee/list.html', context)
 
+
 @login_required(login_url='shopkeeper:admin_login')
 def employeeHistoryList(request):
     employee_history_list = EmployeeHistry.objects.all()
@@ -159,6 +159,7 @@ def employeeHistoryList(request):
         'employee_history_list': employee_history_list
     }
     return render(request, 'shopkeeper/employee/history.html', context)
+
 
 @login_required(login_url='shopkeeper:admin_login')
 def employeeSetup(request):
@@ -183,13 +184,15 @@ def employeeSetup(request):
             employee_obj.area_designated = request.POST.get('area_designated')
             employee_obj.is_active = request.POST.get('is_active') or False
             employee_obj.save()
-            emp_histroy =EmployeeHistry.objects.create(employee=employee_obj,daily_target_assign=employee_obj.target_assign ,daily_achieved =employee_obj.target_achieved)
+            emp_histroy = EmployeeHistry.objects.create(employee=employee_obj,
+                                                        daily_target_assign=employee_obj.target_assign,
+                                                        daily_achieved=employee_obj.target_achieved)
             emp_histroy.save()
             messages.add_message(request, messages.SUCCESS, 'Record Updated Successfully')
             return redirect('shopkeeper:employee_list')
 
         else:
-           
+
             email = request.POST.get('email')
             password = request.POST.get('password')
             password1 = request.POST.get('password1')
@@ -223,7 +226,8 @@ def employeeSetup(request):
                                                description=request.POST.get('description'),
                                                is_active=request.POST.get('is_active') or False)
             employee.save()
-            emp_histroy =EmployeeHistry.objects.create(employee=employee,daily_target_assign=employee.target_assign ,daily_achieved =employee.target_achieved)
+            emp_histroy = EmployeeHistry.objects.create(employee=employee, daily_target_assign=employee.target_assign,
+                                                        daily_achieved=employee.target_achieved)
             emp_histroy.save()
             user.save()
             messages.success(request, 'Record Created Successfully')
@@ -252,12 +256,11 @@ def employeeUpdate(request, pk):
 @login_required(login_url='shopkeeper:admin_login')
 def employeeDelete(request, pk):
     employee_obj = Employee.objects.get(id=pk)
-    user_obj=User.objects.get(id=employee_obj.user.id)
+    user_obj = User.objects.get(id=employee_obj.user.id)
     employee_obj.delete()
     user_obj.delete()
     messages.add_message(request, messages.SUCCESS, 'Record Deleted Successfully')
     return redirect('shopkeeper:employee_list')
-
 
 
 @login_required(login_url='shopkeeper:admin_login')
@@ -266,47 +269,47 @@ def dukandarList(request):
     order_list = []
     walet_list = []
     spines_list = []
-    winSpin_list=[]
-    
+    winSpin_list = []
+
     for dukan in dukandars_list:
         order_li = Order.objects.filter(shopkeeper=dukan.id)
         for ord in order_li:
             order_list.append({
-                'id':ord.id,
-                'amount':ord.total_amount,
-                'shopkeeper':ord.shopkeeper
+                'id': ord.id,
+                'amount': ord.total_amount,
+                'shopkeeper': ord.shopkeeper
             })
         walet_li = Wallet.objects.filter(shopkeeper=dukan.id)
         for wlt in walet_li:
             walet_list.append({
-                'id':wlt.id,
-                'amount':wlt.amount,
-                'shopkeeper':wlt.shopkeeper
+                'id': wlt.id,
+                'amount': wlt.amount,
+                'shopkeeper': wlt.shopkeeper
             })
         spines_li = Spines.objects.filter(shopkeeper=dukan.id)
         for spin in spines_li:
             spines_list.append({
-                'id':spin.id,
-                'amount':spin.order,
-                'spine_no':spin.spine_no,
-                'shopkeeper':spin.shopkeeper
+                'id': spin.id,
+                'amount': spin.order,
+                'spine_no': spin.spine_no,
+                'shopkeeper': spin.shopkeeper
             })
 
-        winspin_list=WinSpin.objects.filter(shopkeeper =dukan.id)
+        winspin_list = WinSpin.objects.filter(shopkeeper=dukan.id)
         for spin in winspin_list:
             winSpin_list.append({
                 'id': spin.id,
                 'shopkeeper': spin.shopkeeper,
                 'giftspins': spin.giftSpin,
-                
+
             })
-  
+
     context = {
         'dukandars_list': dukandars_list,
         'order_list': order_list,
         'walet_list': walet_list,
         'spines_list': spines_list,
-        'winSpin_list':winSpin_list
+        'winSpin_list': winSpin_list
     }
     return render(request, 'shopkeeper/dukandar/list.html', context)
 
@@ -314,12 +317,12 @@ def dukandarList(request):
 @login_required(login_url='shopkeeper:admin_login')
 def dukandarSetup(request):
     if request.POST:
-        print('shopkeeper_type',request.POST.get('shopkeeper_type'))
+        print('shopkeeper_type', request.POST.get('shopkeeper_type'))
         dukandar_id = request.POST.get('dukandar_id') or None
         dukandar_obj = Shopkeeper.objects.get(id=dukandar_id)
         print('dukandar_obj', dukandar_obj)
         user = User.objects.get(id=dukandar_obj.user.id)
-        
+
         user.first_name = request.POST.get('first_name')
         user.last_name = request.POST.get('last_name')
         user.email = request.POST.get('email')
@@ -349,7 +352,7 @@ def dukandarUpdate(request, pk):
         'emp_id': dukandar_obj.emp_id,
         'user': dukandar_obj.user,
         'shop_name': dukandar_obj.shop_name,
-        'shopkeeper_type':dukandar_obj.shopkeeper_type,
+        'shopkeeper_type': dukandar_obj.shopkeeper_type,
         'description': dukandar_obj.description,
         'is_active': dukandar_obj.is_active,
     }
@@ -358,9 +361,8 @@ def dukandarUpdate(request, pk):
 
 @login_required(login_url='shopkeeper:admin_login')
 def dukandarDelete(request, pk):
-
     dukandar_obj = Shopkeeper.objects.get(id=pk)
-    user_obj=User.objects.get(id=dukandar_obj.user.id)
+    user_obj = User.objects.get(id=dukandar_obj.user.id)
     dukandar_obj.delete()
     user_obj.delete()
 
@@ -431,31 +433,30 @@ def customerList(request):
     for customer in customer_list:
         order_li = Order.objects.filter(customer=customer.id)
         for ord in order_li:
-                order_list.append({
-                'id':ord.id,
-                'amount':ord.total_amount,
-                'customer':ord.customer
+            order_list.append({
+                'id': ord.id,
+                'amount': ord.total_amount,
+                'customer': ord.customer
             })
     context = {
         'customer_list': customer_list,
-        'order_list':order_list
+        'order_list': order_list
     }
     return render(request, 'shopkeeper/customer/list.html', context)
 
 
 @login_required(login_url='shopkeeper:admin_login')
 def customerDetail(request, pk):
-
     if request.POST:
         pass
     else:
-        customer =Customer.objects.get(id=pk)
-        user=User.objects.get(customer=pk)
-        context ={
-            'user':user,
-            'id':pk
+        customer = Customer.objects.get(id=pk)
+        user = User.objects.get(customer=pk)
+        context = {
+            'user': user,
+            'id': pk
         }
-        return render(request, 'shopkeeper/customer/setup.html',context)
+        return render(request, 'shopkeeper/customer/setup.html', context)
 
 
 @login_required(login_url='shopkeeper:admin_login')
@@ -687,18 +688,17 @@ def productDelete(request):
 
 @login_required(login_url='shopkeeper:admin_login')
 def ordersList(request):
-    
     orders_list = Order.objects.all()
-    shopkeeper=None
-    customer =None
+    shopkeeper = None
+    customer = None
     for order in orders_list:
-        shopkeeper =order.shopkeeper
-        customer =order.customer
-    print('shopkeeper',customer)
+        shopkeeper = order.shopkeeper
+        customer = order.customer
+    print('shopkeeper', customer)
     context = {
         'orders_list': orders_list,
-        'shopkeeper':shopkeeper,
-        'customer':customer
+        'shopkeeper': shopkeeper,
+        'customer': customer
     }
     return render(request, 'shopkeeper/order/list.html', context)
 
@@ -706,54 +706,53 @@ def ordersList(request):
 @login_required(login_url='shopkeeper:admin_login')
 def ordersDetails(request, pk):
     if request.POST:
-        pdf =request.POST.get('PDF_BTN', None)
-       
+        pdf = request.POST.get('PDF_BTN', None)
+
         if pdf:
             orders_obj = Order.objects.filter(id=pdf)
-            
+
             orders_obj = Order.objects.get(id=pdf)
-            shopkeeper_obj= orders_obj.shopkeeper or None
-            customer_obj= orders_obj.customer or None
-            product_orders =ProductOrder.objects.filter(order_id=pk)
+            shopkeeper_obj = orders_obj.shopkeeper or None
+            customer_obj = orders_obj.customer or None
+            product_orders = ProductOrder.objects.filter(order_id=pk)
             # win_gift=WinSpin.objects.filter(shopkeeper_id=shopkeeper_obj.id)
 
             context = {
                 'order_id': orders_obj.id,
                 'products': product_orders,
                 'dukandar': orders_obj.shopkeeper,
-                'customer':orders_obj.customer,
+                'customer': orders_obj.customer,
                 'order_date': orders_obj.created_at,
                 'amount': orders_obj.total_amount,
                 'discount': orders_obj.discount,
                 'order_upto': orders_obj.order_upto,
-                'shopkeeper_obj':shopkeeper_obj,
-                'customer_obj':customer_obj,
+                'shopkeeper_obj': shopkeeper_obj,
+                'customer_obj': customer_obj,
                 # 'win_gift_list':win_gift,
-            
+
                 'status': orders_obj.status,
-                }
+            }
 
             pdf = render_to_pdf('shopkeeper/pdf.html', context)
-            response = HttpResponse(pdf,content_type='application/pdf')
-            response['Content-Disposition'] = 'attachment; filename="dukandarOrder#'+str(orders_obj.id)+'".pdf"'
+            response = HttpResponse(pdf, content_type='application/pdf')
+            response['Content-Disposition'] = 'attachment; filename="dukandarOrder#' + str(orders_obj.id) + '".pdf"'
             return response
-    
+
         else:
             orders_obj = Order.objects.get(id=pk)
             orders_obj.status = request.POST['status']
             orders_obj.save()
-            ord_hist=OrderHistory.objects.create(order=orders_obj)
-            ord_hist.status=orders_obj.status
+            ord_hist = OrderHistory.objects.create(order=orders_obj)
+            ord_hist.status = orders_obj.status
             ord_hist.save()
             messages.success(request, 'Order Status Updated Successfully')
             return redirect('shopkeeper:orders_list')
     else:
-   
-        
+
         orders_obj = Order.objects.get(id=pk)
-        product_orders =ProductOrder.objects.filter(order_id=pk)
-        shopkeeper_id= orders_obj.shopkeeper or None
-        customer_id= orders_obj.customer or None
+        product_orders = ProductOrder.objects.filter(order_id=pk)
+        shopkeeper_id = orders_obj.shopkeeper or None
+        customer_id = orders_obj.customer or None
         context = {
             'order_id': orders_obj.id,
             'products': product_orders,
@@ -761,34 +760,33 @@ def ordersDetails(request, pk):
             # 'customer':orders_obj.customer,
             'order_date': orders_obj.created_at,
             'amount': orders_obj.total_amount,
-             'discount': orders_obj.discount,
+            'discount': orders_obj.discount,
             'order_upto': orders_obj.order_upto,
-            'shopkeeper_id':shopkeeper_id,
-            'customer_id':customer_id,
-            
-           
+            'shopkeeper_id': shopkeeper_id,
+            'customer_id': customer_id,
+
             'status': orders_obj.status,
 
         }
         return render(request, 'shopkeeper/order/detail.html', context)
 
-def ordersDelete(request, pk):
-        orders_obj = Order.objects.get(id=pk)
-        product_ord=ProductOrder.objects.filter(order_id=pk)
-        product_ord.delete()
-        orders_obj.delete()
-        messages.success(request, 'Order Deleted Successfully')
-        return redirect('shopkeeper:orders_list')
 
+def ordersDelete(request, pk):
+    orders_obj = Order.objects.get(id=pk)
+    product_ord = ProductOrder.objects.filter(order_id=pk)
+    product_ord.delete()
+    orders_obj.delete()
+    messages.success(request, 'Order Deleted Successfully')
+    return redirect('shopkeeper:orders_list')
 
 
 @login_required(login_url='shopkeeper:admin_login')
 def walletList(request):
-    wallet_list=Wallet.objects.all()
-    context ={
-        'wallet_list':wallet_list,
+    wallet_list = Wallet.objects.all()
+    context = {
+        'wallet_list': wallet_list,
     }
-    return render(request, 'shopkeeper/wallet/list.html',context)
+    return render(request, 'shopkeeper/wallet/list.html', context)
 
 
 @login_required(login_url='shopkeeper:admin_login')
@@ -797,7 +795,7 @@ def spinesList(request):
     context = {
         'spine_list': spine_list,
     }
-    return render(request, 'shopkeeper/spins/list.html',context)
+    return render(request, 'shopkeeper/spins/list.html', context)
 
 
 @login_required(login_url='shopkeeper:admin_login')
@@ -891,107 +889,110 @@ def giftList(request):
     context = {
         'gift_list': gift_list,
     }
-    return render(request, 'shopkeeper/gift/list.html',context)
+    return render(request, 'shopkeeper/gift/list.html', context)
+
 
 @login_required(login_url='shopkeeper:admin_login')
 def giftSetup(request):
-
     if request.POST:
-            gift_ID =request.POST.get('id', None)
-            if gift_ID:
-                    gift_obj =GiftSpin.objects.get(id=gift_ID)
-                    gift_obj.name=request.POST.get('name', gift_obj.name)
-                    gift_obj.quantity=request.POST.get('quantity', gift_obj.quantity)
-                    gift_obj.amount=request.POST.get('amount', gift_obj.amount)
-                    gift_obj.save()
-                    messages.success(request, 'Gift Updated  Successfully ')
-                    return redirect('shopkeeper:gift_List')
-            
-            else:
-                form =GiftSpinForm(request.POST)
-                if form.is_valid():
-                    form.save()
-                    messages.success(request, 'Gift Added  Successfully ')
-                    return redirect('shopkeeper:gift_List')
+        gift_ID = request.POST.get('id', None)
+        if gift_ID:
+            gift_obj = GiftSpin.objects.get(id=gift_ID)
+            gift_obj.name = request.POST.get('name', gift_obj.name)
+            gift_obj.quantity = request.POST.get('quantity', gift_obj.quantity)
+            gift_obj.amount = request.POST.get('amount', gift_obj.amount)
+            gift_obj.save()
+            messages.success(request, 'Gift Updated  Successfully ')
+            return redirect('shopkeeper:gift_List')
 
-                else:
-                    messages.error(request, 'Invalid Data')
-                    return redirect('shopkeeper:gift_Setup')
+        else:
+            form = GiftSpinForm(request.POST)
+            if form.is_valid():
+                form.save()
+                messages.success(request, 'Gift Added  Successfully ')
+                return redirect('shopkeeper:gift_List')
+
+            else:
+                messages.error(request, 'Invalid Data')
+                return redirect('shopkeeper:gift_Setup')
 
     else:
-     return render(request, 'shopkeeper/gift/setup.html')
+        return render(request, 'shopkeeper/gift/setup.html')
+
 
 def giftDetails(request, pk):
     try:
-        gift_obj =GiftSpin.objects.get(id=pk)
+        gift_obj = GiftSpin.objects.get(id=pk)
 
         context = {
             'gift_obj': gift_obj,
-            'id':pk
+            'id': pk
         }
-        return render(request, 'shopkeeper/gift/setup.html',context)
+        return render(request, 'shopkeeper/gift/setup.html', context)
     except GiftSpin.DoesNotExist:
         messages.error(request, 'Record Not Found')
         return redirect('shopkeeper:gift_Setup')
 
+
 def giftDelete(request, pk):
-    gift_obj =GiftSpin.objects.get(id=pk)
+    gift_obj = GiftSpin.objects.get(id=pk)
     gift_obj.delete()
     messages.error(request, 'Record Deleted')
     return redirect('shopkeeper:gift_List')
 
+
 @login_required(login_url='shopkeeper:admin_login')
 def ordersHistoryList(request):
-    
     orders_list = OrderHistory.objects.all()
-    shopkeeper=None
-    customer =None
+    shopkeeper = None
+    customer = None
     for order in orders_list:
-        shopkeeper =order.order.shopkeeper
-        customer =order.order.customer
-    print('shopkeeper',customer)
+        shopkeeper = order.order.shopkeeper
+        customer = order.order.customer
+    print('shopkeeper', customer)
     context = {
         'orders_list': orders_list,
-        'shopkeeper':shopkeeper,
-        'customer':customer
+        'shopkeeper': shopkeeper,
+        'customer': customer
     }
     return render(request, 'shopkeeper/order/orderhistorylist.html', context)
+
 
 @login_required(login_url='shopkeeper:admin_login')
 def ordersHistoryDetails(request, pk):
     if request.POST:
-        pdf =request.POST.get('PDF_BTN', None)
+        pdf = request.POST.get('PDF_BTN', None)
         print('PDF_BTN', pdf)
         if pdf:
             orders_obj = OrderHistory.objects.filter(id=pdf)
-            
+
             orders_obj = OrderHistory.objects.get(id=pdf)
-            shopkeeper_obj= orders_obj.shopkeeper or None
-            customer_obj= orders_obj.customer or None
-            product_orders =ProductOrderHistory.objects.filter(order_id=pk)
+            shopkeeper_obj = orders_obj.shopkeeper or None
+            customer_obj = orders_obj.customer or None
+            product_orders = ProductOrderHistory.objects.filter(order_id=pk)
             # win_gift=WinSpin.objects.filter(shopkeeper_id=shopkeeper_obj.id)
 
             context = {
                 'order_id': orders_obj.id,
                 'products': product_orders,
                 'dukandar': orders_obj.shopkeeper,
-                'customer':orders_obj.customer,
+                'customer': orders_obj.customer,
                 'order_date': orders_obj.order_date,
                 'amount': orders_obj.total_amount,
                 'discount': orders_obj.discount,
                 'order_upto': orders_obj.order_upto,
-                'shopkeeper_obj':shopkeeper_obj,
-                'customer_obj':customer_obj,
+                'shopkeeper_obj': shopkeeper_obj,
+                'customer_obj': customer_obj,
                 # 'win_gift_list':win_gift,
-            
+
                 'status': orders_obj.status,
-                }
+            }
 
             pdf = render_to_pdf('shopkeeper/pdf.html', context)
-            response = HttpResponse(pdf,content_type='application/pdf')
-            response['Content-Disposition'] = 'attachment; filename="dukandarOrder#'+str(orders_obj.id)+'".pdf"'
+            response = HttpResponse(pdf, content_type='application/pdf')
+            response['Content-Disposition'] = 'attachment; filename="dukandarOrder#' + str(orders_obj.id) + '".pdf"'
             return response
-    
+
         else:
             orders_obj = OrderHistory.objects.get(id=pk)
             orders_obj.status = request.POST['status']
@@ -999,15 +1000,14 @@ def ordersHistoryDetails(request, pk):
             messages.success(request, 'Order Status Successfully')
             return redirect('shopkeeper:orders_list')
     else:
-   
-        
+
         orders_obj = OrderHistory.objects.get(id=pk)
-        print('orders_obj',orders_obj)
-        product_orders =ProductOrder.objects.filter(order=orders_obj.order.id)
-        print('product_orders',product_orders)
-        shopkeeper_id= orders_obj.order.shopkeeper or None
-        customer_id= orders_obj.order.customer or None
-        datalist=[]
+        print('orders_obj', orders_obj)
+        product_orders = ProductOrder.objects.filter(order=orders_obj.order.id)
+        print('product_orders', product_orders)
+        shopkeeper_id = orders_obj.order.shopkeeper or None
+        customer_id = orders_obj.order.customer or None
+        datalist = []
         for prod in product_orders:
             print('prod')
             datalist.append({
@@ -1023,20 +1023,19 @@ def ordersHistoryDetails(request, pk):
                 'shopkeeper_id': shopkeeper_id,
                 'customer_id': customer_id,
 
-
             })
-        print('datalist',datalist)
+        print('datalist', datalist)
         context = {
-            'datalist':datalist,
+            'datalist': datalist,
             'order_id': orders_obj.id,
             # 'products': product_orders,
             # 'dukandar': orders_obj.order.shopkeeper,
             # # 'customer':orders_obj.customer,
             # 'order_date': orders_obj.created_at,
-             'amount': orders_obj.order.total_amount,
-                'discount': orders_obj.order.discount,
-            'shopkeeper_id':shopkeeper_id,
-            'customer_id':customer_id,
+            'amount': orders_obj.order.total_amount,
+            'discount': orders_obj.order.discount,
+            'shopkeeper_id': shopkeeper_id,
+            'customer_id': customer_id,
             #
             #
             'status': orders_obj.status,
@@ -1048,7 +1047,7 @@ def ordersHistoryDetails(request, pk):
 
 @login_required(login_url='shopkeeper:admin_login')
 def complaintsList(request):
-    complaint_list =Complaints.objects.all()
+    complaint_list = Complaints.objects.all()
 
     context = {
         'complaint_list': complaint_list,
@@ -1056,9 +1055,9 @@ def complaintsList(request):
     }
     return render(request, 'shopkeeper/complaints/list.html', context)
 
+
 @login_required(login_url='shopkeeper:admin_login')
 def complaintsDetail(request, pk):
-
     comp_obj = Complaints.objects.get(id=pk)
 
     context = {
@@ -1066,6 +1065,7 @@ def complaintsDetail(request, pk):
 
     }
     return render(request, 'shopkeeper/complaints/detail.html', context)
+
 
 @login_required(login_url='shopkeeper:admin_login')
 def complaintsDelete(request, pk):
@@ -1096,7 +1096,7 @@ def notificationSetup(request):
             return redirect('shopkeeper:notification_List')
 
         else:
-            print('request.POST',request.POST)
+            print('request.POST', request.POST)
             form = NotificationForm(request.POST)
             if form.is_valid():
                 form.save()
