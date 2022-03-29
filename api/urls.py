@@ -43,6 +43,6 @@ urlpatterns = [
     path('user', views.UserView.as_view(), name='UserView_view'),
     path('user/logout', views.LogoutView.as_view(), name='logoutView'),
     # path('change-password/', views.ChangePasswordView.as_view(), name='change-password'),
-    path('password_reset/', include('django_rest_passwordreset.urls', namespace='password_reset')),
+    path('password_forget/', include('django_rest_passwordreset.urls', namespace='password_reset')),
 
 ]

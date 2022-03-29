@@ -262,7 +262,7 @@ class ShopkeeperViewSetApi(viewsets.ViewSet):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def update(self, request, pk):
-        # tokenCheck(request)
+        tokenCheck(request)
         post_data = request.data
         dukandar = Shopkeeper.objects.get(user=pk)
         user = User.objects.get(id=pk)
@@ -293,7 +293,7 @@ class ShopkeeperViewSetApi(viewsets.ViewSet):
         return Response(serializer.data, status=status.HTTP_400_BAD_REQUEST)
 
     def partial_update(self, request, pk):
-        # tokenCheck(request)
+        tokenCheck(request)
         post_data = request.data
        
         dukandar = Shopkeeper.objects.get(user=pk)
@@ -314,8 +314,6 @@ class ShopkeeperViewSetApi(viewsets.ViewSet):
         emp_id=post_data.get('emp_id', None)
         if emp_id:
             employee = Employee.objects.get(user__email=emp_id)
-            print('employee',employee)
-
             dukandar.emp_id = employee or dukandar.emp_id
             dukandar.save()
         
@@ -393,7 +391,7 @@ class CustomerViewSetApi(viewsets.ViewSet):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def retrieve(self, request, pk=None):
-        # tokenCheck(request)
+        tokenCheck(request)
         try:
             user = User.objects.get(id=pk)
             customer = Customer.objects.get(user=user)
@@ -613,7 +611,7 @@ class OrderViewSetApi(viewsets.ViewSet):
 
     def retrieve(self, request, pk=None):
 
-        # tokenCheck(request)
+        tokenCheck(request)
         try:
             orderItm_LIST =[]
             shopkeeper = Shopkeeper.objects.get(user_id=pk)
@@ -658,7 +656,7 @@ class OrderViewSetApi(viewsets.ViewSet):
 
         except Shopkeeper.DoesNotExist:
             try:
-                print('customer', pk)
+                
                 orderItm_LIST = []
                 customer = Customer.objects.get(user_id=pk)
 
@@ -881,35 +879,35 @@ class OrderViewSetApi(viewsets.ViewSet):
             }
             return Response(response, status=status.HTTP_400_BAD_REQUEST)
    
-    def partial_update(self, request, pk):
-        # tokenCheck(request)
-        post_data = request.data
-        print('request.data', request.data, 'PK', pk)
-        try:
-            order = Order.objects.get(id=pk)
-            # user = User.objects.get(id=customer.user.id)
+    # def partial_update(self, request, pk):
+    #     # tokenCheck(request)
+    #     post_data = request.data
+    #     print('request.data', request.data, 'PK', pk)
+    #     try:
+    #         order = Order.objects.get(id=pk)
+    #         # user = User.objects.get(id=customer.user.id)
       
-            if post_data.get('status') =='CANCELLED':
-                order.status = post_data.get('status', order.status)    
-                order.save()
-                serializer = OrderSerializer(order, data=request.data, partial=True)
-                if serializer.is_valid():
-                    serializer.save()
-                    response = {
-                        'message': 'Partial Record Update Successfully'
-                    }
-                    return Response(response, status=status.HTTP_200_OK)
-                return Response(serializer.data, status=status.HTTP_400_BAD_REQUEST)
-            else:
-                response = {
-                    'message': 'You can only Cancelled your Order'
-                }
-                return Response(response, status=status.HTTP_400_BAD_REQUEST)
-        except Order.DoesNotExist:  
-             response = {
-                    'message': 'Order Does Not Updated'
-                }
-             return Response(response, status=status.HTTP_400_BAD_REQUEST)
+    #         if post_data.get('status') =='CANCELLED':
+    #             order.status = post_data.get('status', order.status)    
+    #             order.save()
+    #             serializer = OrderSerializer(order, data=request.data, partial=True)
+    #             if serializer.is_valid():
+    #                 serializer.save()
+    #                 response = {
+    #                     'message': 'Partial Record Update Successfully'
+    #                 }
+    #                 return Response(response, status=status.HTTP_200_OK)
+    #             return Response(serializer.data, status=status.HTTP_400_BAD_REQUEST)
+    #         else:
+    #             response = {
+    #                 'message': 'You can only Cancelled your Order'
+    #             }
+    #             return Response(response, status=status.HTTP_400_BAD_REQUEST)
+    #     except Order.DoesNotExist:  
+    #          response = {
+    #                 'message': 'Order Does Not Updated'
+    #             }
+    #          return Response(response, status=status.HTTP_400_BAD_REQUEST)
 class SpinesViewSetApi(viewsets.ViewSet):
 
     def list(self, request):
