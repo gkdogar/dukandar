@@ -276,8 +276,7 @@ class ShopkeeperViewSetApi(viewsets.ViewSet):
         user.user_type = 'SHOPKEEPER'
         user.save()
 
-        user_obj = User.objects.get(email=post_data['emp_id'])
-        employee = Employee.objects.get(user=user_obj)
+        employee = Employee.objects.get(user__email=post_data['emp_id'])
         dukandar.emp_id = employee
         dukandar.save()
         serializer = ShopkeeperSerializer(dukandar, data=post_data)
@@ -304,6 +303,10 @@ class ShopkeeperViewSetApi(viewsets.ViewSet):
         user.phone_no = post_data.get('phone_no', user.phone_no)
         user.user_type = 'SHOPKEEPER'
         user.save()
+
+        employee =Employee.objects.get(user__email =post_data['emp_id'])
+        dukandar.emp_id=employee
+        dukandar.save()
         serializer = ShopkeeperSerializer(dukandar, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
@@ -400,8 +403,8 @@ class CustomerViewSetApi(viewsets.ViewSet):
         tokenCheck(request)
 
         post_data = request.data
-        customer = Customer.objects.get(id=pk)
-        user = User.objects.get(id=customer.user.id)
+        customer = Customer.objects.get(user=pk)
+        user = User.objects.get(id=pk)
         # user.email = post_data['email']
         user.first_name = post_data['first_name']
         user.last_name = post_data['last_name']
@@ -425,8 +428,8 @@ class CustomerViewSetApi(viewsets.ViewSet):
     def partial_update(self, request, pk):
         tokenCheck(request)
         post_data = request.data
-        customer = Customer.objects.get(id=pk)
-        user = User.objects.get(id=customer.user.id)
+        customer = Customer.objects.get(user=pk)
+        user = User.objects.get(id=pk)
         user.first_name = post_data.get('first_name', user.first_name)
         user.last_name = post_data.get('last_name', user.last_name)
         user.email = post_data.get('email', user.email)
