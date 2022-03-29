@@ -310,11 +310,14 @@ class ShopkeeperViewSetApi(viewsets.ViewSet):
 
         user.save()
         # user_obj = User.objects.get(email=post_data['emp_id'])
-       
-        employee = Employee.objects.get(user__email=post_data['emp_id'])
-       
-        dukandar.emp_id = employee
-        dukandar.save()
+
+        emp_id=post_data.get('emp_id', None)
+        if emp_id:
+            employee = Employee.objects.get(user__email=emp_id)
+            print('employee',employee)
+
+            dukandar.emp_id = employee or dukandar.emp_id
+            dukandar.save()
         
         serializer = ShopkeeperSerializer(dukandar, data=request.data, partial=True)
         if serializer.is_valid():
@@ -610,10 +613,11 @@ class OrderViewSetApi(viewsets.ViewSet):
 
     def retrieve(self, request, pk=None):
 
-        tokenCheck(request)
+        # tokenCheck(request)
         try:
             orderItm_LIST =[]
             shopkeeper = Shopkeeper.objects.get(user_id=pk)
+
             order_obj = Order.objects.filter(shopkeeper_id=shopkeeper.id)
             orderItm_List =[]
             for ord in order_obj:
@@ -632,6 +636,8 @@ class OrderViewSetApi(viewsets.ViewSet):
                     
                     'order#':ord.id,
                     'status':ord.status,
+                    'order_date':ord.created_at,
+                    'last_updated': ord.updated_at,
                     'orderItem':test_dict
                     })
             orderItm_List.append({
@@ -649,11 +655,44 @@ class OrderViewSetApi(viewsets.ViewSet):
 
             # print('serializer1',serializer1.data)
             return Response(orderItm_List, status=status.HTTP_200_OK)
+
         except Shopkeeper.DoesNotExist:
-            response = {
-                'message': 'No Order Found'
-            }
-            return Response(response, status=status.HTTP_200_OK)
+            try:
+                print('customer', pk)
+                orderItm_LIST = []
+                customer = Customer.objects.get(user_id=pk)
+
+                order_obj = Order.objects.filter(customer_id=customer.id)
+                orderItm_List = []
+                for ord in order_obj:
+                    order_item = ProductOrder.objects.filter(order=ord)
+                    test_dict = []
+                    for item in order_item:
+                        test_dict.append({
+                            'product': item.product.name,
+                            'quantity': item.quantity,
+                            'price': item.price,
+                            'sub_total': item.sub_total
+                        })
+
+                    orderItm_LIST.append({
+
+                        'order#': ord.id,
+                        'status': ord.status,
+                        'order_date': ord.created_at,
+                        'last_updated':ord.updated_at,
+                        'orderItem': test_dict
+                    })
+                orderItm_List.append({
+                    'user': pk,
+                    'orders': orderItm_LIST
+                })
+                return Response(orderItm_List, status=status.HTTP_200_OK)
+            except Customer.DoesNotExist:
+                response = {
+                    'message': 'No Order Found'
+                }
+                return Response(response, status=status.HTTP_200_OK)
 
     def create(self, request):
         tokenCheck(request)
@@ -664,14 +703,14 @@ class OrderViewSetApi(viewsets.ViewSet):
             products = post_Data.get('products', None)
             customer_id = post_data.get('customer', None)
             shopkeeper_id = post_data.get('shopkeeper', None)
-            print('customer_id',customer_id)
+
             if customer_id:
                 try:
 
                     user = User.objects.get(id=customer_id)
                     print('user',user)
                     customer_obj = Customer.objects.get(user=customer_id)
-                    print('customer_obj',user)
+
                     if customer_obj:
                         post_Data['customer'] = customer_obj.id
                         serializer = OrderSerializer(data=post_Data)
