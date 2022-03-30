@@ -276,9 +276,12 @@ class ShopkeeperViewSetApi(viewsets.ViewSet):
         user.user_type = 'SHOPKEEPER'
         user.save()
 
+<<<<<<< HEAD
+=======
         # user_obj = User.objects.get(email=post_data['emp_id'])
         # employee = Employee.objects.get(user=user_obj)
         # dukandar.emp_id = employee
+>>>>>>> 34e4b22089250efc0d057a7617bb5649cf76e5a2
         employee = Employee.objects.get(user__email=post_data['emp_id'])
         dukandar.emp_id = employee
         dukandar.save()
@@ -309,6 +312,12 @@ class ShopkeeperViewSetApi(viewsets.ViewSet):
         user.user_type = 'SHOPKEEPER'
 
         user.save()
+<<<<<<< HEAD
+
+        employee =Employee.objects.get(user__email =post_data['emp_id'])
+        dukandar.emp_id=employee
+        dukandar.save()
+=======
         # user_obj = User.objects.get(email=post_data['emp_id'])
 
         emp_id=post_data.get('emp_id', None)
@@ -317,6 +326,7 @@ class ShopkeeperViewSetApi(viewsets.ViewSet):
             dukandar.emp_id = employee or dukandar.emp_id
             dukandar.save()
         
+>>>>>>> 34e4b22089250efc0d057a7617bb5649cf76e5a2
         serializer = ShopkeeperSerializer(dukandar, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
@@ -440,7 +450,10 @@ class CustomerViewSetApi(viewsets.ViewSet):
       
         post_data = request.data
         customer = Customer.objects.get(user=pk)
+<<<<<<< HEAD
+=======
         
+>>>>>>> 34e4b22089250efc0d057a7617bb5649cf76e5a2
         user = User.objects.get(id=pk)
         user.first_name = post_data.get('first_name', user.first_name)
         user.last_name = post_data.get('last_name', user.last_name)
