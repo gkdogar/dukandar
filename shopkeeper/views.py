@@ -514,9 +514,10 @@ def parent_category_detail(request, pk):
 
 @login_required(login_url='shopkeeper:admin_login')
 def parent_category_delete(request, pk):
+    
     parent_delete = ParentCategory.objects.get(id=pk)
     parent_delete.delete()
-
+    messages.success(request, 'Record Deleted Successfully')
     return redirect('shopkeeper:parent_category_list')
 
 
@@ -696,8 +697,11 @@ def productUpdate(request, pk):
 
 
 @login_required(login_url='shopkeeper:admin_login')
-def productDelete(request):
-    return render(request, 'shopkeeper/product/setup.html')
+def productDelete(request, pk):
+    prod_obj = Product.objects.get(pk=pk)  
+    prod_obj.delete()
+    messages.success(request, 'Record Deleted Successfully')
+    return redirect('shopkeeper:product_list')
 
 
 @login_required(login_url='shopkeeper:admin_login')

@@ -62,8 +62,8 @@
                             <td>{{ parent.is_active }}</td>
                             <td>
 
-                                <a href="{% url 'shopkeeper:parent_category_update' parent.id %}" class="mr-3"
-                                   data-toggle="tooltip" title="Hooray!"> <i class="fas fa-trash-alt"
+                                <a href="{% url 'shopkeeper:parent_category_delete' parent.id %}" class="mr-3"
+                                   data-toggle="tooltip" title="Delete!"> <i class="fas fa-trash-alt"
                                                                              style="color:red;"></i></a>
                                 <a href="{% url 'shopkeeper:parent_category_update'  parent.id %}"> <i
                                         class="fas fa-edit" style="color:blue;"></i></a>
