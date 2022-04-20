@@ -33,7 +33,8 @@
                     <th scope="col">Dukandar Name</th>
                   
                     <th scope="col">Customer Name</th>
-                
+                     <th scope="col">Phone#</th>
+                     <th scope="col">Address</th>
                     <th scope="col">Order Date</th>
                     <th scope="col">Last Update</th>
                     <th scope="col">Discount</th>
@@ -58,7 +59,21 @@
                       
                         <td>{{ order.customer.user.first_name }} {{ order.customer.user.last_name }}</td>
                   
-                       
+                       <td>
+                           {%  if  order.customer %}
+                           {{ order.customer.user.phone_no }}
+                           {% endif %}
+                       {%  if  order.shopkeeper %}
+                           {{ order.shopkeeper.user.phone_no }}
+                           {% endif %}
+                       </td>
+                        <td>{% if order.customer %}
+                            {{ order.customer.user.address }}
+                            {% endif %}
+                            {% if order.shopkeeper %}
+                            {{ order.shopkeeper.user.address }}
+                            {% endif %}
+                        </td>
                         <td>{{ order.created_at }}</td>
                         <td>{{ order.updated_at }}</td>
                         <td>{{ order.discount }}</td>
