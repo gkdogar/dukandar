@@ -587,10 +587,13 @@ class SubCategoryView(viewsets.ViewSet):
     #     return Response(serializer.data, status=status.HTTP_200_OK)
 
     def retrieve(self, request, pk=None):
-        tokenCheck(request)
+        print('pk', pk)
+        # tokenCheck(request)
         try:
             parent = SubCategory.objects.get(id=pk)
-            products_list = Product.objects.filter(parent=parent.id, is_active=True, quantity__gt=0)
+            print('parent',parent)
+            products_list = Product.objects.filter(sub_cat=parent.id, is_active=True, quantity__gt=0)
+            print('products_list',products_list)
             serializer = ProductSerializer(products_list, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except ParentCategory.DoesNotExist:
