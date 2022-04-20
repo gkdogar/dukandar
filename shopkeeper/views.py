@@ -399,7 +399,9 @@ def customerSetup(request):
             user.phone_no = request.POST.get('phone_no')
             user.save()
             customer_obj.user = user
+            print('dd',request.POST.get('is_active'))
             customer_obj.is_active = request.POST.get('is_active') or False
+
             customer_obj.save()
             messages.add_message(request, messages.SUCCESS, 'Record Updated Successfully')
             return redirect('shopkeeper:customer_list')
@@ -467,8 +469,9 @@ def customerDetail(request, pk):
         customer = Customer.objects.get(id=pk)
         user = User.objects.get(customer=pk)
         context = {
-            'user': user,
-            'id': pk
+            'customer': customer,
+            'id': pk,
+
         }
         return render(request, 'shopkeeper/customer/setup.html', context)
 

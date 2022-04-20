@@ -54,24 +54,24 @@
          <div class="form-group">
             <label for="employeeFname">Email</label>
             <input type="text" class="form-control" id="username" aria-describedby="email" name="email"
-                  value="{{user.email}}">
+                  value="{{customer.user.email}}">
         </div>
 
         <div class="form-group">
             <label for="employeeFname">First Name</label>
             <input type="text" class="form-control" id="first_name" aria-describedby="first_name" name="first_name"
-            value="{{user.first_name}}" >
+            value="{{customer.user.first_name}}" >
         </div>
         <div class="form-group">
             <label for="employeeFname">Last Name</label>
             <input type="text" class="form-control" id="last_name" aria-describedby="last_name" name="last_name"
-            value="{{user.last_name}}">
+            value="{{customer.user.last_name}}">
         </div>
 
         <div class="form-group">
             <label for="employeeFname">Phone#</label>
             <input type="text" class="form-control" id="phone_no" aria-describedby="phone_no" name="phone_no"
-                  value="{{user.phone_no}}">
+                  value="{{customer.user.phone_no}}">
         </div>
 
 
@@ -83,19 +83,19 @@
         <div class="form-group">
             <label for="city">City</label>
             <input type="text" class="form-control" id="phone_no" aria-describedby="city" name="city"
-                  value="{{user.city}}">
+                  value="{{customer.user.city}}">
         </div>
         <div class="form-group">
             <label for="address">Address</label>
             <input type="text" class="form-control" id="phone_no" aria-describedby="address" name="address"
-                  value="{{user.address}}">
+                  value="{{customer.user.address}}">
         </div>
 
 
 
             <div class="form-check mt-5">
                 <input type="checkbox" class="form-check-input checkbox" id="is_active"
-                name="is_active" {% if is_active %} checked
+                name="is_active" {% if customer.is_active %} checked
                 value="True"   {% endif %} value="False">
                 <label class="form-check-label" for="exampleCheck1" name="is_active">Is Active Customer</label>
               </div>
@@ -122,6 +122,15 @@
             $('ul#customer_control').addClass('show')
             $('#cust_setup').addClass('active')
 
+          $(".checkbox").on('change', function () {
+            if ($(this).is(':checked')) {
+                $(this).attr('value', 'True');
+
+            } else {
+                $(this).attr('value', 'False');
+
+            }
+        });
         });
     </script>
 {% endblock %}
